@@ -70,7 +70,7 @@
  '(org-startup-indented t)
  '(package-selected-packages
    (quote
-    (projectile web-mode virtualenvwrapper counsel r-autoyas validate elpy ess-view theme-changer material-theme help-fns+ magit evil-indent-textobject evil-surround evil-leader evil which-key use-package twittering-mode try swiper neotree cyberpunk-theme ace-window)))
+    (org helm-projectile projectile web-mode virtualenvwrapper counsel r-autoyas validate elpy ess-view theme-changer material-theme help-fns+ magit evil-indent-textobject evil-surround evil-leader evil which-key use-package twittering-mode try swiper neotree cyberpunk-theme ace-window)))
  '(vc-annotate-background nil)
  '(vc-annotate-color-map
    (quote
