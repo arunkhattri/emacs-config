@@ -13,7 +13,7 @@
 ;; You may delete these explanatory comments.
 (package-initialize)
 
-(load "~/.emacs.d/emacs-config/my-noexternal.el")
+;; (load "~/.emacs.d/emacs-config/my-noexternal.el")
 (load "~/.emacs.d/emacs-config/my-configuration.el")
 (load "~/.emacs.d/emacs-config/all_packages.el")
 (load "~/.emacs.d/emacs-config/init_org.el")
