@@ -1,9 +1,22 @@
 ;; .emacs.d/my-configuration.el
 
-;; (setq inhibit-startup-message t)
-;; (tool-bar-mode -1)
+;;=================================================================== 
+;; interface tweaks
+(setq inhibit-startup-message t)
+(tool-bar-mode -1)
 
 ;;=================================================================== 
+;;longitude and lattitude of delhi
+;; to be used by calendar
+(setq calendar-latitude 28.6)
+(setq calendar-longitude 77.2)
+(setq calendar-location-name "New Delhi, India")
+;; Time-Zone for New Delhi
+(setq calendar-time-zone +530)
+(setq calendar-standard-time-zone-name "IST")
+
+;;=================================================================== 
+
 ;; Language environment
 (set-language-environment "UTF-8")
 
@@ -21,6 +34,26 @@
   (package-refresh-contents)
   (package-install 'use-package))
 
+;;=================================================================== 
+(use-package material-theme
+  :ensure t
+  :config
+  (progn (load-theme 'material t)
+	 (load-theme 'material-light t)))
+
+(use-package theme-changer
+  :ensure t
+  :config
+  (progn (change-theme 'material-light 'material)))
+
+;; themes
+;; (load-theme 'leuven t)
+;; (load-theme 'material t)
+;; (load-theme 'material-light t)
+
+;; themes-changer
+;; (require 'theme-changer)
+;; (change-theme 'material-light 'material)
 ;;=================================================================== 
 ;; try package
 (use-package try
@@ -58,4 +91,20 @@
      ((t (:inherit ace-jump-face-foreground :height 3.0))))) 
   ))
 
+;;=================================================================== 
+
+;; Powerline theme
+(load "~/.emacs.d/emacs-config/init-powerline.el")
+
+;;Powerline
+;; (require 'powerline)
+;; (powerline-default-theme)
+;; (setq powerline-default-separator 'arrow)
+;; (set-face-attribute 'mode-line nil
+;;                     :foreground "Black"
+;;                     :background "#ff8c00"
+;;                     :box nil)
+
+;; use term instead of shell, keeping in mind python
+;; (setenv "TERM" "xterm")
 ;;=================================================================== 
