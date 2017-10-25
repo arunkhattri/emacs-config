@@ -154,7 +154,7 @@
   (global-company-mode)
   ;; Quick-help (popup documentation for suggestions).
   (use-package company-quickhelp
-    :if window-system
+    :ensure t
     :init (company-quickhelp-mode 1))
   (use-package company-web-html)
   ;; Company settings.
@@ -427,6 +427,33 @@ want to use in the modeline *in lieu of* the original.")
   :config
   (helm-projectile-on))
 
+;;=================================================================== 
+;; Ledger mode
+(autoload 'ledger-mode "ledger-mode" "A major mode for Ledger" t)
+;; (add-to-list 'load-path
+;;              (expand-file-name "~/.emacs.d/e/ledger/source/lisp/"))
+(add-to-list 'auto-mode-alist '("\\.ledger$" . ledger-mode))
+;;=================================================================== 
+
+;;rcirc
+(global-set-key (kbd "C-c I") 'irc)
+(setq rcirc-server-alist
+      '(("irc.freenode.net" :port 6697 :encryption tls
+	 :channels ("#rcirc" "#emacs" "#emacswiki"))))
+
+;; This code adds smileys such as :) and :( to rcirc.
+
+(eval-after-load 'rcirc
+  '(add-to-list 'rcirc-markup-text-functions 'rcirc-smileys))
+
+(defun rcirc-smileys (&rest ignore)
+  "Run smiley-buffer on the buffer
+but add a temporary space at the end to ensure matches of smiley
+regular expressions."
+  (goto-char (point-max))
+  (insert " ")
+  (smiley-buffer)
+  (delete-char -1))
 
 ;;=================================================================== 
 ;;; all_packages.el ends here
