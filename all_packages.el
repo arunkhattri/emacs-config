@@ -180,12 +180,17 @@
   ;; (define-key company-active-map (kbd "SPC") nil))
 
 ;; ======================================================================
+;; shell-mode
+(defun sh ()
+  (interactive)
+  (ansi-term "/bin/zsh"))
+  
 ;;Python Mode
 (use-package python
   :ensure t
   :config
-  (setq python-shell-interpreter "ipython"
-	python-shell-interpreter-args "--simple-prompt -i"))
+  (setq python-shell-interpreter "python"))
+	;; python-shell-interpreter-args "--simple-prompt --pprint"))
 
 ;;elpy
 ;; (package-initialize)
@@ -196,9 +201,9 @@
   :ensure t
   :config
   (elpy-enable)
-  (when (executable-find "ipython")
-  (elpy-use-ipython))
-  (setenv "WORKON_HOME" "~/anaconda3/envs/")
+  ;; (when (executable-find "ipython")
+  ;; (elpy-use-ipython))
+  (setenv "WORKON_HOME" "/home/deadlytackler/anaconda3/envs/")
   (pyvenv-mode 1)
   (setq-default indent-tabs-mode nil)
   ;; ;; jedi for auto-completion in elpy
@@ -211,24 +216,24 @@
     :config
     (add-to-list 'company-backends 'company-jedi))
 
-(use-package virtualenvwrapper
-  :ensure t
-  :config
-  (venv-initialize-interactive-shells)
-  (venv-initialize-eshell))
+;; (use-package virtualenvwrapper
+;;   :ensure t
+;;   :config
+;;   (venv-initialize-interactive-shells)
+;;   (venv-initialize-eshell))
 ;; ======================================================================
 ;; copied from:
 ;; https://github.com/sejdemyr/.emacs.d/blob/master/init.el
 
 ;;; emacs speaks statistics
 (use-package ess-site
-  :load-path "~/.emacs.d/elpa/ess-20171015.130/lisp/"
+  :load-path "~/.emacs.d/elpa/ess-20171102.958/lisp/"
   :mode ("\\.R\\'" . R-mode)
   :config
   (validate-setq
    ring-bell-function #'ignore
    ess-ask-for-ess-directory nil
-   inferior-R-program-name "/usr/local/bin/R"
+   inferior-R-program-name "/usr/bin/R"
    ess-local-process-name "R"
    ansi-color-for-comint-mode 'filter
    comint-scroll-to-bottom-on-input t
@@ -237,7 +242,7 @@
    ess-default-style 'RStudio)         ; rstudio indentation style
 
   ;; set assignment operator
-  (setq ess-S-assign-key (kbd "s-n"))
+  (setq ess-S-assign-key (kbd "C--"))
   (ess-toggle-S-assign-key t)
 
   ;; disable '_' shortcut
@@ -248,14 +253,15 @@
 
   ;; set piping operator key binding
   ;; http://emacs.stackexchange.com/questions/8041/how-to-implement-the-piping-operator-in-ess-mode
+  ;; CTRL-SHIFT-% for pipe operator
   (defun then_R_operator ()
     "R - %>% operator or 'then' pipe operator"
     (interactive)
     (just-one-space 1)
     (insert "%>%")
     (just-one-space 1))
-  (define-key ess-mode-map (kbd "s-N") 'then_R_operator)
-  (define-key inferior-ess-mode-map (kbd "s-N") 'then_R_operator)
+  (define-key ess-mode-map (kbd "C-%") 'then_R_operator)
+  (define-key inferior-ess-mode-map (kbd "C-%") 'then_R_operator)
 
   ;; key binding to evaluate current line or marked region
   (defun my-ess-eval ()
@@ -286,7 +292,7 @@
   )
 
 ;; use pretty mode
-(add-hook 'ess-mode-hook 'turn-on-pretty-mode)
+;; (add-hook 'ess-mode-hook 'turn-on-pretty-mode)
 
 ;; add author info
 (defun akk/ess-author-date ()
