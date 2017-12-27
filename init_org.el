@@ -125,6 +125,17 @@
 
   )
 
+;;=================================================================== 
+;; Enable plantuml-mode for PlantUML files
+
+(use-package plantuml-mode
+  :init
+  (setq plantuml-jar-path "/usr/share/plantuml/plantuml.jar"))
+
+(add-to-list 'auto-mode-alist '("\\.plantuml\\'" . plantuml-mode))
+;; (add-to-list
+;;  'org-src-lang-modes '("plantuml" . plantuml))
+;;=================================================================== 
 ;;==================================================
 ;; Org-babel support
 
@@ -133,7 +144,8 @@
  '((latex . t)
    (emacs-lisp . t)
    ;; (R . t)
-   (python . t)))
+   (python . t)
+   (plantuml . t)))
 
 ;;==================================================
 (provide 'init_org)
