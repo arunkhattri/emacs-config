@@ -130,7 +130,7 @@
 
 ;;=================================================================== 
 ;;Elfeed
-(global-set-key (kbd "C-x M-w") 'elfeed)
+(global-set-key (kbd "C-x w") 'elfeed)
 ;; list of feeds
 (setq elfeed-feeds
       '(("http://feeds.reuters.com/reuters/INtopNews" ReutersTopNews)

@@ -23,6 +23,20 @@
  '(custom-safe-themes
    (quote
     ("745f50fa29c8427309e172ec9ffb59ddd1e4a62e4871509f424ddfd854a065d2" "98cc377af705c0f2133bb6d340bf0becd08944a588804ee655809da5d8140de6" default)))
+ '(ledger-reports
+   (quote
+    ((#("bal" 0 1
+        (idx 0))
+      "ledger -f /home/deadlytackler/Dropbox/Ledger/Dec29_2017onwards.ledger bal")
+     (#("reg" 0 1
+        (idx 1))
+      "%(binary) -f %(ledger-file) reg")
+     (#("payee" 0 1
+        (idx 2))
+      "%(binary) -f %(ledger-file) reg @%(payee)")
+     (#("account" 0 1
+        (idx 3))
+      "%(binary) -f %(ledger-file) reg %(account)"))))
  '(org-agenda-files (quote ("~/Dropbox/diary.org")))
  '(org-plantuml-jar-path "/usr/share/plantuml/plantuml.jar")
  '(org-src-lang-modes
@@ -43,7 +57,7 @@
      ("plantuml" . plantuml))))
  '(package-selected-packages
    (quote
-    (plantuml-mode company-quickhelp which-key web-mode virtualenvwrapper validate use-package twittering-mode try theme-changer r-autoyas powerline-evil org neotree material-theme magit help-fns+ helm-projectile evil-surround evil-leader evil-indent-textobject ess-view elpy cyberpunk-theme counsel ace-window))))
+    (elfeed plantuml-mode company-quickhelp which-key web-mode virtualenvwrapper validate use-package twittering-mode try theme-changer r-autoyas powerline-evil org neotree material-theme magit help-fns+ helm-projectile evil-surround evil-leader evil-indent-textobject ess-view elpy cyberpunk-theme counsel ace-window))))
 (custom-set-faces
  ;; custom-set-faces was added by Custom.
  ;; If you edit it by hand, you could mess it up, so be careful.
