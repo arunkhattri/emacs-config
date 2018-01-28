@@ -92,6 +92,8 @@
   :ensure t
   :config
   (evil-mode 1)
+  (add-to-list 'evil-emacs-state-modes 'elfeed-search-mode)
+  (add-to-list 'evil-emacs-state-modes 'elfeed-show-mode)
   (use-package evil-leader
     :ensure t
     :config
@@ -432,6 +434,11 @@ want to use in the modeline *in lieu of* the original.")
   :bind ("M-t" . helm-projectile-find-file)
   :config
   (helm-projectile-on))
+
+;;=================================================================== 
+(use-package cython-mode
+  :ensure t
+  :mode (("\\.py[xdi]" . cython-mode)))
 
 ;;=================================================================== 
 ;; Ledger mode
