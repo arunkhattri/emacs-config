@@ -62,7 +62,6 @@
 ;;=================================================================== 
 ;; make ibuffer default
 (defalias 'list-buffers 'ibuffer)
-
 ;;=================================================================== 
 ;; Ace window
 (use-package ace-window
