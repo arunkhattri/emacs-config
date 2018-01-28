@@ -37,7 +37,7 @@
 ;; (load "~/.emacs.d/emacs-config/my-noexternal.el")
 ;; (load "~/.emacs.d/emacs-config/my-configuration.el")
 ;; (load "~/.emacs.d/emacs-config/all_packages.el")
-(load "~/.emacs.d/emacs-config/init_org.el")
+;; (load "~/.emacs.d/emacs-config/init_org.el")
 (load "~/.emacs.d/emacs-config/mail_setup.el")
 
 ;; ----------------------------------------------------------------------
