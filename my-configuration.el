@@ -21,20 +21,6 @@
 (set-language-environment "UTF-8")
 
 ;;=================================================================== 
-;; Melpa
-(require 'package)
-(setq package-enable-at-startup nil)
-(add-to-list 'package-archives
-             '("melpa" . "https://melpa.org/packages/"))
-(package-initialize)
-;;=================================================================== 
-
-;;Use Package
-(unless (package-installed-p 'use-package)
-  (package-refresh-contents)
-  (package-install 'use-package))
-
-;;=================================================================== 
 (use-package material-theme
   :ensure t
   :config
