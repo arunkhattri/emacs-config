@@ -57,7 +57,7 @@
      ("plantuml" . plantuml))))
  '(package-selected-packages
    (quote
-    (elfeed plantuml-mode company-quickhelp which-key web-mode virtualenvwrapper validate use-package twittering-mode try theme-changer r-autoyas powerline-evil org neotree material-theme magit help-fns+ helm-projectile evil-surround evil-leader evil-indent-textobject ess-view elpy cyberpunk-theme counsel ace-window))))
+    (cython-mode elfeed plantuml-mode company-quickhelp which-key web-mode virtualenvwrapper validate use-package twittering-mode try theme-changer r-autoyas powerline-evil org neotree material-theme magit help-fns+ helm-projectile evil-surround evil-leader evil-indent-textobject ess-view elpy cyberpunk-theme counsel ace-window))))
 (custom-set-faces
  ;; custom-set-faces was added by Custom.
  ;; If you edit it by hand, you could mess it up, so be careful.
