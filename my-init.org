@@ -1,0 +1,656 @@
+#+STARTUP: overview
+* Interface Tweaks
+
+#+BEGIN_SRC emacs-lisp
+(setq inhibit-startup-message t)
+(tool-bar-mode -1)
+(fset 'yes-or-no-p 'y-or-n-p)
+#+END_SRC
+
+* Delhi Coordinates
+for calendar and other stuffs:
+
+#+BEGIN_SRC emacs-lisp
+(setq calendar-latitude 28.6)
+(setq calendar-longitude 77.2)
+(setq calendar-location-name "New Delhi, India")
+;; Time-Zone for New Delhi
+(setq calendar-time-zone +530)
+(setq calendar-standard-time-zone-name "IST")
+#+END_SRC
+
+* Language Environment
+
+#+BEGIN_SRC emacs-lisp
+(set-language-environment "UTF-8")
+(when (display-graphic-p)
+  (setq x-select-request-type '(UTF8_STRING COMPOUND_TEXT TEXT STRING)))
+#+END_SRC
+
+* Themes
+using material theme and theme-changer
+
+#+BEGIN_SRC 
+(use-package material-theme
+  :ensure t
+  :config
+  (progn (load-theme 'material t)
+	 (load-theme 'material-light t)))
+
+(use-package theme-changer
+  :ensure t
+  :config
+  (progn (change-theme 'material-light 'material)))
+
+#+END_SRC
+
+* Try
+
+#+BEGIN_SRC emacs-lisp
+(use-package try
+  :ensure t)
+#+END_SRC
+
+* Which key
+
+#+BEGIN_SRC emacs-lisp
+(use-package which-key
+  :ensure t
+  :config (which-key-mode))
+#+END_SRC
+
+* IDO Mode
+
+#+BEGIN_SRC emacs-lisp
+(setq ido-enable-flex-matching t)
+(setq ido-everywhere t)
+(ido-mode 1)
+;; (setq ido-max-directory-size 100000)
+(ido-mode (quote both))
+#+END_SRC
+
+* ibuffer
+make ibuffer default
+
+#+BEGIN_SRC emacs-lisp
+(defalias 'list-buffers 'ibuffer)
+#+END_SRC
+
+* Ace Window
+
+#+BEGIN_SRC emacs-lisp
+(use-package ace-window
+:ensure t
+:init
+(progn
+(setq aw-scope 'frame)
+(global-set-key (kbd "C-x O") 'other-frame)
+  (global-set-key [remap other-window] 'ace-window)
+  (custom-set-faces
+   '(aw-leading-char-face
+     ((t (:inherit ace-jump-face-foreground :height 3.0))))) 
+  ))
+#+END_SRC
+
+* Powerline
+
+#+BEGIN_SRC emacs-lisp
+(defface my-pl-segment1-active
+  '((t (:foreground "#000000" :background "#E1B61A")))
+  "Powerline first segment active face.")
+(defface my-pl-segment1-inactive
+  '((t (:foreground "#CEBFF3" :background "#3A2E58")))
+  "Powerline first segment inactive face.")
+(defface my-pl-segment2-active
+  '((t (:foreground "#F5E39F" :background "#8A7119")))
+  "Powerline second segment active face.")
+(defface my-pl-segment2-inactive
+  '((t (:foreground "#CEBFF3" :background "#3A2E58")))
+  "Powerline second segment inactive face.")
+(defface my-pl-segment3-active
+  '((t (:foreground "#CEBFF3" :background "#3A2E58")))
+  "Powerline third segment active face.")
+(defface my-pl-segment3-inactive
+  '((t (:foreground "#CEBFF3" :background "#3A2E58")))
+  "Powerline third segment inactive face.")
+
+(defun air--powerline-default-theme ()
+  "Set up my custom Powerline with Evil indicators."
+  (setq-default mode-line-format
+                '("%e"
+                  (:eval
+                   (let* ((active (powerline-selected-window-active))
+                          (seg1 (if active 'my-pl-segment1-active 'my-pl-segment1-inactive))
+                          (seg2 (if active 'my-pl-segment2-active 'my-pl-segment2-inactive))
+                          (seg3 (if active 'my-pl-segment3-active 'my-pl-segment3-inactive))
+                          (separator-left (intern (format "powerline-%s-%s"
+                                                          (powerline-current-separator)
+                                                          (car powerline-default-separator-dir))))
+                          (separator-right (intern (format "powerline-%s-%s"
+                                                           (powerline-current-separator)
+                                                           (cdr powerline-default-separator-dir))))
+                          (lhs (list (let ((evil-face (powerline-evil-face)))
+                                       (if evil-mode
+                                           (powerline-raw (powerline-evil-tag) evil-face)
+                                         ))
+                                     (if evil-mode
+                                         (funcall separator-left (powerline-evil-face) seg1))
+                                     (powerline-buffer-id seg1 'l)
+                                     (powerline-raw "[%*]" seg1 'l)
+                                     (when (and (boundp 'which-func-mode) which-func-mode)
+                                       (powerline-raw which-func-format seg1 'l))
+                                     (powerline-raw " " seg1)
+                                     (funcall separator-left seg1 seg2)
+                                     (when (boundp 'erc-modified-channels-object)
+                                       (powerline-raw erc-modified-channels-object seg2 'l))
+                                     (powerline-major-mode seg2 'l)
+                                     (powerline-process seg2)
+                                     (powerline-minor-modes seg2 'l)
+                                     (powerline-narrow seg2 'l)
+                                     (powerline-raw " " seg2)
+                                     (funcall separator-left seg2 seg3)
+                                     (powerline-vc seg3 'r)
+                                     (when (bound-and-true-p nyan-mode)
+                                       (powerline-raw (list (nyan-create)) seg3 'l))))
+                          (rhs (list (powerline-raw global-mode-string seg3 'r)
+                                     (funcall separator-right seg3 seg2)
+                                     (unless window-system
+                                       (powerline-raw (char-to-string #xe0a1) seg2 'l))
+                                     (powerline-raw "%4l" seg2 'l)
+                                     (powerline-raw ":" seg2 'l)
+                                     (powerline-raw "%3c" seg2 'r)
+                                     (funcall separator-right seg2 seg1)
+                                     (powerline-raw " " seg1)
+                                     (powerline-raw "%6p" seg1 'r)
+                                     (when powerline-display-hud
+                                       (powerline-hud seg1 seg3)))))
+                     (concat (powerline-render lhs)
+                             (powerline-fill seg3 (powerline-width rhs))
+                             (powerline-render rhs)))))))
+  
+(use-package powerline
+  :ensure t
+  :config
+  (setq powerline-default-separator (if (display-graphic-p) 'arrow
+                                      nil))
+  (air--powerline-default-theme))
+
+(use-package powerline-evil
+  :ensure t)
+
+#+END_SRC
+
+* Counsel
+
+#+BEGIN_SRC emacs-lisp
+(use-package counsel
+  :ensure t
+  :bind
+  (("M-y" . counsel-yank-pop)
+   :map ivy-minibuffer-map
+   ("M-y" . ivy-next-line)))
+
+#+END_SRC
+
+* Validate
+
+#+BEGIN_SRC emacs-lisp
+;; https://github.com/sejdemyr/.emacs.d/blob/master/init.el
+;; validate options
+(use-package validate
+  :ensure t
+  :init
+  (use-package seq
+    :ensure t))
+
+#+END_SRC
+
+* Ivy
+
+#+BEGIN_SRC emacs-lisp
+(use-package ivy
+  :ensure t
+  :diminish (ivy-mode)
+  :bind (("C-x b" . ivy-switch-buffer))
+  :config
+  (ivy-mode 1)
+  (setq ivy-use-virtual-buffers t)
+  (setq ivy-count-format "%d/%d ")
+  (setq ivy-display-style 'fancy))
+
+#+END_SRC
+
+* Swiper
+
+#+BEGIN_SRC emacs-lisp
+(use-package swiper
+  :ensure t
+  :bind (("C-s" . swiper)
+	 ("C-r" . swiper)
+	 ("C-c C-r" . ivy-resume)
+	 ("M-x" . counsel-M-x)
+	 ("C-x C-f" . counsel-find-file))
+  :config
+  (progn
+    (ivy-mode 1)
+    (setq ivy-use-virtual-buffers t)
+    (setq ivy-display-style 'fancy)
+    (define-key read-expression-map (kbd "C-r") 'counsel-expression-history)
+    ))
+
+#+END_SRC
+
+* Evil
+
+#+BEGIN_SRC emacs-lisp
+(use-package evil
+  :ensure t
+  :config
+  (evil-mode 1)
+  (add-to-list 'evil-emacs-state-modes 'elfeed-search-mode)
+  (add-to-list 'evil-emacs-state-modes 'elfeed-show-mode)
+  (use-package evil-leader
+    :ensure t
+    :config
+    (global-evil-leader-mode))
+;;  (use-package evil-jumper
+;;    :ensure t
+;;    :config
+;;    (global-evil-jumper-mode))
+  (use-package evil-surround
+    :ensure t
+    :config
+    (global-evil-surround-mode))
+  (use-package evil-indent-textobject
+    :ensure t))
+
+#+END_SRC
+
+* Magit
+
+#+BEGIN_SRC emacs-lisp
+(use-package magit
+  :ensure t
+  :config
+  (global-set-key (kbd "C-x g") 'magit-status)
+  (setenv "GIT_ASKPASS" "git-gui--askpass")
+  
+  (defun magit-insert-remote-header ()
+    "Insert a header line about the remote of the current branch."
+    (-when-let (remote (or (magit-get-remote)
+                           (let ((remotes (magit-list-remotes)))
+                             (or (car (member "origin" remotes))
+                                 (car remotes)))))
+      (magit-insert-section (remote remote)
+        (magit-insert
+         (concat (format "%-10s" "Remote: ")
+                 (propertize remote 'face 'magit-branch-remote) " "
+                 (magit-get "remote" remote "url") "\n")))))
+  )
+
+#+END_SRC
+
+* Elfeed
+
+#+BEGIN_SRC emacs-lisp
+(global-set-key (kbd "C-x w") 'elfeed)
+;; list of feeds
+(setq elfeed-feeds
+      '(("http://feeds.reuters.com/reuters/INtopNews" ReutersTopNews)
+	("http://feeds.reuters.com/reuters/INsportsNews" ReutersSportsNews)
+	("http://timesofindia.indiatimes.com/rssfeedstopstories.cms" TOI)
+	("http://www.livemint.com/rss/economy_politics" LiveMintEconPolicies)
+	("http://www.asianage.com/rss/38" AsianAge)
+	("http://feeds.bbci.co.uk/news/rss.xml?edition=asia" BBC)))
+
+(setf url-queue-timeout 30)
+(setq-default elfeed-search-filter "@1-week-ago +unread ")
+
+#+END_SRC
+
+* Company
+
+#+BEGIN_SRC emacs-lisp
+(use-package company
+  :diminish ""
+  :init
+  ;; (add-hook 'prog-mode-hook 'company-mode)
+  ;; (add-hook 'comint-mode-hook 'company-mode)
+  :config
+  (global-company-mode)
+  ;; Quick-help (popup documentation for suggestions).
+  (use-package company-quickhelp
+    :ensure t
+    :init (company-quickhelp-mode 1))
+  (use-package company-web-html)
+  ;; Company settings.
+  (setq company-tooltip-limit 10)
+  (setq company-idle-delay 0.2)
+  (setq company-echo-delay 0)
+  (setq company-minimum-prefix-length 2)
+  (setq company-require-match nil)
+  (setq company-selection-wrap-around t)
+  (setq company-tooltip-align-annotations t)
+  (setq company-tooltip-flip-when-above t)
+  ;; weight by frequency
+  (setq company-transformers '(company-sort-by-occurrence))
+  (define-key company-active-map (kbd "M-n") nil)
+  (define-key company-active-map (kbd "M-p") nil)
+  (define-key company-active-map (kbd "C-n") 'company-select-next)
+  (define-key company-active-map (kbd "C-p") 'company-select-previous)
+  (define-key company-active-map (kbd "TAB") 'company-complete-common-or-cycle)
+  (define-key company-active-map (kbd "<tab>") 'company-complete-common-or-cycle)
+  (define-key company-active-map (kbd "S-TAB") 'company-select-previous)
+  (define-key company-active-map (kbd "<backtab>") 'company-select-previous))
+  ;; prevent company from completing on its own when we type regular characters
+  ;; (define-key company-active-map (kbd "SPC") nil))
+
+#+END_SRC
+
+* Shell
+zsh
+#+BEGIN_SRC emacs-lisp
+(defun sh ()
+  (interactive)
+  (ansi-term "/bin/zsh"))
+
+#+END_SRC
+
+* Python & Elpy
+
+#+BEGIN_SRC emacs-lisp
+(use-package python
+  :ensure t
+  :config
+  (setq python-shell-interpreter "python"))
+	;; python-shell-interpreter-args "--simple-prompt --pprint"))
+
+(use-package elpy
+  :ensure t
+  :config
+  (elpy-enable)
+  ;; (when (executable-find "ipython")
+  ;; (elpy-use-ipython))
+  (setenv "WORKON_HOME" "/home/deadlytackler/anaconda3/envs/")
+  (pyvenv-mode 1)
+  (setq-default indent-tabs-mode nil)
+  ;; ;; jedi for auto-completion in elpy
+  (setq elpy-rpc-backend "jedi")
+  (global-set-key (kbd "<f7>") (kbd "C-u C-c C-c")))
+  ;; Python auto completion
+  (use-package company-jedi
+    :init
+    (setq company-jedi-python-bin "python")
+    :config
+    (add-to-list 'company-backends 'company-jedi))
+
+#+END_SRC
+
+* ESS
+copied from: https://github.com/sejdemyr/.emacs.d/blob/master/init.el
+
+#+BEGIN_SRC emacs-lisp
+(use-package ess-site
+  :load-path "~/.emacs.d/elpa/ess-20171102.958/lisp/"
+  :mode ("\\.R\\'" . R-mode)
+  :config
+  (validate-setq
+   ring-bell-function #'ignore
+   ess-ask-for-ess-directory nil
+   inferior-R-program-name "/usr/bin/R"
+   ess-local-process-name "R"
+   ansi-color-for-comint-mode 'filter
+   comint-scroll-to-bottom-on-input t
+   comint-scroll-to-bottom-on-output t
+   comint-move-point-for-output t
+   ess-default-style 'RStudio)         ; rstudio indentation style
+
+  ;; set assignment operator
+  (setq ess-S-assign-key (kbd "C--"))
+  (ess-toggle-S-assign-key t)
+
+  ;; disable '_' shortcut
+  (ess-toggle-underscore nil)
+
+  ;; automatically complete parentheses etc
+  ;; (add-hook 'ess-mode-hook #'electric-pair-mode)
+
+  ;; set piping operator key binding
+  ;; http://emacs.stackexchange.com/questions/8041/how-to-implement-the-piping-operator-in-ess-mode
+  ;; CTRL-SHIFT-% for pipe operator
+  (defun then_R_operator ()
+    "R - %>% operator or 'then' pipe operator"
+    (interactive)
+    (just-one-space 1)
+    (insert "%>%")
+    (just-one-space 1))
+  (define-key ess-mode-map (kbd "C-%") 'then_R_operator)
+  (define-key inferior-ess-mode-map (kbd "C-%") 'then_R_operator)
+
+  ;; key binding to evaluate current line or marked region
+  (defun my-ess-eval ()
+    (interactive)
+    (if (and transient-mark-mode mark-active)
+        (call-interactively 'ess-eval-region)
+      (call-interactively 'ess-eval-line)))
+  (add-hook 'ess-mode-hook
+            '(lambda()
+               (local-set-key (kbd "s-m") 'my-ess-eval)))
+
+  ;; key binding to evaluate entire region (whether marked or not)
+  (defun my-ess-eval2 ()
+    (interactive)
+    (call-interactively 'ess-eval-region-or-function-or-paragraph-and-step))
+  (add-hook 'ess-mode-hook
+            '(lambda()
+               (local-set-key (kbd "s-M") 'my-ess-eval2)))
+
+  ;; key binding to load_all() for R devlopment
+  (defun my-ess-eval3 ()
+    (interactive)
+    (call-interactively 'ess-r-devtools-load-package))
+  (add-hook 'ess-mode-hook
+            '(lambda()
+               (local-set-key (kbd "s-B") 'my-ess-eval3)))
+
+  )
+
+;; add author info
+(defun akk/ess-author-date ()
+  (interactive)
+  (when (string= major-mode "ess-mode")
+    (goto-char (point-min))
+    (insert "#' ---\n")
+    (insert "#' title: <title>\n")
+    (insert "#' author: Arun Kr. Khattri\n")
+    (insert "#' Date: ")
+    (insert (format-time-string "%F %T\n"))
+    (insert "#' ---\n\n")
+    (save-buffer)))
+(add-hook 'org-babel-post-tangle-hook 'akk/ess-author-date)
+(setq ess-indent-offset 2)
+(setq ess-help-kill-bogus-buffers t)
+#+END_SRC
+
+* ESS-Vies
+
+#+BEGIN_SRC emacs-lisp
+(use-package ess-view
+  :ensure t)
+
+#+END_SRC
+
+* Snippets for R in ESS
+
+#+BEGIN_SRC emacs-lisp
+(use-package r-autoyas
+  :ensure t
+  :config
+  (progn (add-hook 'ess-mode-hook 'r-autoyas-ess-activate)))
+
+#+END_SRC
+
+* Highlight FIXME, TODO & BUG
+in prog-mode
+
+#+BEGIN_SRC emacs-lisp
+(add-hook 'prog-mode-hook
+	  (lambda ()
+	    (font-lock-add-keywords nil '(("\\<\\(AKK\\|FIXME\\|TODO\\|BUG\\):" 1
+					   font-lock-warning-face t)))))
+
+#+END_SRC
+
+* fns+
+
+#+BEGIN_SRC emacs-lisp
+(use-package help-fns+
+  :ensure t)
+
+#+END_SRC
+
+* EasyPG
+for encryption and decryption of files
+
+#+BEGIN_SRC emacs-lisp
+(require 'epa)
+(epa-file-enable)
+
+#+END_SRC
+
+* Clean Mode-line
+
+#+BEGIN_SRC emacs-lisp
+(defvar mode-line-cleaner-alist
+  `((company-mode . " α")
+    (elpy-mode . " Elp")
+    (ivy-mode . " I")
+    (undo-tree-mode . " UT")
+    (yas/minor-mode . " υ")
+    (paredit-mode . " π")
+    (eldoc-mode . "")
+    (abbrev-mode . "")
+    ;; Major modes
+    (lisp-interaction-mode . "λ")
+    (hi-lock-mode . "")
+    (python-mode . "Py")
+    (emacs-lisp-mode . "EL")
+    (nxhtml-mode . "nx"))
+  "Alist for `clean-mode-line'.
+
+When you add a new element to the alist, keep in mind that you
+must pass the correct minor/major mode symbol and a string you
+want to use in the modeline *in lieu of* the original.")
+
+
+(defun clean-mode-line ()
+  (interactive)
+  (loop for cleaner in mode-line-cleaner-alist
+        do (let* ((mode (car cleaner))
+                 (mode-str (cdr cleaner))
+                 (old-mode-str (cdr (assq mode minor-mode-alist))))
+             (when old-mode-str
+                 (setcar old-mode-str mode-str))
+               ;; major mode
+             (when (eq mode major-mode)
+               (setq mode-name mode-str)))))
+
+
+(add-hook 'after-change-major-mode-hook 'clean-mode-line)
+
+;;; alias the new `flymake-report-status-slim' to
+;;; `flymake-report-status'
+(defalias 'flymake-report-status 'flymake-report-status-slim)
+(defun flymake-report-status-slim (e-w &optional status)
+  "Show \"slim\" flymake status in mode line."
+  (when e-w
+    (setq flymake-mode-line-e-w e-w))
+  (when status
+    (setq flymake-mode-line-status status))
+  (let* ((mode-line " Φ"))
+    (when (> (length flymake-mode-line-e-w) 0)
+      (setq mode-line (concat mode-line ":" flymake-mode-line-e-w)))
+    (setq mode-line (concat mode-line flymake-mode-line-status))
+    (setq flymake-mode-line mode-line)
+    (force-mode-line-update)))
+
+#+END_SRC
+
+* Web Mode
+
+#+BEGIN_SRC emacs-lisp
+(use-package web-mode
+    :ensure t
+    :config
+	   (add-to-list 'auto-mode-alist '("\\.html?\\'" . web-mode))
+	   (add-to-list 'auto-mode-alist '("\\.vue?\\'" . web-mode))
+	   (setq web-mode-engines-alist
+		 '(("django"    . "\\.html\\'")))
+	   (setq web-mode-ac-sources-alist
+	   '(("css" . (ac-source-css-property))
+	   ("vue" . (ac-source-words-in-buffer ac-source-abbrev))
+         ("html" . (ac-source-words-in-buffer ac-source-abbrev))))
+(setq web-mode-enable-auto-closing t))
+(setq web-mode-enable-auto-quoting t) ; this fixes the quote problem I mentioned
+
+#+END_SRC
+
+* Projectile
+
+#+BEGIN_SRC emacs-lisp
+(use-package projectile
+  :ensure t
+  :config
+  (projectile-global-mode)
+  (setq projectile-enable-caching t))
+
+(use-package helm-projectile
+  :ensure t
+  :bind ("M-t" . helm-projectile-find-file)
+  :config
+  (helm-projectile-on))
+
+#+END_SRC
+
+* Cython
+
+#+BEGIN_SRC emacs-lisp
+(use-package cython-mode
+  :ensure t
+  :mode (("\\.py[xdi]" . cython-mode)))
+
+#+END_SRC
+
+* Ledger
+
+#+BEGIN_SRC emacs-lisp
+(autoload 'ledger-mode "ledger-mode" "A major mode for Ledger" t)
+;; (add-to-list 'load-path
+;;              (expand-file-name "~/.emacs.d/e/ledger/source/lisp/"))
+(add-to-list 'auto-mode-alist '("\\.ledger$" . ledger-mode))
+
+#+END_SRC
+
+* IRC Chat
+
+#+BEGIN_SRC emacs-lisp
+(global-set-key (kbd "C-c I") 'irc)
+(setq rcirc-server-alist
+      '(("irc.freenode.net" :port 6697 :encryption tls
+	 :channels ("#rcirc" "#emacs" "#emacswiki"))))
+
+;; This code adds smileys such as :) and :( to rcirc.
+
+(eval-after-load 'rcirc
+  '(add-to-list 'rcirc-markup-text-functions 'rcirc-smileys))
+
+(defun rcirc-smileys (&rest ignore)
+  "Run smiley-buffer on the buffer
+but add a temporary space at the end to ensure matches of smiley
+regular expressions."
+  (goto-char (point-max))
+  (insert " ")
+  (smiley-buffer)
+  (delete-char -1))
+
+#+END_SRC
