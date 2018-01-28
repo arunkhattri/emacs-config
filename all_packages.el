@@ -4,19 +4,6 @@
 
 ;;; Code:
 
-(defalias 'list-buffers 'ibuffer)
-
-;;=================================================================== 
-(use-package ace-window
-  :ensure t
-  :init
-  (progn
-    (global-set-key [remap other-window] 'ace-window)
-					;(setq aw-scope 'frame)
-    (custom-set-faces
-     '(aw-leading-char-face
-       ((t (:inherit ace-jump-face-foreground :height 3.0)))))
-))
 
 ;;=================================================================== 
 ;; UTF-8
