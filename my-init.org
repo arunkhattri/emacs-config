@@ -44,6 +44,14 @@ using material theme and theme-changer
 
 #+END_SRC
 
+* Highlight parenthesis/brackets
+#+BEGIN_SRC emacs-lisp
+(use-package paren
+  :init
+  (setq show-paren-style 'mixed)
+  :config
+  (show-paren-mode t))
+#+END_SRC
 * Try
 
 #+BEGIN_SRC emacs-lisp
@@ -359,117 +367,160 @@ zsh
 * Python & Elpy
 
 #+BEGIN_SRC emacs-lisp
-(use-package python
-  :ensure t
-  :config
-  (setq python-shell-interpreter "python"))
-	;; python-shell-interpreter-args "--simple-prompt --pprint"))
-
-(use-package elpy
-  :ensure t
-  :config
-  (elpy-enable)
-  ;; (when (executable-find "ipython")
-  ;; (elpy-use-ipython))
-  (setenv "WORKON_HOME" "/home/deadlytackler/anaconda3/envs/")
-  (pyvenv-mode 1)
-  (setq-default indent-tabs-mode nil)
-  ;; ;; jedi for auto-completion in elpy
-  (setq elpy-rpc-backend "jedi")
-  (global-set-key (kbd "<f7>") (kbd "C-u C-c C-c")))
-  ;; Python auto completion
-  (use-package company-jedi
-    :init
-    (setq company-jedi-python-bin "python")
+  (use-package python
+    :ensure t
     :config
-    (add-to-list 'company-backends 'company-jedi))
+    ;; (setq python-shell-interpreter-args "--simple-prompt -i")
+    (setq python-shell-interpreter "ipython")
+    (setq python-shell-interpreter-args "--simple-prompt -i")
+    (add-hook 'python-mode-hook 'electric-pair-mode))
+
+  (use-package elpy
+    :ensure t
+    :config
+    (elpy-enable)
+    ;; Enable elpy in a Python mode and jedi for auto-completion in elpy
+    (add-hook 'python-mode-hook 'elpy-mode)
+    (setq elpy-rpc-backend "jedi")
+    ;; (when (executable-find "ipython")
+    ;; (elpy-use-ipython))
+    ;; (setq python-shell-interpreter-args "--simple-prompt -i")
+    (setenv "WORKON_HOME" "/home/deadlytackler/anaconda3/envs/")
+    (pyvenv-mode 1)
+    (setq-default indent-tabs-mode nil)
+    (global-set-key (kbd "<f7>") (kbd "C-u C-c C-c"))
+    ;; Tell Python debugger (pdb) to use the current virtual environment
+    ;; https://emacs.stackexchange.com/questions/17808/enable-python-pdb-on-emacs-with-virtualenv
+    (setq gud-pdb-command-name "python -m pdb "))
+    ;; Python auto completion
+    (use-package company-jedi
+      :init
+      (setq company-jedi-python-bin "python")
+      :config
+      (add-to-list 'company-backends 'company-jedi))
 
 #+END_SRC
 
+* Golang
+#+BEGIN_SRC emacs-lisp
+(use-package company-go
+  :ensure t
+  :defer t
+  :init
+  (with-eval-after-load 'company
+    (add-to-list 'company-backends 'company-go)))
+
+(use-package go-mode
+  :ensure t
+  :init
+  (progn
+    (setq gofmt-command "goimports")
+    (add-hook 'before-save-hook 'gofmt-before-save))
+  :config
+  (add-hook 'go-mode-hook 'electric-pair-mode)
+  :bind (("C-c C-r" . go-remove-unused-imports)
+	   ("C-c C-g" . go-goto-imports)
+	   ("C-c C-f" . gofmt)
+	   ("C-c C-k" . godoc)))
+(use-package go-eldoc
+  :ensure t
+  :defer
+  :init
+  (add-hook 'go-mode-hook 'go-eldoc-setup))
+
+#+END_SRC
 * ESS
 copied from: https://github.com/sejdemyr/.emacs.d/blob/master/init.el
 
 #+BEGIN_SRC emacs-lisp
-(use-package ess-site
-  :load-path "~/.emacs.d/elpa/ess-20171102.958/lisp/"
-  :mode ("\\.R\\'" . R-mode)
-  :config
-  (validate-setq
-   ring-bell-function #'ignore
-   ess-ask-for-ess-directory nil
-   inferior-R-program-name "/usr/bin/R"
-   ess-local-process-name "R"
-   ansi-color-for-comint-mode 'filter
-   comint-scroll-to-bottom-on-input t
-   comint-scroll-to-bottom-on-output t
-   comint-move-point-for-output t
-   ess-default-style 'RStudio)         ; rstudio indentation style
+  (use-package ess-site
+    :load-path "~/.emacs.d/elpa/ess-20171102.958/lisp/"
+    :mode ("\\.R\\'" . R-mode)
+    :config
+    (validate-setq
+     ring-bell-function #'ignore
+     ess-ask-for-ess-directory nil
+     inferior-R-program-name "/usr/bin/R"
+     ess-local-process-name "R"
+     ansi-color-for-comint-mode 'filter
+     comint-scroll-to-bottom-on-input t
+     comint-scroll-to-bottom-on-output t
+     comint-move-point-for-output t
+     ess-default-style 'RStudio)         ; rstudio indentation style
 
-  ;; set assignment operator
-  (setq ess-S-assign-key (kbd "C--"))
-  (ess-toggle-S-assign-key t)
+    ;; set assignment operator
+    (setq ess-S-assign-key (kbd "C--"))
+    (ess-toggle-S-assign-key t)
 
-  ;; disable '_' shortcut
-  (ess-toggle-underscore nil)
+    ;; disable '_' shortcut
+    (ess-toggle-underscore nil)
+    ;; display quick help
+    (define-key company-active-map (kbd "M-h") 'company-show-doc-buffer)
 
-  ;; automatically complete parentheses etc
-  ;; (add-hook 'ess-mode-hook #'electric-pair-mode)
+    ;; bind ac-complete to tab:
+    (define-key company-active-map [return] nil)
+    (define-key company-active-map [tab] 'company-complete-common)
+    (define-key company-active-map (kbd "TAB") 'company-complete-common)
+    (define-key company-active-map (kbd "M-TAB") 'company-complete-selection)
 
-  ;; set piping operator key binding
-  ;; http://emacs.stackexchange.com/questions/8041/how-to-implement-the-piping-operator-in-ess-mode
-  ;; CTRL-SHIFT-% for pipe operator
-  (defun then_R_operator ()
-    "R - %>% operator or 'then' pipe operator"
+    ;; automatically complete parentheses etc
+    ;; (add-hook 'ess-mode-hook #'electric-pair-mode)
+
+    ;; set piping operator key binding
+    ;; http://emacs.stackexchange.com/questions/8041/how-to-implement-the-piping-operator-in-ess-mode
+    ;; CTRL-SHIFT-% for pipe operator
+    (defun then_R_operator ()
+      "R - %>% operator or 'then' pipe operator"
+      (interactive)
+      (just-one-space 1)
+      (insert "%>%")
+      (just-one-space 1))
+    (define-key ess-mode-map (kbd "C-%") 'then_R_operator)
+    (define-key inferior-ess-mode-map (kbd "C-%") 'then_R_operator)
+
+    ;; key binding to evaluate current line or marked region
+    (defun my-ess-eval ()
+      (interactive)
+      (if (and transient-mark-mode mark-active)
+          (call-interactively 'ess-eval-region)
+        (call-interactively 'ess-eval-line)))
+    (add-hook 'ess-mode-hook
+              '(lambda()
+                 (local-set-key (kbd "s-m") 'my-ess-eval)))
+
+    ;; key binding to evaluate entire region (whether marked or not)
+    (defun my-ess-eval2 ()
+      (interactive)
+      (call-interactively 'ess-eval-region-or-function-or-paragraph-and-step))
+    (add-hook 'ess-mode-hook
+              '(lambda()
+                 (local-set-key (kbd "s-M") 'my-ess-eval2)))
+
+    ;; key binding to load_all() for R devlopment
+    (defun my-ess-eval3 ()
+      (interactive)
+      (call-interactively 'ess-r-devtools-load-package))
+    (add-hook 'ess-mode-hook
+              '(lambda()
+                 (local-set-key (kbd "s-B") 'my-ess-eval3)))
+
+    )
+
+  ;; add author info
+  (defun akk/ess-author-date ()
     (interactive)
-    (just-one-space 1)
-    (insert "%>%")
-    (just-one-space 1))
-  (define-key ess-mode-map (kbd "C-%") 'then_R_operator)
-  (define-key inferior-ess-mode-map (kbd "C-%") 'then_R_operator)
-
-  ;; key binding to evaluate current line or marked region
-  (defun my-ess-eval ()
-    (interactive)
-    (if (and transient-mark-mode mark-active)
-        (call-interactively 'ess-eval-region)
-      (call-interactively 'ess-eval-line)))
-  (add-hook 'ess-mode-hook
-            '(lambda()
-               (local-set-key (kbd "s-m") 'my-ess-eval)))
-
-  ;; key binding to evaluate entire region (whether marked or not)
-  (defun my-ess-eval2 ()
-    (interactive)
-    (call-interactively 'ess-eval-region-or-function-or-paragraph-and-step))
-  (add-hook 'ess-mode-hook
-            '(lambda()
-               (local-set-key (kbd "s-M") 'my-ess-eval2)))
-
-  ;; key binding to load_all() for R devlopment
-  (defun my-ess-eval3 ()
-    (interactive)
-    (call-interactively 'ess-r-devtools-load-package))
-  (add-hook 'ess-mode-hook
-            '(lambda()
-               (local-set-key (kbd "s-B") 'my-ess-eval3)))
-
-  )
-
-;; add author info
-(defun akk/ess-author-date ()
-  (interactive)
-  (when (string= major-mode "ess-mode")
-    (goto-char (point-min))
-    (insert "#' ---\n")
-    (insert "#' title: <title>\n")
-    (insert "#' author: Arun Kr. Khattri\n")
-    (insert "#' Date: ")
-    (insert (format-time-string "%F %T\n"))
-    (insert "#' ---\n\n")
-    (save-buffer)))
-(add-hook 'org-babel-post-tangle-hook 'akk/ess-author-date)
-(setq ess-indent-offset 2)
-(setq ess-help-kill-bogus-buffers t)
+    (when (string= major-mode "ess-mode")
+      (goto-char (point-min))
+      (insert "#' ---\n")
+      (insert "#' title: <title>\n")
+      (insert "#' author: Arun Kr. Khattri\n")
+      (insert "#' Date: ")
+      (insert (format-time-string "%F %T\n"))
+      (insert "#' ---\n\n")
+      (save-buffer)))
+  (add-hook 'org-babel-post-tangle-hook 'akk/ess-author-date)
+  (setq ess-indent-offset 2)
+  (setq ess-help-kill-bogus-buffers t)
 #+END_SRC
 
 * ESS-Vies
@@ -582,16 +633,20 @@ want to use in the modeline *in lieu of* the original.")
 (use-package web-mode
     :ensure t
     :config
-	   (add-to-list 'auto-mode-alist '("\\.html?\\'" . web-mode))
-	   (add-to-list 'auto-mode-alist '("\\.vue?\\'" . web-mode))
-	   (setq web-mode-engines-alist
-		 '(("django"    . "\\.html\\'")))
-	   (setq web-mode-ac-sources-alist
-	   '(("css" . (ac-source-css-property))
-	   ("vue" . (ac-source-words-in-buffer ac-source-abbrev))
-         ("html" . (ac-source-words-in-buffer ac-source-abbrev))))
-(setq web-mode-enable-auto-closing t))
-(setq web-mode-enable-auto-quoting t) ; this fixes the quote problem I mentioned
+    (add-to-list 'auto-mode-alist '("\\.html?\\'" . web-mode))
+    (add-to-list 'auto-mode-alist '("\\.vue?\\'" . web-mode))
+    (setq web-mode-engines-alist
+      '(("django"    . "\\.html\\'")))
+    (setq web-mode-ac-sources-alist
+      '(("css" . (ac-source-css-property))
+      ("vue" . (ac-source-words-in-buffer ac-source-abbrev))
+      ("html" . (ac-source-words-in-buffer ac-source-abbrev))))
+    (setq web-mode-css-indent-offset 2)
+    (setq web-mode-code-indent-offset 2)
+    (setq web-mode-attr-indent-offset 2)
+    (setq web-mode-enable-auto-closing t)
+    (setq web-mode-enable-auto-pairing t)
+    (setq web-mode-enable-auto-quoting t)) ; this fixes the quote problem I mentioned
 
 #+END_SRC
 
@@ -719,126 +774,172 @@ regular expressions."
 (setq message-kill-buffer-on-exit t)
 
 #+END_SRC
+
 * Org
 
 #+BEGIN_SRC emacs-lisp
-;;; Code:
-(use-package org
+  ;;; Code:
+  (use-package org
   :ensure t
   :defer t
   :commands (org-capture)
   :config
   (progn
-    (global-set-key "\C-cl" 'org-store-link)
-    (global-set-key "\C-ca" 'org-agenda)
-    (global-set-key "\C-cc" 'org-capture)
-    (global-set-key "\C-cb" 'org-iswitchb))
-  ;;   (define-key viper-vi-global-user-map "C-c /" 'org-sparse-tree))
-  ;; :bind (("C-c l" . 'org-store-link)
-  ;;        ("C-c c" . 'org-capture)
-  ;;        ("C-c a" . 'org-agenda)
-  ;;        ("C-c b" . 'org-iswitchb))
-  ;; :config
-  (setq org-todo-keywords
-	'((sequence "TODO(t)" "FEEDBACK(f)" "VERIFY(v)" "|" "CANCELLED(c@)" "DONE(d@)" "PARTIALLY-DONE(p@)" "DELEGATED(g@)")))
-  (setq org-agenda-include-diary t)
-  (setq org-startup-indented t)
-  (setq org-hide-leading-stars t)
-  (setq org-indent-mode t)
-  (setq org-refile-targets (quote ((nil :maxlevel . 9)
-                                 (org-agenda-files :maxlevel . 9))))
-  ;; Use full outline paths for refile targets - we file directly with IDO
-  (setq org-refile-use-outline-path t)
-  ;; Targets complete directly with IDO
-  (setq org-outline-path-complete-in-steps nil)
-  ;; Allow refile to create parent tasks with confirmation
-  (setq org-refile-allow-creating-parent-nodes (quote confirm))
-  ;; Use the current window when visiting files and buffers with ido
-  (setq ido-default-file-method 'selected-window)
-  (setq ido-default-buffer-method 'selected-window)
-  ;; Use the current window for indirect buffer display
-  (setq org-indirect-buffer-display 'current-window)
-  ;;org-latex
-  (require 'ox-latex)
-  ;; Listing Package
-  (setq org-latex-listings t)
-  (add-to-list 'org-latex-packages-alist '("" "listings"))
-  (add-to-list 'org-latex-packages-alist '("" "color"))
+  (global-set-key "\C-cl" 'org-store-link)
+  (global-set-key "\C-ca" 'org-agenda)
+  (global-set-key "\C-cc" 'org-capture)
+  (global-set-key "\C-cb" 'org-iswitchb))
+      ;;   (define-key viper-vi-global-user-map "C-c /" 'org-sparse-tree))
+      ;; :bind (("C-c l" . 'org-store-link)
+      ;;        ("C-c c" . 'org-capture)
+      ;;        ("C-c a" . 'org-agenda)
+      ;;        ("C-c b" . 'org-iswitchb))
+      ;; :config
+  (use-package org-bullets
+    :ensure t
+    :config
+    (add-hook 'org-mode-hook (lambda () (org-bullets-mode 1))))
+      (custom-set-variables
+      ' (org-hide-leading-stars t)
+      ' (org-startup-folded (quote overview))
+      ' (org-startup-indented t))
+      (setq org-todo-keywords
+            '((sequence "TODO(t)" "IN-PROCESS(p)" "ON-HOLD(h)" "|" "CANCELLED(c@)" "DONE(d@)" "PARTIALLY-DONE(p@)" "DELEGATED(g@)")))
+      (setq org-agenda-include-diary t)
 
-  (setq org-latex-to-pdf-process
-	'("LC_ALL=C PDFLATEX=\"pdflatex –shell-escape\" texi2dvi -p %f"))
-  ;;Org to odt export
-  (setq org-export-odt-preferred-output-format "odt")
-  ;; org v8 bundled with Emacs 24.4
-  (setq org-odt-preferred-output-format "odt")
+      (setq org-indent-mode t)
+      (setq org-refile-targets (quote ((nil :maxlevel . 9)
+                                     (org-agenda-files :maxlevel . 9))))
 
-  ;; if evil-mode is present
-  (evil-leader/set-key-for-mode 'org-mode
-    "$"  'org-archive-subtree
-    "a"  'org-agenda
-    "d"  'org-deadline
-    "ns" 'org-narrow-to-subtree
-    "p"  'org-set-property
-    "s"  'org-schedule)
+  ;; =======================================================================
+      ;; Function to choose where a captured entry will go
+  ;; https://emacs.stackexchange.com/questions/5923/org-capture-how-to-choose-the-target-file-at-the-end-of-the-process
+  (defun org-get-target-headline (&optional targets prompt)
+    "Prompt for a location in an org file and jump to it.
 
-  (add-hook 'org-agenda-mode-hook
-            (lambda ()
-              (setq org-habit-graph-column 50)
-              (define-key org-agenda-mode-map "H"          'beginning-of-buffer)
-              (define-key org-agenda-mode-map "j"          'org-agenda-next-item)
-              (define-key org-agenda-mode-map "k"          'org-agenda-previous-item)
-              (define-key org-agenda-mode-map "n"          'org-agenda-next-date-line)
-              (define-key org-agenda-mode-map "p"          'org-agenda-previous-date-line)
-              (define-key org-agenda-mode-map "R"          'org-revert-all-org-buffers)
-              (define-key org-agenda-mode-map "/"          'counsel-grep-or-swiper)
-              (define-key org-agenda-mode-map (kbd "RET")  'org-agenda-switch-to)))
+  This is for promping for refile targets when doing captures.
+  Targets are selected from `org-refile-targets'. If TARGETS is
+  given it temporarily overrides `org-refile-targets'. PROMPT will
+  replace the default prompt message.
 
-  )
+  If CAPTURE-LOC is is given, capture to that location instead of
+  prompting."
+    (let ((org-refile-targets (or targets org-refile-targets))
+          (prompt (or prompt "Capture Location")))
+      (if org-capture-overriding-marker
+          (org-goto-marker-or-bmk org-capture-overriding-marker)
+        (org-refile t nil nil prompt)))
+    )
 
-;; Colour-coding categories in org-mode
+  (setq org-capture-templates
+        '(("a" "Appointments" entry
+           (file+headline "~/Dropbox/orgFiles/simola.org" "Appointments")
+           "* %^{prompt}\nSCHEDULED: %^T\n+ %?")
+          ("d" "Distributors" entry
+           (file+headline "~/Dropbox/orgFiles/simola.org" org-get-target-headline)
+           "* %^{prompt}\n%^T\n+ %?")))
+  ;; =======================================================================
+      ;; Use full outline paths for refile targets - we file directly with IDO
+      (setq org-refile-use-outline-path t)
+      ;; Targets complete directly with IDO
+      (setq org-outline-path-complete-in-steps nil)
+      ;; Allow refile to create parent tasks with confirmation
+      (setq org-refile-allow-creating-parent-nodes (quote confirm))
+      ;; Use the current window when visiting files and buffers with ido
+      (setq ido-default-file-method 'selected-window)
+      (setq ido-default-buffer-method 'selected-window)
+      ;; Use the current window for indirect buffer display
+      (setq org-indirect-buffer-display 'current-window)
+      ;;org-latex
+      (require 'ox-latex)
+      ;; Listing Package
+      (setq org-latex-listings t)
+      (add-to-list 'org-latex-packages-alist '("" "listings"))
+      (add-to-list 'org-latex-packages-alist '("" "color"))
 
-(add-hook 'org-finalize-agenda-hook
-          (lambda ()
-            (save-excursion
-              (color-org-header "TODO:" "green")
-              (color-org-header "Meetings:" "DarkGreen")
-              (color-org-header "Follow-up:" "#00fa9a")
-              (color-org-header "Reports:" "blue3")
-	      (color-org-header "Tours:" "yellow1")
-	      (color-org-header "Annv:" "dark cyan")
-	      (color-org-header "mail:" "yellow")
-	      (color-org-header "call:" "DeepSkyBlue"))))
+      (setq org-latex-to-pdf-process
+            '("LC_ALL=C PDFLATEX=\"pdflatex –shell-escape\" texi2dvi -p %f"))
+      ;;Org to odt export
+      (setq org-export-odt-preferred-output-format "odt")
+      ;; org v8 bundled with Emacs 24.4
+      (setq org-odt-preferred-output-format "odt")
 
-(defun color-org-header (tag col)
-  ""
-  (interactive)
-  (goto-char (point-min))
-  (while (re-search-forward tag nil t)
-    (add-text-properties (match-beginning 0) (point-at-eol)
-                         `(face (:foreground ,col)))))
+      ;; if evil-mode is present
+      (evil-leader/set-key-for-mode 'org-mode
+        "$"  'org-archive-subtree
+        "a"  'org-agenda
+        "d"  'org-deadline
+        "ns" 'org-narrow-to-subtree
+        "p"  'org-set-property
+        "s"  'org-schedule)
 
-;;=============================================
-(unless (boundp 'org-latex-classes)
-  (setq org-latex-classes nil))
-(add-to-list 'org-latex-classes
-             '("article"
-               "\\documentclass{article}"
-               ("\\section{%s}" . "\\section*{%s}")
-               ("\\subsection{%s}" . "\\subsection*{%s}")
-               ("\\subsubsection{%s}" . "\\subsubsection*{%s}")
-               ("\\paragraph{%s}" . "\\paragraph*{%s}")
-               ("\\subparagraph{%s}" . "\\subparagraph*{%s}"))
-	     '("beamer"
-	       ,(concat "\\documentclass[presentation]{beamer}\n"
-			"[DEFAULT-PACKAGES]"
-			"[PACKAGES]"
-			"[EXTRA]\n")
-	       ("\\section{%s}" . "\\section*{%s}")
-	       ("\\subsection{%s}" . "\\subsection*{%s}")
-	       ("\\subsubsection{%s}" . "\\subsubsection*{%s}")))
+      (add-hook 'org-agenda-mode-hook
+                (lambda ()
+                  (setq org-habit-graph-column 50)
+                  (define-key org-agenda-mode-map "H"          'beginning-of-buffer)
+                  (define-key org-agenda-mode-map "j"          'org-agenda-next-item)
+                  (define-key org-agenda-mode-map "k"          'org-agenda-previous-item)
+                  (define-key org-agenda-mode-map "n"          'org-agenda-next-date-line)
+                  (define-key org-agenda-mode-map "p"          'org-agenda-previous-date-line)
+                  (define-key org-agenda-mode-map "R"          'org-revert-all-org-buffers)
+                  (define-key org-agenda-mode-map "/"          'counsel-grep-or-swiper)
+                  (define-key org-agenda-mode-map (kbd "RET")  'org-agenda-switch-to)))
+
+      )
 
 
+    ;; Colour-coding categories in org-mode
+
+    (add-hook 'org-finalize-agenda-hook
+              (lambda ()
+                (save-excursion
+                  (color-org-header "TODO:" "green")
+                  (color-org-header "Appointments:" "DarkGreen")
+                  (color-org-header "Follow-up:" "#00fa9a")
+                  (color-org-header "Reports:" "blue3")
+                  (color-org-header "Tours:" "yellow1")
+                  (color-org-header "Annv:" "dark cyan")
+                  (color-org-header "mail:" "yellow")
+                  (color-org-header "call:" "DeepSkyBlue"))))
+
+    (defun color-org-header (tag col)
+      ""
+      (interactive)
+      (goto-char (point-min))
+      (while (re-search-forward tag nil t)
+        (add-text-properties (match-beginning 0) (point-at-eol)
+                             `(face (:foreground ,col)))))
+
+    ;;=============================================
+    (unless (boundp 'org-latex-classes)
+      (setq org-latex-classes nil))
+    (add-to-list 'org-latex-classes
+                 '("article"
+                   "\\documentclass{article}"
+                   ("\\section{%s}" . "\\section*{%s}")
+                   ("\\subsection{%s}" . "\\subsection*{%s}")
+                   ("\\subsubsection{%s}" . "\\subsubsection*{%s}")
+                   ("\\paragraph{%s}" . "\\paragraph*{%s}")
+                   ("\\subparagraph{%s}" . "\\subparagraph*{%s}"))
+                 '("beamer"
+                   ,(concat "\\documentclass[presentation]{beamer}\n"
+                            "[DEFAULT-PACKAGES]"
+                            "[PACKAGES]"
+                            "[EXTRA]\n")
+                   ("\\section{%s}" . "\\section*{%s}")
+                   ("\\subsection{%s}" . "\\subsection*{%s}")
+                   ("\\subsubsection{%s}" . "\\subsubsection*{%s}")))
+
+
+
+  (setq org-file-apps
+        (append '(
+                  ("\\.pdf\\'" . "okular %s")
+                  ) org-file-apps ))
 #+END_SRC
+
+#+RESULTS:
+: ((\.pdf\' . okular %s) (\.pdf\' . okular %s) (auto-mode . emacs) (\.mm\' . default) (\.x?html?\' . default) (\.pdf\' . default))
 
 * Plantuml
 
@@ -861,5 +962,25 @@ regular expressions."
    ;; (R . t)
    (python . t)
    (plantuml . t)))
+
+#+END_SRC
+
+* NeoTree & Icons
+
+#+BEGIN_SRC emacs-lisp
+(use-package all-the-icons
+  :ensure t
+  :config
+    (setq inhibit-compacting-font-caches t))
+
+(use-package neotree
+  :ensure t
+  :config
+    (global-set-key (kbd "<f8>") 'neotree-toggle)
+    (setq neo-theme (if (display-graphic-p) 'icons 'arrow))
+    (evil-define-key 'normal neotree-mode-map (kbd "TAB") 'neotree-enter)
+    (evil-define-key 'normal neotree-mode-map (kbd "SPC") 'neotree-quick-look)
+    (evil-define-key 'normal neotree-mode-map (kbd "q") 'neotree-hide)
+    (evil-define-key 'normal neotree-mode-map (kbd "RET") 'neotree-enter))
 
 #+END_SRC
