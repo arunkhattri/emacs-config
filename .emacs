@@ -31,6 +31,7 @@
 
 (use-package theme-changer
   :ensure t
+  :defer 1
   :config
   (progn (change-theme 'material-light 'material)))
 ;; ----------------------------------------------------------------------
