@@ -27,23 +27,6 @@ for calendar and other stuffs:
   (setq x-select-request-type '(UTF8_STRING COMPOUND_TEXT TEXT STRING)))
 #+END_SRC
 
-* Themes
-using material theme and theme-changer
-
-#+BEGIN_SRC 
-(use-package material-theme
-  :ensure t
-  :config
-  (progn (load-theme 'material t)
-	 (load-theme 'material-light t)))
-
-(use-package theme-changer
-  :ensure t
-  :config
-  (progn (change-theme 'material-light 'material)))
-
-#+END_SRC
-
 * Highlight parenthesis/brackets
 #+BEGIN_SRC emacs-lisp
 (use-package paren
@@ -298,6 +281,17 @@ make ibuffer default
 
 #+END_SRC
 
+* ctags
+
+#+BEGIN_SRC emacs-lisp
+  (setq path-to-ctags "/usr/local/bin/ctags")
+  (defun create-tags (dir-name)
+    "Create tags file."
+    (interactive "DDirectory: ")
+    (shell-command
+     (format "%s -f TAGS -e -R %s" path-to-ctags (directory-file-name dir-name))))
+#+END_SRC
+
 * Elfeed
 
 #+BEGIN_SRC emacs-lisp
@@ -375,6 +369,37 @@ zsh
     (setq python-shell-interpreter-args "--simple-prompt -i")
     (add-hook 'python-mode-hook 'electric-pair-mode))
 
+  ;; (use-package anaconda-mode
+  ;;   :ensure t
+  ;;   :commands anaconda-mode
+  ;;   :diminish anaconda-mode
+  ;;   :init
+  ;;   (progn
+  ;;       (add-hook 'python-mode-hook 'anaconda-mode)
+  ;;       (add-hook 'python-mode-hook 'eldoc-mode))
+  ;;   :config
+  ;;   (setenv "WORKON_HOME" "/home/deadlytackler/anaconda3/envs/")
+  ;;   (pyvenv-mode 1)
+  ;;   (setq-default indent-tabs-mode nil)
+  ;;   (global-set-key (kbd "<f7>") (kbd "C-u C-c C-c"))
+  ;;   ;; Tell Python debugger (pdb) to use the current virtual environment
+  ;;   ;; https://emacs.stackexchange.com/questions/17808/enable-python-pdb-on-emacs-with-virtualenv
+  ;;   (setq gud-pdb-command-name "python -m pdb "))
+
+  ;; (use-package company-anaconda
+  ;;   :ensure t
+  ;;   :init (add-to-list 'company-backends 'company-anaconda))
+  ;; 
+  ;; (use-package company-inf-python
+  ;;   :ensure t
+  ;;   :init (add-to-list 'company-backends 'company-inf-python))
+  ;; 
+  ;; (use-package py-autopep8
+  ;;   :ensure t
+  ;;   :commands (py-autopep8-enable-on-save py-autopep8-buffer)
+  ;;   :init
+  ;;   (add-hook 'python-mode-hook 'py-autopep8-enable-on-save))
+
   (use-package elpy
     :ensure t
     :config
@@ -427,6 +452,20 @@ zsh
   :defer
   :init
   (add-hook 'go-mode-hook 'go-eldoc-setup))
+
+#+END_SRC
+* Yasnippets
+#+BEGIN_SRC emacs-lisp
+
+(use-package yasnippet
+  :ensure t
+  :init (add-hook 'prog-mode-hook #'yas-minor-mode)
+  :config
+  (setq yas-snippet-dirs
+        '("~/.emacs.d/snippets"                            ;; personal snippets
+          "~/.emacs.d/elpa/yasnippet-20170923.1646/snippets" ;; the yasnippets
+          ))
+  (yas-reload-all))
 
 #+END_SRC
 * ESS
@@ -646,7 +685,11 @@ want to use in the modeline *in lieu of* the original.")
     (setq web-mode-attr-indent-offset 2)
     (setq web-mode-enable-auto-closing t)
     (setq web-mode-enable-auto-pairing t)
-    (setq web-mode-enable-auto-quoting t)) ; this fixes the quote problem I mentioned
+    (setq web-mode-enable-auto-quoting t) ; this fixes the quote problem I mentioned
+    (defun my-web-mode-hook ()
+      "Hooks for Web mode."
+      (setq web-mode-markup-indent-offset 2))
+    (add-hook 'web-mode-hook  'my-web-mode-hook))
 
 #+END_SRC
 
@@ -894,8 +937,8 @@ regular expressions."
               (lambda ()
                 (save-excursion
                   (color-org-header "TODO:" "green")
-                  (color-org-header "Appointments:" "DarkGreen")
-                  (color-org-header "Follow-up:" "#00fa9a")
+                  (color-org-header "Meetings:" "DarkGreen")
+                  (color-org-header "Notes:" "#00fa9a")
                   (color-org-header "Reports:" "blue3")
                   (color-org-header "Tours:" "yellow1")
                   (color-org-header "Annv:" "dark cyan")

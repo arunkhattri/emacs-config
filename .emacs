@@ -23,17 +23,37 @@
 
 ;; ----------------------------------------------------------------------
 
+;; Paganini themes
+;; (use-package paganini-theme
+;;   :ensure t
+;;   :config
+;;   (load-theme 'paganini t))
+
+;; Base16 themes
+;; (use-package base16-theme
+;;   :ensure t
+;;   :config
+;;   (load-theme 'base16-tomorrow-night t))
+;; (Defvar my/base16-colors base16-default-dark-colors)
+;; (setq evil-emacs-state-cursor   `(,(plist-get my/base16-colors :base0D) box)
+;;       evil-insert-state-cursor  `(,(plist-get my/base16-colors :base0D) bar)
+;;       evil-motion-state-cursor  `(,(plist-get my/base16-colors :base0E) box)
+;;       evil-normal-state-cursor  `(,(plist-get my/base16-colors :base0B) box)
+;;       evil-replace-state-cursor `(,(plist-get my/base16-colors :base08) bar)
+;       evil-visual-state-cursor  `(,(plist-get my/base16-colors :base09) box))
+
+;; Material Theme
 (use-package material-theme
   :ensure t
   :config
-  (progn (load-theme 'material t)
-	 (load-theme 'material-light t)))
+  (progn
+    (load-theme 'material t)))
 
-(use-package theme-changer
-  :ensure t
-  :defer 1
-  :config
-  (progn (change-theme 'material-light 'material)))
+;; (use-package theme-changer
+;;   :ensure t
+;;   :defer 1
+;;   :config
+;;   (progn (change-theme 'material-light 'material)))
 ;; ----------------------------------------------------------------------
 ;; (load "~/.emacs.d/emacs-config/my-noexternal.el")
 ;; (load "~/.emacs.d/emacs-config/my-configuration.el")
