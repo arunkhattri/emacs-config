@@ -19,6 +19,23 @@ for calendar and other stuffs:
 (setq calendar-standard-time-zone-name "IST")
 #+END_SRC
 
+* Hindu Holidays 2018
+for calendar and holidays
+
+#+BEGIN_SRC emacs-lisp
+  (setq holiday-other-holidays
+        '((holiday-fixed 9 2 "Krishna Janmashtami")
+          (holiday-fixed 9 13 "Ganesh Chaturthi")
+          (holiday-fixed 9 17 "Vishwakarma Puja")
+          (holiday-fixed 10 10 "Navratri begins")
+          (holiday-fixed 10 17 "Navratri ends/Maha Navami")
+          (holiday-fixed 10 19 "Dusshera")
+          (holiday-fixed 10 27 "Karwa Chauth")
+          (holiday-fixed 11 5 "Dhan Teras")
+          (holiday-fixed 11 7 "Diwali")
+          (holiday-fixed 11 9 "Bhai Dooj")
+          (holiday-fixed 11 13 "Chhath Puja")))
+#+END_SRC
 * Language Environment
 
 #+BEGIN_SRC emacs-lisp
@@ -369,38 +386,17 @@ zsh
     (setq python-shell-interpreter-args "--simple-prompt -i")
     (add-hook 'python-mode-hook 'electric-pair-mode))
 
-  ;; (use-package anaconda-mode
-  ;;   :ensure t
-  ;;   :commands anaconda-mode
-  ;;   :diminish anaconda-mode
-  ;;   :init
-  ;;   (progn
-  ;;       (add-hook 'python-mode-hook 'anaconda-mode)
-  ;;       (add-hook 'python-mode-hook 'eldoc-mode))
-  ;;   :config
-  ;;   (setenv "WORKON_HOME" "/home/deadlytackler/anaconda3/envs/")
-  ;;   (pyvenv-mode 1)
-  ;;   (setq-default indent-tabs-mode nil)
-  ;;   (global-set-key (kbd "<f7>") (kbd "C-u C-c C-c"))
-  ;;   ;; Tell Python debugger (pdb) to use the current virtual environment
-  ;;   ;; https://emacs.stackexchange.com/questions/17808/enable-python-pdb-on-emacs-with-virtualenv
-  ;;   (setq gud-pdb-command-name "python -m pdb "))
+    (use-package conda
+    :ensure t
+    :config
+    (custom-set-variables
+      '(conda-anaconda-home "/home/deadlytackler/anaconda3"))
+    ;; if you want interactive shell support, include:
+    (conda-env-initialize-interactive-shells)
+    ;; if you want auto-activation (see below for details), include:
+    (conda-env-autoactivate-mode t))
 
-  ;; (use-package company-anaconda
-  ;;   :ensure t
-  ;;   :init (add-to-list 'company-backends 'company-anaconda))
-  ;; 
-  ;; (use-package company-inf-python
-  ;;   :ensure t
-  ;;   :init (add-to-list 'company-backends 'company-inf-python))
-  ;; 
-  ;; (use-package py-autopep8
-  ;;   :ensure t
-  ;;   :commands (py-autopep8-enable-on-save py-autopep8-buffer)
-  ;;   :init
-  ;;   (add-hook 'python-mode-hook 'py-autopep8-enable-on-save))
-
-  (use-package elpy
+    (use-package elpy
     :ensure t
     :config
     (elpy-enable)
@@ -410,19 +406,21 @@ zsh
     ;; (when (executable-find "ipython")
     ;; (elpy-use-ipython))
     ;; (setq python-shell-interpreter-args "--simple-prompt -i")
-    (setenv "WORKON_HOME" "/home/deadlytackler/anaconda3/envs/")
+    (setenv "WORKON_HOME" "/home/deadlytackler/anaconda3/envs")
     (pyvenv-mode 1)
     (setq-default indent-tabs-mode nil)
     (global-set-key (kbd "<f7>") (kbd "C-u C-c C-c"))
     ;; Tell Python debugger (pdb) to use the current virtual environment
     ;; https://emacs.stackexchange.com/questions/17808/enable-python-pdb-on-emacs-with-virtualenv
     (setq gud-pdb-command-name "python -m pdb "))
+
     ;; Python auto completion
     (use-package company-jedi
       :init
       (setq company-jedi-python-bin "python")
       :config
       (add-to-list 'company-backends 'company-jedi))
+
 
 #+END_SRC
 
@@ -943,6 +941,9 @@ regular expressions."
                   (color-org-header "Tours:" "yellow1")
                   (color-org-header "Annv:" "dark cyan")
                   (color-org-header "mail:" "yellow")
+                  (color-org-header "outlay:" "dark orange")
+                  (color-org-header "immediate:" "chartreuse")
+                  (color-org-header "personal:" "salmon")
                   (color-org-header "call:" "DeepSkyBlue"))))
 
     (defun color-org-header (tag col)
@@ -1025,5 +1026,91 @@ regular expressions."
     (evil-define-key 'normal neotree-mode-map (kbd "SPC") 'neotree-quick-look)
     (evil-define-key 'normal neotree-mode-map (kbd "q") 'neotree-hide)
     (evil-define-key 'normal neotree-mode-map (kbd "RET") 'neotree-enter))
+
+#+END_SRC
+
+* Region Bindings Mode
+#+BEGIN_SRC emacs-lisp
+  (use-package region-bindings-mode
+    :config
+    (progn
+      ;; Do not activate `region-bindings-mode' in Special modes like `dired' and
+      ;; `ibuffer'. Single-key bindings like 'm' are useful in those modes even
+      ;; when a region is selected.
+      (setq region-bindings-mode-disabled-modes '(dired-mode
+                                                  ibuffer-mode))
+
+      (region-bindings-mode-enable)
+
+      (defun akk/disable-rbm-deactivate-mark ()
+        "Disable `region-bindings-mode' and deactivate mark."
+        (interactive)
+        (region-bindings-mode -1)
+        (deactivate-mark)
+        (message "Mark deactivated"))
+
+      (bind-keys
+       :map region-bindings-mode-map
+        ("<C-SPC>" . akk/disable-rbm-deactivate-mark))))
+
+#+END_SRC
+* Multiple Cursors
+#+BEGIN_SRC emacs-lisp
+  (use-package multiple-cursors
+    :bind (("C-S-c C-S-c" . mc/edit-lines)
+           ("C->" . mc/mark-next-like-this)
+           ("C-<" . mc/mark-previous-like-this)
+           ("C-c C-<" . mc/mark-all-like-this)
+           ("C-S-<mouse-1>" . mc/add-cursor-on-click))
+    :bind (:map region-bindings-mode-map
+           ("a" . mc/mark-all-like-this)
+           ("p" . mc/mark-previous-like-this)
+           ("n" . mc/mark-next-like-this)
+           ("P" . mc/unmark-previous-like-this)
+           ("N" . mc/unmark-next-like-this)
+           ("[" . mc/cycle-backward)
+           ("]" . mc/cycle-forward)
+           ("m" . mc/mark-more-like-this-extended)
+           ("h" . mc-hide-unmatched-lines-mode)
+           ("\\" . mc/vertical-align-with-space)
+           ("#" . mc/insert-numbers) ; use num prefix to set the starting number
+           ("^" . mc/edit-beginnings-of-lines)
+           ("$" . mc/edit-ends-of-lines))
+    :init
+    (progn
+      ;; Temporary hack to get around bug # 28524 in emacs 26+
+      ;; https://debbugs.gnu.org/cgi/bugreport.cgi?bug=28524
+      (setq mc/mode-line
+            `(" mc:" (:eval (format ,(propertize "%-2d" 'face 'font-lock-warning-face)
+                                    (mc/num-cursors)))))
+
+      (setq mc/list-file (locate-user-emacs-file "mc-lists"))
+
+      ;; Disable the annoying sluggish matching paren blinks for all cursors
+      ;; when you happen to type a ")" or "}" at all cursor locations.
+      (defvar akk/blink-matching-paren--store nil
+        "Internal variable used to restore the value of `blink-matching-paren'
+  after `multiple-cursors-mode' is quit.")
+
+      ;; The `multiple-cursors-mode-enabled-hook' and
+      ;; `multiple-cursors-mode-disabled-hook' are run in the
+      ;; `multiple-cursors-mode' minor mode definition, but they are not declared
+      ;; (not `defvar'd). So do that first before using `add-hook'.
+      (defvar multiple-cursors-mode-enabled-hook nil
+        "Hook that is run after `multiple-cursors-mode' is enabled.")
+      (defvar multiple-cursors-mode-disabled-hook nil
+        "Hook that is run after `multiple-cursors-mode' is disabled.")
+
+      (defun akk/mc-when-enabled ()
+        "Function to be added to `multiple-cursors-mode-enabled-hook'."
+        (setq akk/mc-blink-matching-paren--store blink-matching-paren)
+        (setq blink-matching-paren nil))
+
+      (defun akk/mc-when-disabled ()
+        "Function to be added to `multiple-cursors-mode-disabled-hook'."
+        (setq blink-matching-paren akk/mc-blink-matching-paren--store))
+
+      (add-hook 'multiple-cursors-mode-enabled-hook #'akk/mc-when-enabled)
+      (add-hook 'multiple-cursors-mode-disabled-hook #'akk/mc-when-disabled)))
 
 #+END_SRC
