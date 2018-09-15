@@ -1057,60 +1057,50 @@ regular expressions."
 * Multiple Cursors
 #+BEGIN_SRC emacs-lisp
   (use-package multiple-cursors
-    :bind (("C-S-c C-S-c" . mc/edit-lines)
-           ("C->" . mc/mark-next-like-this)
-           ("C-<" . mc/mark-previous-like-this)
-           ("C-c C-<" . mc/mark-all-like-this)
-           ("C-S-<mouse-1>" . mc/add-cursor-on-click))
-    :bind (:map region-bindings-mode-map
-           ("a" . mc/mark-all-like-this)
-           ("p" . mc/mark-previous-like-this)
-           ("n" . mc/mark-next-like-this)
-           ("P" . mc/unmark-previous-like-this)
-           ("N" . mc/unmark-next-like-this)
-           ("[" . mc/cycle-backward)
-           ("]" . mc/cycle-forward)
-           ("m" . mc/mark-more-like-this-extended)
-           ("h" . mc-hide-unmatched-lines-mode)
-           ("\\" . mc/vertical-align-with-space)
-           ("#" . mc/insert-numbers) ; use num prefix to set the starting number
-           ("^" . mc/edit-beginnings-of-lines)
-           ("$" . mc/edit-ends-of-lines))
+    :ensure t
+    :bind (("C-c l" . 'mc/edit-lines)
+           ("C-c >" . 'mc/mark-next-like-this)
+           ("C-c <" . 'mc/mark-previous-like-this)
+           ("C-c C-<" . 'mc/mark-all-like-this)
+           ("C-S-<mouse-1>" . 'mc/add-cursor-on-click))
     :init
     (progn
       ;; Temporary hack to get around bug # 28524 in emacs 26+
       ;; https://debbugs.gnu.org/cgi/bugreport.cgi?bug=28524
       (setq mc/mode-line
             `(" mc:" (:eval (format ,(propertize "%-2d" 'face 'font-lock-warning-face)
-                                    (mc/num-cursors)))))
+                                    (mc/num-cursors)))))))
 
-      (setq mc/list-file (locate-user-emacs-file "mc-lists"))
+  ;;     (setq mc/list-file (locate-user-emacs-file "mc-lists"))
 
-      ;; Disable the annoying sluggish matching paren blinks for all cursors
-      ;; when you happen to type a ")" or "}" at all cursor locations.
-      (defvar akk/blink-matching-paren--store nil
-        "Internal variable used to restore the value of `blink-matching-paren'
-  after `multiple-cursors-mode' is quit.")
+  ;;     ;; Disable the annoying sluggish matching paren blinks for all cursors
+  ;;     ;; when you happen to type a ")" or "}" at all cursor locations.
+  ;;     (defvar akk/blink-matching-paren--store nil
+  ;;       "Internal variable used to restore the value of `blink-matching-paren'
+  ;; after `multiple-cursors-mode' is quit.")
 
-      ;; The `multiple-cursors-mode-enabled-hook' and
-      ;; `multiple-cursors-mode-disabled-hook' are run in the
-      ;; `multiple-cursors-mode' minor mode definition, but they are not declared
-      ;; (not `defvar'd). So do that first before using `add-hook'.
-      (defvar multiple-cursors-mode-enabled-hook nil
-        "Hook that is run after `multiple-cursors-mode' is enabled.")
-      (defvar multiple-cursors-mode-disabled-hook nil
-        "Hook that is run after `multiple-cursors-mode' is disabled.")
+  ;;     ;; The `multiple-cursors-mode-enabled-hook' and
+  ;;     ;; `multiple-cursors-mode-disabled-hook' are run in the
+  ;;     ;; `multiple-cursors-mode' minor mode definition, but they are not declared
+  ;;     ;; (not `defvar'd). So do that first before using `add-hook'.
+  ;;     (defvar multiple-cursors-mode-enabled-hook nil
+  ;;       "Hook that is run after `multiple-cursors-mode' is enabled.")
+  ;;     (defvar multiple-cursors-mode-disabled-hook nil
+  ;;       "Hook that is run after `multiple-cursors-mode' is disabled.")
 
-      (defun akk/mc-when-enabled ()
-        "Function to be added to `multiple-cursors-mode-enabled-hook'."
-        (setq akk/mc-blink-matching-paren--store blink-matching-paren)
-        (setq blink-matching-paren nil))
+  ;;     (defun akk/mc-when-enabled ()
+  ;;       "Function to be added to `multiple-cursors-mode-enabled-hook'."
+  ;;       (setq akk/mc-blink-matching-paren--store blink-matching-paren)
+  ;;       (setq blink-matching-paren nil))
 
-      (defun akk/mc-when-disabled ()
-        "Function to be added to `multiple-cursors-mode-disabled-hook'."
-        (setq blink-matching-paren akk/mc-blink-matching-paren--store))
+  ;;     (defun akk/mc-when-disabled ()
+  ;;       "Function to be added to `multiple-cursors-mode-disabled-hook'."
+  ;;       (setq blink-matching-paren akk/mc-blink-matching-paren--store))
 
-      (add-hook 'multiple-cursors-mode-enabled-hook #'akk/mc-when-enabled)
-      (add-hook 'multiple-cursors-mode-disabled-hook #'akk/mc-when-disabled)))
+  ;;     (add-hook 'multiple-cursors-mode-enabled-hook #'akk/mc-when-enabled)
+  ;;     (add-hook 'multiple-cursors-mode-disabled-hook #'akk/mc-when-disabled)))
 
+  (use-package expand-region
+    :ensure t
+    :bind ("C-q" . 'er/expand-region))
 #+END_SRC
