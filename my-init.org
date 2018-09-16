@@ -312,18 +312,17 @@ make ibuffer default
 * Elfeed
 
 #+BEGIN_SRC emacs-lisp
-(global-set-key (kbd "C-x w") 'elfeed)
-;; list of feeds
-(setq elfeed-feeds
-      '(("http://feeds.reuters.com/reuters/INtopNews" ReutersTopNews)
-	("http://feeds.reuters.com/reuters/INsportsNews" ReutersSportsNews)
-	("http://timesofindia.indiatimes.com/rssfeedstopstories.cms" TOI)
-	("http://www.livemint.com/rss/economy_politics" LiveMintEconPolicies)
-	("http://www.asianage.com/rss/38" AsianAge)
-	("http://feeds.bbci.co.uk/news/rss.xml?edition=asia" BBC)))
+  (use-package elfeed
+    :ensure t
+    :bind ("C-c w" . 'elfeed)
+    :init
+      ;; list of feeds
+      (setq elfeed-feeds
+          '(("http://feeds.reuters.com/reuters/INtopNews" ReutersTopNews)
+              ("http://feeds.reuters.com/reuters/INsportsNews" ReutersSportsNews)))
 
-(setf url-queue-timeout 30)
-(setq-default elfeed-search-filter "@1-week-ago +unread ")
+      (setf url-queue-timeout 30)
+      (setq-default elfeed-search-filter "@1-week-ago +unread "))
 
 #+END_SRC
 
@@ -844,13 +843,13 @@ regular expressions."
       ' (org-hide-leading-stars t)
       ' (org-startup-folded (quote overview))
       ' (org-startup-indented t))
-      (setq org-todo-keywords
-            '((sequence "TODO(t)" "IN-PROCESS(p)" "ON-HOLD(h)" "|" "CANCELLED(c@)" "DONE(d@)" "PARTIALLY-DONE(p@)" "DELEGATED(g@)")))
-      (setq org-agenda-include-diary t)
+  (setq org-todo-keywords
+          '((sequence "TODO(t)" "IN-PROCESS(p)" "ON-HOLD(h)" "|" "CANCELLED(c@)" "DONE(d@)" "PARTIALLY-DONE(p@)" "DELEGATED(g@)")))
+  (setq org-agenda-include-diary t)
 
-      (setq org-indent-mode t)
-      (setq org-refile-targets (quote ((nil :maxlevel . 9)
-                                     (org-agenda-files :maxlevel . 9))))
+  (setq org-indent-mode t)
+  (setq org-refile-targets (quote ((nil :maxlevel . 9)
+                                  (org-agenda-files :maxlevel . 9))))
 
   ;; =======================================================================
       ;; Function to choose where a captured entry will go
@@ -942,7 +941,7 @@ regular expressions."
                   (color-org-header "Annv:" "dark cyan")
                   (color-org-header "mail:" "yellow")
                   (color-org-header "outlay:" "dark orange")
-                  (color-org-header "immediate:" "chartreuse")
+                  (color-org-header "Attention:" "chartreuse")
                   (color-org-header "personal:" "salmon")
                   (color-org-header "call:" "DeepSkyBlue"))))
 
@@ -1059,8 +1058,8 @@ regular expressions."
   (use-package multiple-cursors
     :ensure t
     :bind (("C-c l" . 'mc/edit-lines)
-           ("C-c >" . 'mc/mark-next-like-this)
-           ("C-c <" . 'mc/mark-previous-like-this)
+           ("C->" . 'mc/mark-next-like-this)
+           ("C-<" . 'mc/mark-previous-like-this)
            ("C-c C-<" . 'mc/mark-all-like-this)
            ("C-S-<mouse-1>" . 'mc/add-cursor-on-click))
     :init
