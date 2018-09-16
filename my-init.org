@@ -828,6 +828,7 @@ regular expressions."
   (global-set-key "\C-cl" 'org-store-link)
   (global-set-key "\C-ca" 'org-agenda)
   (global-set-key "\C-cc" 'org-capture)
+  (global-set-key "\C-cw" 'org-refile)
   (global-set-key "\C-cb" 'org-iswitchb))
       ;;   (define-key viper-vi-global-user-map "C-c /" 'org-sparse-tree))
       ;; :bind (("C-c l" . 'org-store-link)
@@ -852,32 +853,44 @@ regular expressions."
                                   (org-agenda-files :maxlevel . 9))))
 
   ;; =======================================================================
-      ;; Function to choose where a captured entry will go
+  ;; Function to choose where a captured entry will go
+  ;; No more working as on Sep 16, 2018
   ;; https://emacs.stackexchange.com/questions/5923/org-capture-how-to-choose-the-target-file-at-the-end-of-the-process
-  (defun org-get-target-headline (&optional targets prompt)
-    "Prompt for a location in an org file and jump to it.
+  ;; (defun org-get-target-headline (&optional targets prompt)
+  ;;  "Prompt for a location in an org file and jump to it.
 
-  This is for promping for refile targets when doing captures.
-  Targets are selected from `org-refile-targets'. If TARGETS is
-  given it temporarily overrides `org-refile-targets'. PROMPT will
-  replace the default prompt message.
+  ;; This is for promping for refile targets when doing captures.
+  ;; Targets are selected from `org-refile-targets'. If TARGETS is
+  ;; given it temporarily overrides `org-refile-targets'. PROMPT will
+  ;; replace the default prompt message.
 
-  If CAPTURE-LOC is is given, capture to that location instead of
-  prompting."
-    (let ((org-refile-targets (or targets org-refile-targets))
-          (prompt (or prompt "Capture Location")))
-      (if org-capture-overriding-marker
-          (org-goto-marker-or-bmk org-capture-overriding-marker)
-        (org-refile t nil nil prompt)))
-    )
+  ;; If CAPTURE-LOC is is given, capture to that location instead of
+  ;; prompting."
+  ;;   (let ((org-refile-targets (or targets org-refile-targets))
+  ;;         (prompt (or prompt "Capture Location")))
+  ;;     (if org-capture-overriding-marker
+  ;;         (org-goto-marker-or-bmk org-capture-overriding-marker)
+  ;;       (org-refile t nil nil prompt)))
+  ;;   )
 
   (setq org-capture-templates
         '(("a" "Appointments" entry
-           (file+headline "~/Dropbox/orgFiles/simola.org" "Appointments")
+           (file+headline "~/Dropbox/orgFiles/Diary/organize.org" "Meetings")
            "* %^{prompt}\nSCHEDULED: %^T\n+ %?")
-          ("d" "Distributors" entry
-           (file+headline "~/Dropbox/orgFiles/simola.org" org-get-target-headline)
-           "* %^{prompt}\n%^T\n+ %?")))
+          ;; as function is not working giving full location.
+          ("n" "Notes" entry
+           (file+olp "~/Dropbox/orgFiles/Diary/organize.org" "Official" "Notes")
+           "* %^{prompt}\n%^T\n+ %?")
+          ("N" "Notes" entry
+           (file+olp "~/Dropbox/orgFiles/Diary/organize.org" "Personal" "Notes")
+           "* %^{prompt}\n%^T\n+ %?")
+          ("o" "Other Items Official" entry
+           (file+olp "~/Dropbox/orgFiles/Diary/organize.org" "Official")
+           "* %^{prompt}\n%^T\n+ %?")
+          ("O" "Other Items Personal" entry
+           (file+olp "~/Dropbox/orgFiles/Diary/organize.org" "Personal")
+           "* %^{prompt}\n%^T\n+ %?")
+          ))
   ;; =======================================================================
       ;; Use full outline paths for refile targets - we file directly with IDO
       (setq org-refile-use-outline-path t)
