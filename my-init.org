@@ -379,6 +379,7 @@ make ibuffer default
     ("T" (elfeed-search-set-filter "@1-day-ago") "Today")
     ("Q" akk/elfeed-save-db-and-bury "Quit Elfeed" :color blue)
     ("q" nil "quit" :color blue)
+    ("c" nil "cancel")
     )
 
   ;;============================================================
