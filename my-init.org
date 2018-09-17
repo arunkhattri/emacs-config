@@ -312,18 +312,86 @@ make ibuffer default
 * Elfeed
 
 #+BEGIN_SRC emacs-lisp
+  (setq elfeed-db-directory "~/Dropbox/orgFiles/elfeed")
+
+  ;;============================================================
+  ;; Helper Functions
+  ;;============================================================
+
+  ;; Ref: http://pragmaticemacs.com/emacs/read-your-rss-feeds-in-emacs-with-elfeed/
+
+  (defun akk/elfeed-show-all ()
+    (interactive)
+    (bookmark-maybe-load-default-file)
+    (bookmark-jump "elfeed-all"))
+  (defun akk/elfeed-show-python ()
+    (interactive)
+    (bookmark-maybe-load-default-file)
+    (bookmark-jump "elfeed-python"))
+  (defun akk/elfeed-show-news ()
+    (interactive)
+    (bookmark-maybe-load-default-file)
+    (bookmark-jump "elfeed-news"))
+  (defun akk/elfeed-show-emacs ()
+    (interactive)
+    (bookmark-maybe-load-default-file)
+    (bookmark-jump "elfeed-emacs"))
+  (defun akk/elfeed-show-golang ()
+    (interactive)
+    (bookmark-maybe-load-default-file)
+    (bookmark-jump "elfeed-golang"))
+  (defun elfeed-mark-all-as-read ()
+    (interactive)
+    (mark-whole-buffer)
+    (elfeed-search-untag-all-unread))
+
+  ;;============================================================
+  ;; Sync elfeed between machines
+  ;; makes sure that elfeed reads index from disk before launching
+  ;;============================================================
+
+  (defun akk/elfeed-load-db-and-open ()
+    "Wrapper to load the elfeed db from disk before opening"
+    (interactive)
+    (elfeed-db-load)
+    (elfeed)
+    (elfeed-search-update--force))
+
+  ;;write to disk when quiting
+  (defun akk/elfeed-save-db-and-bury ()
+    "Wrapper to save the elfeed db to disk before burying buffer"
+    (interactive)
+    (elfeed-db-save)
+    (quit-window))
+
+  ;;============================================================
+  ;; Configure elfeed
+  ;;============================================================
+
   (use-package elfeed
     :ensure t
-    :bind ("C-c w" . 'elfeed)
-    :init
-      ;; list of feeds
-      (setq elfeed-feeds
-          '(("http://feeds.reuters.com/reuters/INtopNews" ReutersTopNews)
-              ("http://feeds.reuters.com/reuters/INsportsNews" ReutersSportsNews)))
+    :bind (:map elfeed-search-mode-map
+                ("A" . akk/elfeed-show-all)
+                ("E" . akk/elfeed-emacs)
+                ("G" . akk/elfeed-show-golang)
+                ("N" . akk/elfeed-show-news)
+                ("P" . akk/elfeed-show-python)))
 
-      (setf url-queue-timeout 30)
-      (setq-default elfeed-search-filter "@1-week-ago +unread "))
+  ;;============================================================
+  ;; use an org file to organise feeds
+  ;;============================================================
+  (use-package elfeed-org
+    :ensure t
+    :config
+    (elfeed-org)
+    (setq rmh-elfeed-org-files (list "~/Dropbox/orgFiles/elfeed/elfeed.org")))
 
+  ;;============================================================
+  ;; elfeed goodies
+  ;;============================================================
+  (use-package elfeed-goodies
+    :ensure t
+    :config(elfeed-goodies/setup))
 #+END_SRC
 
 * Company
