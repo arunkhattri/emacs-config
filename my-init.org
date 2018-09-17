@@ -365,17 +365,33 @@ make ibuffer default
     (quit-window))
 
   ;;============================================================
+  ;; using hydra for navigation
+  ;;============================================================
+  ;; Ref: http://cestlaz.github.io/posts/using-emacs-30-elfeed-2/#.W58qdS0zbeQ
+
+  (defhydra akk/hydra-elfeed ()
+    "filter"
+    ("e" (elfeed-search-set-filter "@6-months-ago +emacs") "emacs")
+    ("p" (elfeed-search-set-filter "@6-months-ago +python") "python")
+    ("g" (elfeed-search-set-filter "@6-months-ago +golang") "golang")
+    ("n" (elfeed-search-set-filter "@6-months-ago +news") "news")
+    ("A" (elfeed-search-set-filter "@6-months-ago") "All")
+    ("T" (elfeed-search-set-filter "@1-day-ago") "Today")
+    ("Q" akk/elfeed-save-db-and-bury "Quit Elfeed" :color blue)
+    ("q" nil "quit" :color blue)
+    )
+
+  ;;============================================================
   ;; Configure elfeed
   ;;============================================================
 
   (use-package elfeed
     :ensure t
     :bind (:map elfeed-search-mode-map
-                ("A" . akk/elfeed-show-all)
-                ("E" . akk/elfeed-emacs)
-                ("O" . akk/elfeed-show-golang)
-                ("N" . akk/elfeed-show-news)
-                ("P" . akk/elfeed-show-python)))
+                ("q" . akk/elfeed-save-db-and-bury)
+                ("Q" . akk/elfeed-save-db-and-bury)
+                ("j" . akk/hydra-elfeed/body)
+                ("j" . akk/hydra-elfeed/body)))
 
   ;;============================================================
   ;; use an org file to organise feeds
