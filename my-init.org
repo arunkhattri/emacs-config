@@ -466,8 +466,6 @@ zsh
     :ensure t
     :config
     ;; (setq python-shell-interpreter-args "--simple-prompt -i")
-    (setq python-shell-interpreter "ipython")
-    (setq python-shell-interpreter-args "--simple-prompt -i")
     (add-hook 'python-mode-hook 'electric-pair-mode))
 
     (use-package conda
@@ -489,14 +487,25 @@ zsh
     (setq elpy-rpc-backend "jedi")
     ;; (when (executable-find "ipython")
     ;; (elpy-use-ipython))
-    ;; (setq python-shell-interpreter-args "--simple-prompt -i")
     (setenv "WORKON_HOME" "/home/deadlytackler/anaconda3/envs")
     (pyvenv-mode 1)
     (setq-default indent-tabs-mode nil)
     (global-set-key (kbd "<f7>") (kbd "C-u C-c C-c"))
     ;; Tell Python debugger (pdb) to use the current virtual environment
     ;; https://emacs.stackexchange.com/questions/17808/enable-python-pdb-on-emacs-with-virtualenv
-    (setq gud-pdb-command-name "python -m pdb "))
+    (setq python-shell-interpreter "ipython"
+          python-shell-interpreter-args "--colors NoColor --simple-prompt"
+          python-shell-prompt-regexp "In \\[[0-9]+\\]: "
+          python-shell-prompt-output-regexp "Out\\[[0-9]+\\]: "
+          python-shell-completion-setup-code "from IPython.core.completerlib import module_completion"
+          python-shell-completion-module-string-code "';'.join(module_completion('''%s'''))\n"
+          python-shell-completion-string-code "';'.join(get_ipython().Completer.all_completions('''%s'''))\n")
+  
+    (add-to-list 'python-shell-completion-native-disabled-interpreters
+                 "ipython")
+    (setq gud-pdb-command-name "python -m pdb ")
+    ;; (setq elpy-shell-echo-input nil)
+    )
 
     ;; Python auto completion
     (use-package company-jedi
@@ -510,30 +519,34 @@ zsh
 
 * Golang
 #+BEGIN_SRC emacs-lisp
-(use-package company-go
-  :ensure t
-  :defer t
-  :init
-  (with-eval-after-load 'company
-    (add-to-list 'company-backends 'company-go)))
+  (use-package company-go
+    :ensure t
+    :defer t
+    :init
+    (with-eval-after-load 'company
+      (add-to-list 'company-backends 'company-go)))
 
-(use-package go-mode
-  :ensure t
-  :init
-  (progn
-    (setq gofmt-command "goimports")
-    (add-hook 'before-save-hook 'gofmt-before-save))
-  :config
-  (add-hook 'go-mode-hook 'electric-pair-mode)
-  :bind (("C-c C-r" . go-remove-unused-imports)
-	   ("C-c C-g" . go-goto-imports)
-	   ("C-c C-f" . gofmt)
-	   ("C-c C-k" . godoc)))
-(use-package go-eldoc
-  :ensure t
-  :defer
-  :init
-  (add-hook 'go-mode-hook 'go-eldoc-setup))
+  (use-package go-mode
+    :ensure t
+    :init
+    (progn
+      (setq gofmt-command "goimports")
+      (add-hook 'before-save-hook 'gofmt-before-save)
+      (setq compile-command "go build -v && go test -v && go vet"))
+    :config
+    (add-hook 'go-mode-hook 'electric-pair-mode)
+    :bind (("C-c C-r" . go-remove-unused-imports)
+           ("C-c C-g" . go-goto-imports)
+           ("C-c C-f" . gofmt)
+           ("C-c C-k" . godoc)
+           ("C-c C-c" . compile)))
+  (use-package go-eldoc
+    :ensure t
+    :defer
+    :init
+    (add-hook 'go-mode-hook 'go-eldoc-setup))
+  (use-package go-guru
+    :ensure t)
 
 #+END_SRC
 * Yasnippets
@@ -838,65 +851,75 @@ regular expressions."
 * Mail
 
 #+BEGIN_SRC emacs-lisp
-(add-to-list 'load-path "/usr/local/share/emacs/site-lisp/mu4e")
-(require 'mu4e)
+  (add-to-list 'load-path "/usr/local/share/emacs/site-lisp/mu4e")
+  (require 'mu4e)
 
-;; default
-(setq mu4e-maildir "~/Dropbox/Maildir")
+  ;; default
+  (setq mu4e-maildir "~/Dropbox/Maildir")
 
-(setq mu4e-drafts-folder "/[Gmail].Drafts")
-(setq mu4e-sent-folder   "/[Gmail].Sent Mail")
-(setq mu4e-trash-folder  "/[Gmail].Trash")
+  (setq mu4e-drafts-folder "/[Gmail].Drafts")
+  (setq mu4e-sent-folder   "/[Gmail].Sent Mail")
+  (setq mu4e-trash-folder  "/[Gmail].Trash")
 
-;; don't save message to Sent Messages, Gmail/IMAP takes care of this
-(setq mu4e-sent-messages-behavior 'delete)
+  ;; don't save message to Sent Messages, Gmail/IMAP takes care of this
+  (setq mu4e-sent-messages-behavior 'delete)
 
-;; (See the documentation for `mu4e-sent-messages-behavior' if you have
-;; additional non-Gmail addresses and want assign them different
-;; behavior.)
+  ;; (See the documentation for `mu4e-sent-messages-behavior' if you have
+  ;; additional non-Gmail addresses and want assign them different
+  ;; behavior.)
 
-;; setup some handy shortcuts
-;; you can quickly switch to your Inbox -- press ``ji''
-;; then, when you want archive some messages, move them to
-;; the 'All Mail' folder by pressing ``ma''.
+  ;; setup some handy shortcuts
+  ;; you can quickly switch to your Inbox -- press ``ji''
+  ;; then, when you want archive some messages, move them to
+  ;; the 'All Mail' folder by pressing ``ma''.
 
-(setq mu4e-maildir-shortcuts
-    '( ("/INBOX" . ?i)
-       ("/[Gmail].Sent Mail" . ?s)
-       ("/[Gmail].Trash" . ?t)
-       ("/[Gmail].All Mail" . ?a)))
+  (setq mu4e-maildir-shortcuts
+      '( ("/INBOX" . ?i)
+         ("/[Gmail].Sent Mail" . ?s)
+         ("/[Gmail].Trash" . ?t)
+         ("/[Gmail].All Mail" . ?a)))
 
-;; allow for updating mail using 'U' in the main view:
-(setq mu4e-get-mail-command "offlineimap")
-(setq mu4e-update-interval 300)
+  ;; allow for updating mail using 'U' in the main view:
+  (setq mu4e-get-mail-command "offlineimap")
+  (setq mu4e-update-interval 300)
 
-;; something about ourselves
-(setq
-   user-mail-address "arun.kr.khattri@gmail.com"
-   user-full-name  "Arun Kr. Khattri"
-   mu4e-compose-signature
-    (concat
-      "With regards\n"
-      "Arun Kr. Khattri\n\n\n"
-      "An approximate answer to the right problem is worth a good deal more than an exact answer to an approximate problem.\n"))
+  ;; something about ourselves
+  (setq
+     user-mail-address "arun.kr.khattri@gmail.com"
+     user-full-name  "Arun Kr. Khattri"
+     mu4e-compose-signature
+      (concat
+        "With regards\n"
+        "Arun Kr. Khattri\n\n\n"
+        "An approximate answer to the right problem is worth a good deal more than an exact answer to an approximate problem.\n"))
 
-;; sending mail -- replace USERNAME with your gmail username
-;; also, make sure the gnutls command line utils are installed
-;; package 'gnutls-bin' in Debian/Ubuntu
+  ;; sending mail -- replace USERNAME with your gmail username
+  ;; also, make sure the gnutls command line utils are installed
+  ;; package 'gnutls-bin' in Debian/Ubuntu
 
-(require 'smtpmail)
-(setq message-send-mail-function 'smtpmail-send-it
-   starttls-use-gnutls t
-   smtpmail-starttls-credentials '(("smtp.gmail.com" 587 nil nil))
-   smtpmail-auth-credentials
-     '(("smtp.gmail.com" 587 "arun.kr.khattri@gmail.com" nil))
-   smtpmail-default-smtp-server "smtp.gmail.com"
-   smtpmail-smtp-server "smtp.gmail.com"
-   smtpmail-smtp-service 587)
+  (require 'smtpmail)
+  (setq message-send-mail-function 'smtpmail-send-it
+     starttls-use-gnutls t
+     smtpmail-starttls-credentials '(("smtp.gmail.com" 587 nil nil))
+     smtpmail-auth-credentials
+       '(("smtp.gmail.com" 587 "arun.kr.khattri@gmail.com" nil))
+     smtpmail-default-smtp-server "smtp.gmail.com"
+     smtpmail-smtp-server "smtp.gmail.com"
+     smtpmail-smtp-service 587)
 
 
-;; don't keep message buffers around
-(setq message-kill-buffer-on-exit t)
+  ;; don't keep message buffers around
+  (setq message-kill-buffer-on-exit t)
+
+  ;; Displaying rich-text messages
+  (add-hook 'mu4e-view-mode-hook
+    (lambda()
+      ;; try to emulate some of the eww key-bindings
+      (local-set-key (kbd "<tab>") 'shr-next-link)
+      (local-set-key (kbd "<backtab>") 'shr-previous-link)))
+
+  ;; using dark-theme, change the luminosity
+  (setq shr-color-visible-luminance-min 80)
 
 #+END_SRC
 
@@ -1151,6 +1174,7 @@ regular expressions."
         ("<C-SPC>" . akk/disable-rbm-deactivate-mark))))
 
 #+END_SRC
+
 * Multiple Cursors
 #+BEGIN_SRC emacs-lisp
   (use-package multiple-cursors
@@ -1201,6 +1225,7 @@ regular expressions."
     :ensure t
     :bind ("C-q" . 'er/expand-region))
 #+END_SRC
+
 * Hydra
 #+BEGIN_SRC emacs-lisp
   (use-package hydra
@@ -1239,4 +1264,44 @@ regular expressions."
      ("p" (lambda () (interactive) (forward-line -1)) "up")
      ("g" goto-line "goto-line")
      ))
+#+END_SRC
+
+* Org-ref
+#+BEGIN_SRC emacs-lisp
+  (use-package org-ref
+    :ensure t
+    :config
+    (setq reftex-default-bibliography '("~/Dropbox/bibliography/references.bib"))
+    ;; other variables
+    (setq org-ref-bibliography-notes "~/Dropbox/bibliography/notes.org"
+          org-ref-default-bibliography '("~/Dropbox/bibliography/references.bib")
+          org-ref-pdf-directory "~/Dropbox/bibliography/bibtex-pdfs/")
+    (unless (file-exists-p org-ref-pdf-directory)
+      (make-directory org-ref-pdf-directory t))
+    (setq bibtex-autokey-year-length 4
+          bibtex-autokey-name-year-separator "-"
+          bibtex-autokey-year-title-separator "-"
+          bibtex-autokey-titleword-separator "-"
+          bibtex-autokey-titlewords 2
+          bibtex-autokey-titlewords-stretch 1
+          bibtex-autokey-titleword-length 5))
+
+  ;; Other stuff required for basic org-ref-usage
+  ;; (require )
+  ;; (use-package org-ref-pdf
+  ;;   :ensure t)
+  ;; (use-package org-ref-url-utils
+  ;;   :ensure t)
+
+  ;; make sure that org-latex-pdf-process is set toprocess the bibliography
+  ;; (using) bibtex or biblatex.
+  (setq org-latex-pdf-process (list "latexmk -shell-escape -bibtex -f -pdf %f"))
+
+#+END_SRC
+
+* Scratch
+#+BEGIN_SRC emacs-lisp
+;; git cloned scratch-el
+;; https://github.com/ieure/scratch-el.git
+  (autoload 'scratch "scratch" nil t)
 #+END_SRC

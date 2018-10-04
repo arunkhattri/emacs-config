@@ -30,6 +30,7 @@
  '(custom-safe-themes
    (quote
     ("350dc341799fbbb81e59d1e6fff2b2c8772d7000e352a5c070aa4317127eee94" "3380a2766cf0590d50d6366c5a91e976bdc3c413df963a0ab9952314b4577299" "732b807b0543855541743429c9979ebfb363e27ec91e82f463c91e68c772f6e3" "d6922c974e8a78378eacb01414183ce32bc8dbf2de78aabcc6ad8172547cb074" "745f50fa29c8427309e172ec9ffb59ddd1e4a62e4871509f424ddfd854a065d2" "98cc377af705c0f2133bb6d340bf0becd08944a588804ee655809da5d8140de6" default)))
+ '(electric-pair-mode t)
  '(fci-rule-color "#383838")
  '(hl-sexp-background-color "#efebe9")
  '(ledger-reports
@@ -64,7 +65,7 @@
  '(org-use-sub-superscripts (quote {}))
  '(package-selected-packages
    (quote
-    (elfeed-goodies elfeed-org expand-region mark-multiple multiple-cursors conda paganini-theme paganini company-inf-python company-anaconda go-eldoc cython-mode elfeed plantuml-mode company-quickhelp which-key web-mode virtualenvwrapper validate use-package twittering-mode try theme-changer r-autoyas powerline-evil org neotree material-theme magit help-fns+ helm-projectile evil-surround evil-leader evil-indent-textobject ess-view elpy cyberpunk-theme counsel ace-window)))
+    (company-jedi company-web region-bindings-mode go-guru org-ref-url-utils org-ref-pdf org-ref elfeed-goodies elfeed-org expand-region mark-multiple multiple-cursors conda paganini-theme paganini company-inf-python company-anaconda go-eldoc cython-mode elfeed plantuml-mode company-quickhelp which-key web-mode virtualenvwrapper validate use-package twittering-mode try theme-changer r-autoyas powerline-evil neotree material-theme magit help-fns+ helm-projectile evil-surround evil-leader evil-indent-textobject ess-view elpy cyberpunk-theme counsel ace-window)))
  '(scroll-bar-mode nil)
  '(show-paren-mode t)
  '(tool-bar-mode nil)
