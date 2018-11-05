@@ -43,12 +43,17 @@
 ;       evil-visual-state-cursor  `(,(plist-get my/base16-colors :base09) box))
 
 ;; Material Theme
-(use-package material-theme
+;; (use-package material-theme
+;;   :ensure t
+;;   :config
+;;   (progn
+;;     (load-theme 'material t)))
+
+(use-package atom-one-dark-theme
   :ensure t
   :config
   (progn
-    (load-theme 'material t)))
-
+    (load-theme 'atom-one-dark t)))
 ;; (use-package theme-changer
 ;;   :ensure t
 ;;   :defer 1
@@ -63,8 +68,8 @@
 
 ;; ----------------------------------------------------------------------
 ;; load customization file, avoid littering here
-(setq custom-file "~/.emacs.d/emacs-config/emacs_custom.el")
+(setq custom-file "~/github/Dot_files/emacs-config/emacs_custom.el")
 (load custom-file)
 ;; ----------------------------------------------------------------------
-(org-babel-load-file (expand-file-name "~/.emacs.d/emacs-config/my-init.org"))
+(org-babel-load-file (expand-file-name "~/github/Dot_files/emacs-config/my-init.org"))
 ;;; .emacs ends here
