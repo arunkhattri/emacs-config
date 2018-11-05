@@ -29,7 +29,7 @@
  '(conda-anaconda-home "/home/deadlytackler/anaconda3")
  '(custom-safe-themes
    (quote
-    ("350dc341799fbbb81e59d1e6fff2b2c8772d7000e352a5c070aa4317127eee94" "3380a2766cf0590d50d6366c5a91e976bdc3c413df963a0ab9952314b4577299" "732b807b0543855541743429c9979ebfb363e27ec91e82f463c91e68c772f6e3" "d6922c974e8a78378eacb01414183ce32bc8dbf2de78aabcc6ad8172547cb074" "745f50fa29c8427309e172ec9ffb59ddd1e4a62e4871509f424ddfd854a065d2" "98cc377af705c0f2133bb6d340bf0becd08944a588804ee655809da5d8140de6" default)))
+    ("a24c5b3c12d147da6cef80938dca1223b7c7f70f2f382b26308eba014dc4833a" "bc4c89a7b91cfbd3e28b2a8e9e6750079a985237b960384f158515d32c7f0490" "c968804189e0fc963c641f5c9ad64bca431d41af2fb7e1d01a2a6666376f819c" "446cc97923e30dec43f10573ac085e384975d8a0c55159464ea6ef001f4a16ba" "350dc341799fbbb81e59d1e6fff2b2c8772d7000e352a5c070aa4317127eee94" "3380a2766cf0590d50d6366c5a91e976bdc3c413df963a0ab9952314b4577299" "732b807b0543855541743429c9979ebfb363e27ec91e82f463c91e68c772f6e3" "d6922c974e8a78378eacb01414183ce32bc8dbf2de78aabcc6ad8172547cb074" "745f50fa29c8427309e172ec9ffb59ddd1e4a62e4871509f424ddfd854a065d2" "98cc377af705c0f2133bb6d340bf0becd08944a588804ee655809da5d8140de6" default)))
  '(electric-pair-mode t)
  '(fci-rule-color "#383838")
  '(hl-sexp-background-color "#efebe9")
@@ -62,10 +62,11 @@
      ("plantuml" . plantuml))))
  '(org-startup-folded (quote overview))
  '(org-startup-indented t)
+ '(org-tags-column -65)
  '(org-use-sub-superscripts (quote {}))
  '(package-selected-packages
    (quote
-    (company-jedi company-web region-bindings-mode go-guru org-ref-url-utils org-ref-pdf org-ref elfeed-goodies elfeed-org expand-region mark-multiple multiple-cursors conda paganini-theme paganini company-inf-python company-anaconda go-eldoc cython-mode elfeed plantuml-mode company-quickhelp which-key web-mode virtualenvwrapper validate use-package twittering-mode try theme-changer r-autoyas powerline-evil neotree material-theme magit help-fns+ helm-projectile evil-surround evil-leader evil-indent-textobject ess-view elpy cyberpunk-theme counsel ace-window)))
+    (ox-hugo company-jedi company-web region-bindings-mode go-guru org-ref-url-utils org-ref-pdf org-ref elfeed-goodies elfeed-org expand-region mark-multiple multiple-cursors conda paganini-theme paganini company-inf-python company-anaconda go-eldoc cython-mode elfeed plantuml-mode company-quickhelp which-key web-mode virtualenvwrapper validate use-package twittering-mode try theme-changer r-autoyas powerline-evil neotree material-theme magit help-fns+ helm-projectile evil-surround evil-leader evil-indent-textobject ess-view elpy cyberpunk-theme counsel ace-window)))
  '(scroll-bar-mode nil)
  '(show-paren-mode t)
  '(tool-bar-mode nil)
@@ -91,20 +92,27 @@
      (340 . "#FFA000")
      (360 . "#558b2f"))))
  '(vc-annotate-very-old-color nil))
+;; (custom-set-faces
+;;  ;; custom-set-faces was added by Custom.
+;;  ;; If you edit it by hand, you could mess it up, so be careful.
+;;  ;; Your init file should contain only one such instance.
+;;  ;; If there is more than one, they won't work right.
+;;  '(default ((t (:family "Source Code Pro for Powerline" :foundry "ADBO" :slant normal :weight normal :height 90 :width normal))))
+;;  '(aw-leading-char-face ((t (:inherit ace-jump-face-foreground :height 3.0))))
+;;  '(font-lock-builtin-face ((t (:foreground "tomato"))))
+;;  '(font-lock-comment-delimiter-face ((t (:foreground "tan"))))
+;;  '(font-lock-comment-face ((t (:foreground "khaki"))))
+;;  '(font-lock-constant-face ((t (:foreground "green"))))
+;;  '(font-lock-function-name-face ((t (:foreground "dodger blue"))))
+;;  '(font-lock-keyword-face ((t (:foreground "deep pink"))))
+;;  '(font-lock-regexp-grouping-construct ((t (:foreground "green yellow"))))
+;;  '(font-lock-type-face ((t (:foreground "yellow"))))
+;;  '(font-lock-variable-name-face ((t (:foreground "dark orange")))))
+;;==================================================================== 
 (custom-set-faces
  ;; custom-set-faces was added by Custom.
  ;; If you edit it by hand, you could mess it up, so be careful.
  ;; Your init file should contain only one such instance.
  ;; If there is more than one, they won't work right.
- '(default ((t (:family "Source Code Pro for Powerline" :foundry "ADBO" :slant normal :weight normal :height 90 :width normal))))
- '(aw-leading-char-face ((t (:inherit ace-jump-face-foreground :height 3.0))))
- '(font-lock-builtin-face ((t (:foreground "tomato"))))
- '(font-lock-comment-delimiter-face ((t (:foreground "tan"))))
- '(font-lock-comment-face ((t (:foreground "khaki"))))
- '(font-lock-constant-face ((t (:foreground "green"))))
- '(font-lock-function-name-face ((t (:foreground "dodger blue"))))
- '(font-lock-keyword-face ((t (:foreground "deep pink"))))
- '(font-lock-regexp-grouping-construct ((t (:foreground "green yellow"))))
- '(font-lock-type-face ((t (:foreground "yellow"))))
- '(font-lock-variable-name-face ((t (:foreground "dark orange")))))
-;;==================================================================== 
+ '(default ((t (:family "DejaVu Sans Mono for Powerline" :foundry "PfEd" :slant normal :weight normal :height 98 :width normal))))
+ '(aw-leading-char-face ((t (:inherit ace-jump-face-foreground :height 3.0)))))
