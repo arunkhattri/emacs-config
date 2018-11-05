@@ -583,8 +583,10 @@ copied from: https://github.com/sejdemyr/.emacs.d/blob/master/init.el
      ess-default-style 'RStudio)         ; rstudio indentation style
 
     ;; set assignment operator
-    (setq ess-S-assign-key (kbd "C--"))
-    (ess-toggle-S-assign-key t)
+    ;; original
+    ;; (setq ess-S-assign-key (kbd "C--"))
+    ;; (ess-toggle-S-assign-key t)
+    ;; changing to
 
     ;; disable '_' shortcut
     (ess-toggle-underscore nil)
@@ -891,7 +893,11 @@ regular expressions."
       (concat
         "With regards\n"
         "Arun Kr. Khattri\n\n\n"
-        "An approximate answer to the right problem is worth a good deal more than an exact answer to an approximate problem.\n"))
+        "An approximate answer to the right problem is worth a good deal more than an exact answer to an approximate problem.\n"
+        " *********************************************************************************\n"
+        " This email and any files transmitted with it are confidential and intended solely for the use of the individual or entity to whom they are addressed. If you have received this email in error please notify the system manager. This message contains confidential information and is intended only for the individual named. If you are not the named addressee you should not disseminate, distribute or copy this e-mail. Please notify the sender immediately by e-mail if you have received this e-mail by mistake and delete this e-mail from your system. If you are not the intended recipient you are notified that disclosing, copying, distributing or taking any action in reliance on the contents of this information is strictly prohibited . The information contained in this mail is propriety and strictly confidential.\n"
+        " *********************************************************************************\n"
+        " CONFIDENTIALITY NOTICE This e-mail message and any attachments are only for the use of the intended recipient and may contain information that is privileged, confidential or exempt from disclosure under applicable law. If you are not the intended recipient, any disclosure, distribution or other use of this e-mail message or attachments is prohibited. If you have received this e-mail message in error, please delete and notify the sender immediately. Thank you.\n"))
 
   ;; sending mail -- replace USERNAME with your gmail username
   ;; also, make sure the gnutls command line utils are installed
@@ -1105,6 +1111,14 @@ regular expressions."
 #+RESULTS:
 : ((\.pdf\' . okular %s) (\.pdf\' . okular %s) (auto-mode . emacs) (\.mm\' . default) (\.x?html?\' . default) (\.pdf\' . default))
 
+* ox-hugo
+
+#+BEGIN_SRC emacs-lisp
+  (use-package ox-hugo
+    :ensure t
+    :after ox)
+
+#+END_SRC
 * Plantuml
 
 #+BEGIN_SRC emacs-lisp
@@ -1132,20 +1146,27 @@ regular expressions."
 * NeoTree & Icons
 
 #+BEGIN_SRC emacs-lisp
-(use-package all-the-icons
-  :ensure t
-  :config
-    (setq inhibit-compacting-font-caches t))
+  (use-package all-the-icons
+    :ensure t
+    :config
+      (setq inhibit-compacting-font-caches t))
 
-(use-package neotree
-  :ensure t
-  :config
-    (global-set-key (kbd "<f8>") 'neotree-toggle)
-    (setq neo-theme (if (display-graphic-p) 'icons 'arrow))
-    (evil-define-key 'normal neotree-mode-map (kbd "TAB") 'neotree-enter)
-    (evil-define-key 'normal neotree-mode-map (kbd "SPC") 'neotree-quick-look)
-    (evil-define-key 'normal neotree-mode-map (kbd "q") 'neotree-hide)
-    (evil-define-key 'normal neotree-mode-map (kbd "RET") 'neotree-enter))
+  (use-package neotree
+    :ensure t
+    :config
+      (global-set-key (kbd "<f8>") 'neotree-toggle)
+      (setq neo-theme (if (display-graphic-p) 'icons 'arrow))
+      (evil-define-key 'normal neotree-mode-map (kbd "TAB") 'neotree-enter)
+      (evil-define-key 'normal neotree-mode-map (kbd "SPC") 'neotree-quick-look)
+      (evil-define-key 'normal neotree-mode-map (kbd "q") 'neotree-hide)
+      (evil-define-key 'normal neotree-mode-map (kbd "RET") 'neotree-enter)
+      (setq neo-window-fixed-size nil)
+      (eval-after-load "neotree"
+          '(add-to-list 'window-size-change-functions
+                      (lambda (frame)
+                          (let ((neo-window (neo-global--get-window)))
+                          (unless (null neo-window)
+                              (setq neo-window-width (window-width neo-window))))))))
 
 #+END_SRC
 
@@ -1304,4 +1325,13 @@ regular expressions."
 ;; git cloned scratch-el
 ;; https://github.com/ieure/scratch-el.git
   (autoload 'scratch "scratch" nil t)
+#+END_SRC
+
+* My Functions
+#+BEGIN_SRC emacs-lisp
+  (defun akk-insert-section ()
+    "Insert Section in the code"
+    (interactive)
+    (set 'section (read-string "Enter Section Name: "))
+    (save-excursion (insert (concat section (make-string (- fill-column (length section)) ?-)))))
 #+END_SRC
