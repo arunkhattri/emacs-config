@@ -519,48 +519,102 @@ zsh
 
 * Golang
 #+BEGIN_SRC emacs-lisp
+  (defun akk/go-run()
+    (interactive)
+    (shell-command (concat "go run " (buffer-name))))
+
+  (use-package go-mode
+    :ensure t
+    :bind (:map go-mode-map
+                ("C-," . 'akk/hydra-go/body))
+    :init
+    (defhydra akk/hydra-go (:hint nil :color teal)
+      "
+            ^Command^     ^Imports^     ^Doc^               ^Format^
+            ^-------^     ^-------^     ^---^               ^------^
+         _r_: run        _ig_: goto     _d_: doc at point   _f_: format
+         _b_: build      _ia_: add  
+       [_g_]: guru       _ir_: remove
+       ^  ^           
+      "
+      ("g" akk/hydra-go-guru/body :color blue)
+      ("r" akk/go-run)
+      ("b" compile)
+      ("d" godoc-at-point)
+      ("f" gofmt)
+      ("ig" go-goto-imports)
+      ("ia" go-import-add)
+      ("ir" go-remove-unused-imports)
+      ("q" nil "quit" :color blue))
+    :config
+      (add-hook 'go-mode-hook 'electric-pair-mode)
+      (setq gofmt-command "goimports")
+      (add-hook 'before-save-hook 'gofmt-before-save)
+      (setq compile-command "go build -v && go test -v && go vet"))
+    ;; :bind (("C-c C-r" . go-remove-unused-imports)
+    ;;        ("C-c C-g" . go-goto-imports)
+    ;;        ("C-c C-f" . gofmt)
+    ;;        ("C-c C-k" . godoc)
+    ;;        ("C-c C-c" . compile)))
+
   (use-package company-go
     :ensure t
     :defer t
     :init
     (with-eval-after-load 'company
-      (add-to-list 'company-backends 'company-go)))
-
-  (use-package go-mode
-    :ensure t
-    :init
-    (progn
-      (setq gofmt-command "goimports")
-      (add-hook 'before-save-hook 'gofmt-before-save)
-      (setq compile-command "go build -v && go test -v && go vet"))
+      (add-to-list 'company-backends 'company-go))
     :config
-    (add-hook 'go-mode-hook 'electric-pair-mode)
-    :bind (("C-c C-r" . go-remove-unused-imports)
-           ("C-c C-g" . go-goto-imports)
-           ("C-c C-f" . gofmt)
-           ("C-c C-k" . godoc)
-           ("C-c C-c" . compile)))
+    (add-hook 'go-mode-hook
+        (lambda ()
+          (set (make-local-variable 'company-backends) '(company-go))
+          (company-mode))))
+
   (use-package go-eldoc
     :ensure t
     :defer
     :init
     (add-hook 'go-mode-hook 'go-eldoc-setup))
-  (use-package go-guru
-    :ensure t)
 
+  (use-package go-guru
+    :ensure t
+    :config
+    (add-hook 'go-mode-hook #'go-guru-hl-identifier-mode)
+    (defhydra akk/hydra-go-guru (:color pink :columns 2 :hint nil)
+      "
+      ^NAME^             ^TYPE^            ^CALL^           ^ALIAS^
+      _._: definition    _d_: describe     _lr_: callers     _p_: pointsto
+      _r_: referrers     _i_: implement    _le_: callees     _c_: peers
+      _f_: freevars      ^ ^               _s_: callstack    _e_: whicherrs"
+      ("." go-guru-definition)
+      ("r" go-guru-referrers)
+      ("f" go-guru-freevars)
+      ("d" go-guru-describe)
+      ("i" go-guru-implements)
+      ("lr" go-guru-callers)
+      ("le" go-guru-callees)
+      ("s" go-guru-callstack)
+      ("p" go-guru-pointsto)
+      ("c" go-guru-peers)
+      ("e" go-guru-whicherrs)
+      ("S" go-guru-set-scope "scope" :color blue)
+      ("q" nil "quit" :color blue)))
 #+END_SRC
 * Yasnippets
 #+BEGIN_SRC emacs-lisp
+  (use-package yasnippet
+    :ensure t
+    :init (add-hook 'prog-mode-hook #'yas-minor-mode)
+    :config
+    (setq yas-snippet-dirs
+          '("~/.emacs.d/snippets"                            ;; personal snippets
+            "~/.emacs.d/elpa/yasnippet-20180916.2115"        ;; the yasnippets
+            "~/go/src/github.com/yasnippet-go"               ;; go snippets
+            ))
+    (yas-reload-all))
 
-(use-package yasnippet
-  :ensure t
-  :init (add-hook 'prog-mode-hook #'yas-minor-mode)
-  :config
-  (setq yas-snippet-dirs
-        '("~/.emacs.d/snippets"                            ;; personal snippets
-          "~/.emacs.d/elpa/yasnippet-20170923.1646/snippets" ;; the yasnippets
-          ))
-  (yas-reload-all))
+  (use-package yasnippet-snippets
+    :ensure t)
+
 
 #+END_SRC
 * ESS
@@ -1264,6 +1318,7 @@ regular expressions."
      ("s" flyspell-mode "flyspell")
      ("p" electric-pair-mode "electric-pair")
      ("l" linum-mode "linum")
+     ("v" visual-line-mode "visual")
      ("q" nil "cancel")))
 
   ;;============================================================
