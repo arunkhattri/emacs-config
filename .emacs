@@ -64,12 +64,12 @@
 ;; (load "~/.emacs.d/emacs-config/my-configuration.el")
 ;; (load "~/.emacs.d/emacs-config/all_packages.el")
 ;; (load "~/.emacs.d/emacs-config/init_org.el")
-;; (load "~/.emacs.d/emacs-config/mail_setup.el")
+(load "~/github/emacs-config/help-fns+.el")
 
 ;; ----------------------------------------------------------------------
 ;; load customization file, avoid littering here
-(setq custom-file "~/github/Dot_files/emacs-config/emacs_custom.el")
+(setq custom-file "~/github/emacs-config/emacs_custom.el")
 (load custom-file)
 ;; ----------------------------------------------------------------------
-(org-babel-load-file (expand-file-name "~/github/Dot_files/emacs-config/my-init.org"))
+(org-babel-load-file (expand-file-name "~/github/emacs-config/my-init.org"))
 ;;; .emacs ends here

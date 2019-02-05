@@ -425,7 +425,11 @@ make ibuffer default
   (use-package company-quickhelp
     :ensure t
     :init (company-quickhelp-mode 1))
-  (use-package company-web-html)
+  (use-package company-web
+    :ensure t
+    :bind (("C-c w" . company-web-html))
+    :config
+    (add-to-list 'company-backends 'company-web-html))
   ;; Company settings.
   (setq company-tooltip-limit 10)
   (setq company-idle-delay 0.2)
@@ -472,7 +476,7 @@ zsh
     :ensure t
     :config
     (custom-set-variables
-      '(conda-anaconda-home "/home/deadlytackler/anaconda3"))
+      '(conda-anaconda-home "/home/arunkhattri/anaconda3"))
     ;; if you want interactive shell support, include:
     (conda-env-initialize-interactive-shells)
     ;; if you want auto-activation (see below for details), include:
@@ -487,7 +491,7 @@ zsh
     (setq elpy-rpc-backend "jedi")
     ;; (when (executable-find "ipython")
     ;; (elpy-use-ipython))
-    (setenv "WORKON_HOME" "/home/deadlytackler/anaconda3/envs")
+    (setenv "WORKON_HOME" "/home/arunkhattri/anaconda3/envs")
     (pyvenv-mode 1)
     (setq-default indent-tabs-mode nil)
     (global-set-key (kbd "<f7>") (kbd "C-u C-c C-c"))
@@ -519,9 +523,11 @@ zsh
 
 * Golang
 #+BEGIN_SRC emacs-lisp
-  (defun akk/go-run()
-    (interactive)
-    (shell-command (concat "go run " (buffer-name))))
+  ;; (defun akk/go-run()
+  ;;   (interactive)
+  ;;   (shell-command (concat "go run " (buffer-name))))
+  (use-package gotest
+    :ensure t)
 
   (use-package go-mode
     :ensure t
@@ -538,7 +544,7 @@ zsh
        ^  ^           
       "
       ("g" akk/hydra-go-guru/body :color blue)
-      ("r" akk/go-run)
+      ("r" go-run)
       ("b" compile)
       ("d" godoc-at-point)
       ("f" gofmt)
@@ -607,8 +613,8 @@ zsh
     :config
     (setq yas-snippet-dirs
           '("~/.emacs.d/snippets"                            ;; personal snippets
-            "~/.emacs.d/elpa/yasnippet-20180916.2115"        ;; the yasnippets
-            "~/go/src/github.com/yasnippet-go"               ;; go snippets
+            "~/.emacs.d/elpa/yasnippet-20190118.1945"        ;; the yasnippets
+            "~/go_projects/src/github.com/yasnippet-go"               ;; go snippets
             ))
     (yas-reload-all))
 
@@ -621,80 +627,80 @@ zsh
 copied from: https://github.com/sejdemyr/.emacs.d/blob/master/init.el
 
 #+BEGIN_SRC emacs-lisp
-  (use-package ess-site
-    :load-path "~/.emacs.d/elpa/ess-20171102.958/lisp/"
-    :mode ("\\.R\\'" . R-mode)
-    :config
-    (validate-setq
-     ring-bell-function #'ignore
-     ess-ask-for-ess-directory nil
-     inferior-R-program-name "/usr/bin/R"
-     ess-local-process-name "R"
-     ansi-color-for-comint-mode 'filter
-     comint-scroll-to-bottom-on-input t
-     comint-scroll-to-bottom-on-output t
-     comint-move-point-for-output t
-     ess-default-style 'RStudio)         ; rstudio indentation style
+  ;; (use-package ess-site
+  ;;   :load-path "~/.emacs.d/elpa/ess-20190122.2108/lisp/"
+  ;;   :mode ("\\.R\\'" . R-mode)
+  ;;   :config
+  ;;   (validate-setq
+  ;;    ring-bell-function #'ignore
+  ;;    ess-ask-for-ess-directory nil
+  ;;    inferior-R-program-name "/usr/bin/R"
+  ;;    ess-local-process-name "R"
+  ;;    ansi-color-for-comint-mode 'filter
+  ;;    comint-scroll-to-bottom-on-input t
+  ;;    comint-scroll-to-bottom-on-output t
+  ;;    comint-move-point-for-output t
+  ;;    ess-default-style 'RStudio)         ; rstudio indentation style
 
-    ;; set assignment operator
-    ;; original
-    ;; (setq ess-S-assign-key (kbd "C--"))
-    ;; (ess-toggle-S-assign-key t)
-    ;; changing to
+  ;;   ;; set assignment operator
+  ;;   ;; original
+  ;;   ;; (setq ess-S-assign-key (kbd "C--"))
+  ;;   ;; (ess-toggle-S-assign-key t)
+  ;;   ;; changing to
 
-    ;; disable '_' shortcut
-    (ess-toggle-underscore nil)
-    ;; display quick help
-    (define-key company-active-map (kbd "M-h") 'company-show-doc-buffer)
+  ;;   ;; disable '_' shortcut
+  ;;   (ess-toggle-underscore nil)
+  ;;   ;; display quick help
+  ;;   (define-key company-active-map (kbd "M-h") 'company-show-doc-buffer)
 
-    ;; bind ac-complete to tab:
-    (define-key company-active-map [return] nil)
-    (define-key company-active-map [tab] 'company-complete-common)
-    (define-key company-active-map (kbd "TAB") 'company-complete-common)
-    (define-key company-active-map (kbd "M-TAB") 'company-complete-selection)
+  ;;   ;; bind ac-complete to tab:
+  ;;   (define-key company-active-map [return] nil)
+  ;;   (define-key company-active-map [tab] 'company-complete-common)
+  ;;   (define-key company-active-map (kbd "TAB") 'company-complete-common)
+  ;;   (define-key company-active-map (kbd "M-TAB") 'company-complete-selection)
 
-    ;; automatically complete parentheses etc
-    ;; (add-hook 'ess-mode-hook #'electric-pair-mode)
+  ;;   ;; automatically complete parentheses etc
+  ;;   ;; (add-hook 'ess-mode-hook #'electric-pair-mode)
 
-    ;; set piping operator key binding
-    ;; http://emacs.stackexchange.com/questions/8041/how-to-implement-the-piping-operator-in-ess-mode
-    ;; CTRL-SHIFT-% for pipe operator
-    (defun then_R_operator ()
-      "R - %>% operator or 'then' pipe operator"
-      (interactive)
-      (just-one-space 1)
-      (insert "%>%")
-      (just-one-space 1))
-    (define-key ess-mode-map (kbd "C-%") 'then_R_operator)
-    (define-key inferior-ess-mode-map (kbd "C-%") 'then_R_operator)
+  ;;   ;; set piping operator key binding
+  ;;   ;; http://emacs.stackexchange.com/questions/8041/how-to-implement-the-piping-operator-in-ess-mode
+  ;;   ;; CTRL-SHIFT-% for pipe operator
+  ;;   (defun then_R_operator ()
+  ;;     "R - %>% operator or 'then' pipe operator"
+  ;;     (interactive)
+  ;;     (just-one-space 1)
+  ;;     (insert "%>%")
+  ;;     (just-one-space 1))
+  ;;   (define-key ess-mode-map (kbd "C-%") 'then_R_operator)
+  ;;   (define-key inferior-ess-mode-map (kbd "C-%") 'then_R_operator)
 
-    ;; key binding to evaluate current line or marked region
-    (defun my-ess-eval ()
-      (interactive)
-      (if (and transient-mark-mode mark-active)
-          (call-interactively 'ess-eval-region)
-        (call-interactively 'ess-eval-line)))
-    (add-hook 'ess-mode-hook
-              '(lambda()
-                 (local-set-key (kbd "s-m") 'my-ess-eval)))
+  ;;   ;; key binding to evaluate current line or marked region
+  ;;   (defun my-ess-eval ()
+  ;;     (interactive)
+  ;;     (if (and transient-mark-mode mark-active)
+  ;;         (call-interactively 'ess-eval-region)
+  ;;       (call-interactively 'ess-eval-line)))
+  ;;   (add-hook 'ess-mode-hook
+  ;;             '(lambda()
+  ;;                (local-set-key (kbd "s-m") 'my-ess-eval)))
 
-    ;; key binding to evaluate entire region (whether marked or not)
-    (defun my-ess-eval2 ()
-      (interactive)
-      (call-interactively 'ess-eval-region-or-function-or-paragraph-and-step))
-    (add-hook 'ess-mode-hook
-              '(lambda()
-                 (local-set-key (kbd "s-M") 'my-ess-eval2)))
+  ;;   ;; key binding to evaluate entire region (whether marked or not)
+  ;;   (defun my-ess-eval2 ()
+  ;;     (interactive)
+  ;;     (call-interactively 'ess-eval-region-or-function-or-paragraph-and-step))
+  ;;   (add-hook 'ess-mode-hook
+  ;;             '(lambda()
+  ;;                (local-set-key (kbd "s-M") 'my-ess-eval2)))
 
-    ;; key binding to load_all() for R devlopment
-    (defun my-ess-eval3 ()
-      (interactive)
-      (call-interactively 'ess-r-devtools-load-package))
-    (add-hook 'ess-mode-hook
-              '(lambda()
-                 (local-set-key (kbd "s-B") 'my-ess-eval3)))
+  ;;   ;; key binding to load_all() for R devlopment
+  ;;   (defun my-ess-eval3 ()
+  ;;     (interactive)
+  ;;     (call-interactively 'ess-r-devtools-load-package))
+  ;;   (add-hook 'ess-mode-hook
+  ;;             '(lambda()
+  ;;                (local-set-key (kbd "s-B") 'my-ess-eval3)))
 
-    )
+  ;;   )
 
   ;; add author info
   (defun akk/ess-author-date ()
@@ -713,11 +719,16 @@ copied from: https://github.com/sejdemyr/.emacs.d/blob/master/init.el
   (setq ess-help-kill-bogus-buffers t)
 #+END_SRC
 
-* ESS-Vies
+* other ESS related packages
 
 #+BEGIN_SRC emacs-lisp
-(use-package ess-view
-  :ensure t)
+  ;; (use-package ess-smart-underscore
+  ;;   :ensure t
+  ;;   :after ess)
+
+  ;; (use-package ess-view
+  ;;   :ensure t
+  ;;   :after ess)
 
 #+END_SRC
 
@@ -739,14 +750,6 @@ in prog-mode
 	  (lambda ()
 	    (font-lock-add-keywords nil '(("\\<\\(AKK\\|FIXME\\|TODO\\|BUG\\):" 1
 					   font-lock-warning-face t)))))
-
-#+END_SRC
-
-* fns+
-
-#+BEGIN_SRC emacs-lisp
-(use-package help-fns+
-  :ensure t)
 
 #+END_SRC
 
@@ -957,15 +960,20 @@ regular expressions."
   ;; also, make sure the gnutls command line utils are installed
   ;; package 'gnutls-bin' in Debian/Ubuntu
 
-  (require 'smtpmail)
-  (setq message-send-mail-function 'smtpmail-send-it
-     starttls-use-gnutls t
-     smtpmail-starttls-credentials '(("smtp.gmail.com" 587 nil nil))
-     smtpmail-auth-credentials
-       '(("smtp.gmail.com" 587 "arun.kr.khattri@gmail.com" nil))
-     smtpmail-default-smtp-server "smtp.gmail.com"
-     smtpmail-smtp-server "smtp.gmail.com"
-     smtpmail-smtp-service 587)
+  ;; (require 'smtpmail)
+  ;; (setq message-send-mail-function 'smtpmail-send-it
+  ;;    starttls-use-gnutls t
+  ;;    smtpmail-starttls-credentials '(("smtp.gmail.com" 587 nil nil))
+  ;;    smtpmail-auth-credentials
+  ;;    (expand-file-name "~/.authinfo.gpg")
+  ;;    smtpmail-default-smtp-server "smtp.gmail.com"
+  ;;    smtpmail-smtp-server "smtp.gmail.com"
+  ;;    smtpmail-smtp-service 587)
+  (setq message-send-mail-function 'message-send-mail-with-sendmail
+        sendmail-program "/usr/bin/msmtp"
+        user-full-name "Arun Kr. Khattri")
+
+  (setq message-sendmail-envelope-from 'header)
 
 
   ;; don't keep message buffers around
