@@ -10,9 +10,22 @@
 ;; ----------------------------------------------------------------------
 ;; Melpa
 (require 'package)
-(setq package-enable-at-startup nil)
-(add-to-list 'package-archives
-             '("melpa" . "https://melpa.org/packages/"))
+(let* ((no-ssl (and (memq system-type '(windows-nt ms-dos))
+                    (not (gnutls-available-p))))
+       (proto (if no-ssl "http" "https")))
+  (when no-ssl
+    (warn "\
+Your version of Emacs does not support SSL connections,
+which is unsafe because it allows man-in-the-middle attacks.
+There are two things you can do about this warning:
+1. Install an Emacs version that does support SSL and be safe.
+2. Remove this warning from your init file so you won't see it again."))
+  ;; Comment/uncomment these two lines to enable/disable MELPA and MELPA Stable as desired
+  ;; (add-to-list 'package-archives (cons "melpa" (concat proto "://melpa.org/packages/")) t)
+  (add-to-list 'package-archives (cons "melpa-stable" (concat proto "://stable.melpa.org/packages/")) t)
+  (when (< emacs-major-version 24)
+    ;; For important compatibility libraries like cl-lib
+    (add-to-list 'package-archives (cons "gnu" (concat proto "://elpa.gnu.org/packages/")))))
 (package-initialize)
 
 ;; ----------------------------------------------------------------------
@@ -23,47 +36,13 @@
 
 ;; ----------------------------------------------------------------------
 
-;; Paganini themes
-;; (use-package paganini-theme
-;;   :ensure t
-;;   :config
-;;   (load-theme 'paganini t))
-
-;; Base16 themes
-;; (use-package base16-theme
-;;   :ensure t
-;;   :config
-;;   (load-theme 'base16-tomorrow-night t))
-;; (Defvar my/base16-colors base16-default-dark-colors)
-;; (setq evil-emacs-state-cursor   `(,(plist-get my/base16-colors :base0D) box)
-;;       evil-insert-state-cursor  `(,(plist-get my/base16-colors :base0D) bar)
-;;       evil-motion-state-cursor  `(,(plist-get my/base16-colors :base0E) box)
-;;       evil-normal-state-cursor  `(,(plist-get my/base16-colors :base0B) box)
-;;       evil-replace-state-cursor `(,(plist-get my/base16-colors :base08) bar)
-;       evil-visual-state-cursor  `(,(plist-get my/base16-colors :base09) box))
-
-;; Material Theme
-;; (use-package material-theme
-;;   :ensure t
-;;   :config
-;;   (progn
-;;     (load-theme 'material t)))
 
 (use-package atom-one-dark-theme
   :ensure t
   :config
   (progn
     (load-theme 'atom-one-dark t)))
-;; (use-package theme-changer
-;;   :ensure t
-;;   :defer 1
-;;   :config
-;;   (progn (change-theme 'material-light 'material)))
 ;; ----------------------------------------------------------------------
-;; (load "~/.emacs.d/emacs-config/my-noexternal.el")
-;; (load "~/.emacs.d/emacs-config/my-configuration.el")
-;; (load "~/.emacs.d/emacs-config/all_packages.el")
-;; (load "~/.emacs.d/emacs-config/init_org.el")
 (load "~/github/emacs-config/help-fns+.el")
 
 ;; ----------------------------------------------------------------------
@@ -72,4 +51,6 @@
 (load custom-file)
 ;; ----------------------------------------------------------------------
 (org-babel-load-file (expand-file-name "~/github/emacs-config/my-init.org"))
+
+(server-start)
 ;;; .emacs ends here

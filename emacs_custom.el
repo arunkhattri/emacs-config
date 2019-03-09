@@ -25,13 +25,14 @@
  '(ansi-color-names-vector
    ["#000000" "#8b0000" "#00ff00" "#ffa500" "#7b68ee" "#dc8cc3" "#93e0e3" "#dcdccc"])
  '(ansi-term-color-vector
-   [unspecified "#1d1f21" "#cc6666" "#b5bd68" "#f0c674" "#81a2be" "#b294bb" "#81a2be" "#c5c8c6"])
- '(conda-anaconda-home "/home/deadlytackler/anaconda3")
+   [unspecified "#1d1f21" "#cc6666" "#b5bd68" "#f0c674" "#81a2be" "#b294bb" "#81a2be" "#c5c8c6"] t)
+ '(conda-anaconda-home "/home/arunkhattri/anaconda3")
  '(custom-safe-themes
    (quote
     ("a24c5b3c12d147da6cef80938dca1223b7c7f70f2f382b26308eba014dc4833a" "bc4c89a7b91cfbd3e28b2a8e9e6750079a985237b960384f158515d32c7f0490" "c968804189e0fc963c641f5c9ad64bca431d41af2fb7e1d01a2a6666376f819c" "446cc97923e30dec43f10573ac085e384975d8a0c55159464ea6ef001f4a16ba" "350dc341799fbbb81e59d1e6fff2b2c8772d7000e352a5c070aa4317127eee94" "3380a2766cf0590d50d6366c5a91e976bdc3c413df963a0ab9952314b4577299" "732b807b0543855541743429c9979ebfb363e27ec91e82f463c91e68c772f6e3" "d6922c974e8a78378eacb01414183ce32bc8dbf2de78aabcc6ad8172547cb074" "745f50fa29c8427309e172ec9ffb59ddd1e4a62e4871509f424ddfd854a065d2" "98cc377af705c0f2133bb6d340bf0becd08944a588804ee655809da5d8140de6" default)))
  '(electric-pair-mode t)
  '(fci-rule-color "#383838")
+ '(go-eldoc-gocode "gocode")
  '(hl-sexp-background-color "#efebe9")
  '(ledger-reports
    (quote
@@ -66,7 +67,7 @@
  '(org-use-sub-superscripts (quote {}))
  '(package-selected-packages
    (quote
-    (yasnippet-snippets ox-hugo company-jedi company-web region-bindings-mode go-guru org-ref-url-utils org-ref-pdf org-ref elfeed-goodies elfeed-org expand-region mark-multiple multiple-cursors conda paganini-theme paganini company-inf-python company-anaconda go-eldoc cython-mode elfeed plantuml-mode company-quickhelp which-key web-mode virtualenvwrapper validate use-package twittering-mode try theme-changer r-autoyas powerline-evil neotree material-theme magit help-fns+ helm-projectile evil-surround evil-leader evil-indent-textobject ess-view elpy cyberpunk-theme counsel ace-window)))
+    (ox-reveal flycheck yasnippet go-complete gotest ess-R-data-view ess-smart-underscore ledger-mode all-the-icons org-bullets projectile company-go go-mode elfeed ess hydra powerline yasnippet-snippets ox-hugo company-jedi company-web region-bindings-mode go-guru org-ref-url-utils org-ref-pdf org-ref elfeed-goodies elfeed-org expand-region mark-multiple multiple-cursors conda paganini-theme paganini company-inf-python company-anaconda go-eldoc cython-mode plantuml-mode company-quickhelp which-key web-mode virtualenvwrapper validate use-package twittering-mode try theme-changer r-autoyas powerline-evil neotree material-theme magit help-fns+ helm-projectile evil-surround evil-leader evil-indent-textobject ess-view elpy cyberpunk-theme counsel ace-window)))
  '(scroll-bar-mode nil)
  '(show-paren-mode t)
  '(tool-bar-mode nil)

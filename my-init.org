@@ -43,7 +43,12 @@ for calendar and holidays
 (when (display-graphic-p)
   (setq x-select-request-type '(UTF8_STRING COMPOUND_TEXT TEXT STRING)))
 #+END_SRC
-
+* Abbrev
+#+BEGIN_SRC emacs-lisp
+  (setq-default abbrev-mode t)
+  (setq abbrev-file-name "~/.emacs.d/abbrev_defs")
+  (setq save-abbrevs 'silent)
+#+END_SRC
 * Highlight parenthesis/brackets
 #+BEGIN_SRC emacs-lisp
 (use-package paren
@@ -391,7 +396,6 @@ make ibuffer default
     :bind (:map elfeed-search-mode-map
                 ("q" . akk/elfeed-save-db-and-bury)
                 ("Q" . akk/elfeed-save-db-and-bury)
-                ("j" . akk/hydra-elfeed/body)
                 ("j" . akk/hydra-elfeed/body)))
 
   ;;============================================================
@@ -411,46 +415,105 @@ make ibuffer default
     :config(elfeed-goodies/setup))
 #+END_SRC
 
+* Autocomplete
+#+BEGIN_SRC emacs-lisp
+  ;; (use-package auto-complete
+  ;;   :commands auto-complete-mode
+  ;;   :init
+  ;;   (progn
+  ;;     (auto-complete-mode t))
+  ;;   :bind (("C-n" . ac-next)
+  ;;          ("C-p" . ac-previous))
+  ;;   :config
+  ;;   (progn 
+  ;;     (use-package auto-complete-config)
+
+  ;;     (ac-set-trigger-key "TAB")
+  ;;     (ac-config-default)
+
+  ;;     (setq ac-delay 0.02)
+  ;;     (setq ac-use-menu-map t)
+  ;;     (setq ac-menu-height 50)
+  ;;     (setq ac-use-quick-help nil) 
+  ;;     (setq ac-comphist-file  "~/.emacs.d/ac-comphist.dat")
+  ;;     (setq ac-ignore-case nil)
+  ;;     (setq ac-dwim  t)
+  ;;     (setq ac-fuzzy-enable t)
+
+  ;;     (use-package ac-dabbrev
+  ;;       :config
+  ;;       (progn
+  ;;         (add-to-list 'ac-sources 'ac-source-dabbrev)))
+
+  ;;     (setq ac-modes '(js3-mode
+  ;;                      emacs-lisp-mode
+  ;;                      lisp-mode
+  ;;                      lisp-interaction-mode
+  ;;                      slime-repl-mode
+  ;;                      c-mode
+  ;;                      cc-mode
+  ;;                      c++-mode
+  ;;                      go-mode
+  ;;                      python-mode
+  ;;                      ruby-mode
+  ;;                      enh-ruby-mode
+  ;;                      lua-mode
+  ;;                      ecmascript-mode
+  ;;                      javascript-mode
+  ;;                      js-mode
+  ;;                      js2-mode
+  ;;                      php-mode
+  ;;                      css-mode
+  ;;                      makefile-mode
+  ;;                      sh-mode
+  ;;                      ada-mode
+  ;;                      xml-mode
+  ;;                      sgml-mode
+  ;;                      ts-mode
+  ;;                      sclang-mode
+  ;;                      verilog-mode))))
+
+#+END_SRC
 * Company
 
 #+BEGIN_SRC emacs-lisp
-(use-package company
-  :diminish ""
-  :init
-  ;; (add-hook 'prog-mode-hook 'company-mode)
-  ;; (add-hook 'comint-mode-hook 'company-mode)
-  :config
-  (global-company-mode)
-  ;; Quick-help (popup documentation for suggestions).
-  (use-package company-quickhelp
-    :ensure t
-    :init (company-quickhelp-mode 1))
-  (use-package company-web
-    :ensure t
-    :bind (("C-c w" . company-web-html))
+  (use-package company
+    :diminish ""
+    :init
+    ;; (add-hook 'prog-mode-hook 'company-mode)
+    ;; (add-hook 'comint-mode-hook 'company-mode)
     :config
-    (add-to-list 'company-backends 'company-web-html))
-  ;; Company settings.
-  (setq company-tooltip-limit 10)
-  (setq company-idle-delay 0.2)
-  (setq company-echo-delay 0)
-  (setq company-minimum-prefix-length 2)
-  (setq company-require-match nil)
-  (setq company-selection-wrap-around t)
-  (setq company-tooltip-align-annotations t)
-  (setq company-tooltip-flip-when-above t)
-  ;; weight by frequency
-  (setq company-transformers '(company-sort-by-occurrence))
-  (define-key company-active-map (kbd "M-n") nil)
-  (define-key company-active-map (kbd "M-p") nil)
-  (define-key company-active-map (kbd "C-n") 'company-select-next)
-  (define-key company-active-map (kbd "C-p") 'company-select-previous)
-  (define-key company-active-map (kbd "TAB") 'company-complete-common-or-cycle)
-  (define-key company-active-map (kbd "<tab>") 'company-complete-common-or-cycle)
-  (define-key company-active-map (kbd "S-TAB") 'company-select-previous)
-  (define-key company-active-map (kbd "<backtab>") 'company-select-previous))
-  ;; prevent company from completing on its own when we type regular characters
-  ;; (define-key company-active-map (kbd "SPC") nil))
+    (global-company-mode)
+    ;; Quick-help (popup documentation for suggestions).
+    (use-package company-quickhelp
+      :ensure t
+      :init (company-quickhelp-mode 1))
+    (use-package company-web
+      :ensure t
+      :bind (("C-c w" . company-web-html))
+      :config
+      (add-to-list 'company-backends 'company-web-html))
+    ;; Company settings.
+    (setq company-tooltip-limit 10)
+    (setq company-idle-delay 0.2)
+    (setq company-echo-delay 0)
+    (setq company-minimum-prefix-length 2)
+    (setq company-require-match nil)
+    (setq company-selection-wrap-around t)
+    (setq company-tooltip-align-annotations t)
+    (setq company-tooltip-flip-when-above t)
+    ;; weight by frequency
+    (setq company-transformers '(company-sort-by-occurrence))
+    (define-key company-active-map (kbd "M-n") nil)
+    (define-key company-active-map (kbd "M-p") nil)
+    (define-key company-active-map (kbd "C-n") 'company-select-next)
+    (define-key company-active-map (kbd "C-p") 'company-select-previous)
+    (define-key company-active-map (kbd "TAB") 'company-complete-common-or-cycle)
+    (define-key company-active-map (kbd "<tab>") 'company-complete-common-or-cycle)
+    (define-key company-active-map (kbd "S-TAB") 'company-select-previous)
+    (define-key company-active-map (kbd "<backtab>") 'company-select-previous))
+    ;; prevent company from completing on its own when we type regular characters
+    ;; (define-key company-active-map (kbd "SPC") nil))
 
 #+END_SRC
 
@@ -554,6 +617,7 @@ zsh
       ("q" nil "quit" :color blue))
     :config
       (add-hook 'go-mode-hook 'electric-pair-mode)
+      (add-hook 'go-mode-hook 'global-flycheck-mode)
       (setq gofmt-command "goimports")
       (add-hook 'before-save-hook 'gofmt-before-save)
       (setq compile-command "go build -v && go test -v && go vet"))
@@ -562,10 +626,9 @@ zsh
     ;;        ("C-c C-f" . gofmt)
     ;;        ("C-c C-k" . godoc)
     ;;        ("C-c C-c" . compile)))
-
   (use-package company-go
     :ensure t
-    :defer t
+    ;; :defer t
     :init
     (with-eval-after-load 'company
       (add-to-list 'company-backends 'company-go))
@@ -574,6 +637,13 @@ zsh
         (lambda ()
           (set (make-local-variable 'company-backends) '(company-go))
           (company-mode))))
+  ;; (use-package go-complete
+  ;;   :ensure t
+  ;;   :defer t
+  ;;   :init
+  ;;   (with-eval-after-load 'go-mode)
+  ;;   :config
+  ;;   (add-hook 'completion-at-point-functions 'go-complete-at-point))
 
   (use-package go-eldoc
     :ensure t
@@ -613,10 +683,10 @@ zsh
     :config
     (setq yas-snippet-dirs
           '("~/.emacs.d/snippets"                            ;; personal snippets
-            "~/.emacs.d/elpa/yasnippet-20190118.1945"        ;; the yasnippets
+            "~/.emacs.d/elpa/yasnippet-snippets-20190202.2145/snippets"        ;; the yasnippets
             "~/go_projects/src/github.com/yasnippet-go"               ;; go snippets
             ))
-    (yas-reload-all))
+    (yas-global-mode 1))
 
   (use-package yasnippet-snippets
     :ensure t)
@@ -1181,6 +1251,19 @@ regular expressions."
     :after ox)
 
 #+END_SRC
+
+* ox-reveal
+for reveal.js presentations
+#+BEGIN_SRC emacs-lisp
+  ;; (use-package ox-reveal
+  ;;   :ensure t
+  ;;   :after org)
+  (add-to-list 'load-path "~/github/org-reveal/")
+  (require 'ox-reveal)
+  (setq org-reveal-root "file:///home/arunkhattri/github/reveal.js")
+  (setq org-reveal-mathjx t)
+
+#+END_SRC
 * Plantuml
 
 #+BEGIN_SRC emacs-lisp
@@ -1389,7 +1472,12 @@ regular expressions."
 ;; https://github.com/ieure/scratch-el.git
   (autoload 'scratch "scratch" nil t)
 #+END_SRC
-
+* Flycheck
+#+BEGIN_SRC emacs-lisp
+  (use-package flycheck
+    :ensure t
+    :init (global-flycheck-mode))
+#+END_SRC
 * My Functions
 #+BEGIN_SRC emacs-lisp
   (defun akk-insert-section ()
