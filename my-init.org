@@ -5,6 +5,17 @@
 (setq inhibit-startup-message t)
 (tool-bar-mode -1)
 (fset 'yes-or-no-p 'y-or-n-p)
+;; setup GDB
+ ;; use gdb-many-windows by default
+(setq gdb-many-windows t)
+
+ ;; Non-nil means display source file containing the main routine at startup
+ (setq gdb-show-main t )
+;; Compilation
+(global-set-key (kbd "<f5>") (lambda ()
+                               (interactive)
+                               (setq-local compilation-read-command nil)
+                               (call-interactively 'compile)))
 #+END_SRC
 
 * Delhi Coordinates
@@ -42,6 +53,15 @@ for calendar and holidays
 (set-language-environment "UTF-8")
 (when (display-graphic-p)
   (setq x-select-request-type '(UTF8_STRING COMPOUND_TEXT TEXT STRING)))
+#+END_SRC
+* ANZU
+#+BEGIN_SRC emacs-lisp
+  (use-package anzu
+    :init
+    (global-anzu-mode)
+    (global-set-key (kbd "M-%") 'anzu-query-replace)
+    (global-set-key (kbd "C-M-%") 'anzu-query-replace-regexp))
+
 #+END_SRC
 * Auto-wrap (80 char)
 #+BEGIN_SRC emacs-lisp
@@ -206,107 +226,23 @@ make ibuffer default
 * Counsel
 
 #+BEGIN_SRC emacs-lisp
+  ;; parts taken from https://github.com/tuhdo/emacs-c-ide-demo/blob/master/custom/setup-ivy-counsel.el
   (use-package counsel
     :ensure t
     :bind
-    (("M-y" . counsel-yank-pop)
-     :map ivy-minibuffer-map
-     ("M-y" . ivy-next-line)))
-
-  ;; below code taken from
-  ;; https://gist.github.com/nilsdeppe/7645c096d93b005458d97d6874a91ea9
-
-  ;; Use universal ctags to build the tags database for the project.
-  ;; When you first want to build a TAGS database run 'touch TAGS'
-  ;; in the root directory of your project.
-  (use-package counsel-etags
-    :ensure t
+    (("M-x" . counsel-M-x)
+     ("M-y" . counsel-yank-pop)
+     ("C-c r" . counsel-recentf)
+     ("C-x C-f" . counsel-find-file)
+     ("<f1> f" . counsel-describe-function)
+     ("<f1> v" . counsel-describe-variable)
+     ("<f1> l" . counsel-load-library)
+     ("C-h f" . counsel-describe-function)
+     ("C-h v" . counsel-describe-variable)
+     ("C-h l" . counsel-load-library)))
+  (use-package counsel-projectile
     :init
-    (eval-when-compile
-      ;; Silence missing function warnings
-      (declare-function counsel-etags-virtual-update-tags "counsel-etags.el")
-      (declare-function counsel-etags-guess-program "counsel-etags.el")
-      (declare-function counsel-etags-locate-tags-file "counsel-etags.el"))
-    :bind (
-           ("M-." . counsel-etags-find-tag-at-point)
-           ("M-t" . counsel-etags-grep-symbol-at-point)
-           ("M-s" . counsel-etags-find-tag))
-    :config
-    ;; Ignore files above 800kb
-    (setq counsel-etags-max-file-size 800)
-    ;; Ignore build directories for tagging
-    (add-to-list 'counsel-etags-ignore-directories '"build*")
-    (add-to-list 'counsel-etags-ignore-directories '".vscode")
-    (add-to-list 'counsel-etags-ignore-filenames '".clang-format")
-    ;; Don't ask before rereading the TAGS files if they have changed
-    (setq tags-revert-without-query t)
-    ;; Don't warn when TAGS files are large
-    (setq large-file-warning-threshold nil)
-    ;; How many seconds to wait before rerunning tags for auto-update
-    (setq counsel-etags-update-interval 180)
-    ;; Set up auto-update
-    (add-hook
-     'prog-mode-hook
-     (lambda () (add-hook 'after-save-hook
-                          (lambda ()
-                            (counsel-etags-virtual-update-tags))))
-     )
-
-    ;; The function provided by counsel-etags is broken (at least on Linux)
-    ;; and doesn't correctly exclude directories, leading to an excessive
-    ;; amount of incorrect tags. The issue seems to be that the trailing '/'
-    ;; in e.g. '*dirname/*' causes 'find' to not correctly exclude all files
-    ;; in that directory, only files in sub-directories of the dir set to be
-    ;; ignore.
-    (defun my-scan-dir (src-dir &optional force)
-      "Create tags file from SRC-DIR. \
-       If FORCE is t, the commmand is executed without \
-       checking the timer."
-      (let* ((find-pg (or
-                       counsel-etags-find-program
-                       (counsel-etags-guess-program "find")))
-             (ctags-pg (or
-                        counsel-etags-tags-program
-                        (format "%s -e -L" (counsel-etags-guess-program
-                                            "ctags"))))
-             (default-directory src-dir)
-             ;; run find&ctags to create TAGS
-             (cmd (format
-                   "%s . \\( %s \\) -prune -o -type f -not -size +%sk %s | %s -"
-                   find-pg
-                   (mapconcat
-                    (lambda (p)
-                      (format "-iwholename \"*%s*\"" p))
-                    counsel-etags-ignore-directories " -or ")
-                   counsel-etags-max-file-size
-                   (mapconcat (lambda (n)
-                                (format "-not -name \"%s\"" n))
-                              counsel-etags-ignore-filenames " ")
-                   ctags-pg))
-             (tags-file (concat (file-name-as-directory src-dir) "TAGS"))
-             (doit (or force (not (file-exists-p tags-file)))))
-        ;; always update cli options
-        (when doit
-          (message "%s at %s" cmd default-directory)
-          (shell-command cmd)
-          (visit-tags-table tags-file t)
-          )
-        )
-      )
-
-    (setq counsel-etags-update-tags-backend
-          (lambda ()
-            (interactive)
-            (let* ((tags-file (counsel-etags-locate-tags-file)))
-              (when tags-file
-                (my-scan-dir (file-name-directory tags-file) t)
-                (run-hook-with-args
-                 'counsel-etags-after-update-tags-hook tags-file)
-                (unless counsel-etags-quiet-when-updating-tags
-                  (message "%s is updated!" tags-file))))
-            )
-          )
-    )
+    (counsel-projectile-mode))
 #+END_SRC
 
 * Validate
@@ -340,20 +276,19 @@ make ibuffer default
 * Swiper
 
 #+BEGIN_SRC emacs-lisp
-(use-package swiper
-  :ensure t
-  :bind (("C-s" . swiper)
-	 ("C-r" . swiper)
-	 ("C-c C-r" . ivy-resume)
-	 ("M-x" . counsel-M-x)
-	 ("C-x C-f" . counsel-find-file))
-  :config
-  (progn
-    (ivy-mode 1)
-    (setq ivy-use-virtual-buffers t)
-    (setq ivy-display-style 'fancy)
-    (define-key read-expression-map (kbd "C-r") 'counsel-expression-history)
-    ))
+  (use-package swiper
+    :ensure t
+    :bind
+    (("C-s" . swiper)
+     ("C-r" . swiper)
+     ("C-c C-r" . ivy-resume))
+    :config
+    (progn
+      (ivy-mode 1)
+      (setq ivy-use-virtual-buffers t)
+      (setq ivy-display-style 'fancy)
+      (define-key read-expression-map (kbd "C-r") 'counsel-expression-history)
+      ))
 
 #+END_SRC
 
@@ -617,7 +552,7 @@ make ibuffer default
     (define-key company-active-map (kbd "S-TAB") 'company-select-previous)
     (define-key company-active-map (kbd "<backtab>") 'company-select-previous))
     ;; prevent company from completing on its own when we type regular characters
-    ;; (define-key company-active-map (kbd "SPC") nil))
+    ;; (define-key company-active-map (kbd "SPC") nil)
 
 #+END_SRC
 
@@ -729,7 +664,7 @@ zsh
     ;;        ("C-c C-g" . go-goto-imports)
     ;;        ("C-c C-f" . gofmt)
     ;;        ("C-c C-k" . godoc)
-    ;;        ("C-c C-c" . compile)))
+    ;;        ("C-c C-c" . compile))
   (use-package company-go
     :ensure t
     ;; :defer t
@@ -909,10 +844,10 @@ copied from: https://github.com/sejdemyr/.emacs.d/blob/master/init.el
 * Snippets for R in ESS
 
 #+BEGIN_SRC emacs-lisp
-(use-package r-autoyas
-  :ensure t
-  :config
-  (progn (add-hook 'ess-mode-hook 'r-autoyas-ess-activate)))
+  ;; (use-package r-autoyas
+  ;;   :ensure t
+  ;;   :config
+  ;;   (progn (add-hook 'ess-mode-hook 'r-autoyas-ess-activate)))
 
 #+END_SRC
 
@@ -1021,20 +956,233 @@ want to use in the modeline *in lieu of* the original.")
 
 #+END_SRC
 
+* Helm
+#+BEGIN_SRC emacs-lisp
+  ;; ref: https://github.com/tuhdo/emacs-c-ide-demo/blob/master/custom/setup-helm.el
+    ;; (use-package helm
+    ;;   :ensure t
+    ;;   :init
+    ;;   (progn
+    ;;     (require 'helm-config)
+    ;;     (require 'helm-grep)
+    ;;     ;; To fix error at compile:
+    ;;     ;; Error (bytecomp): Forgot to expand macro with-helm-buffer in
+    ;;     ;; (with-helm-buffer helm-echo-input-in-header-line)
+    ;;     (if (version< "26.0.50" emacs-version)
+    ;;         (eval-when-compile (require 'helm-lib)))
+
+    ;;     (defun helm-hide-minibuffer-maybe ()
+    ;;       (when (with-helm-buffer helm-echo-input-in-header-line)
+    ;;         (let ((ov (make-overlay (point-min) (point-max) nil nil t)))
+    ;;           (overlay-put ov 'window (selected-window))
+    ;;           (overlay-put ov 'face (let ((bg-color (face-background 'default nil)))
+    ;;                                   `(:background ,bg-color :foreground ,bg-color)))
+    ;;           (setq-local cursor-type nil))))
+
+    ;;     (add-hook 'helm-minibuffer-set-up-hook 'helm-hide-minibuffer-maybe)
+    ;;     ;; The default "C-x c" is quite close to "C-x C-c", which quits Emacs.
+    ;;     ;; Changed to "C-c h". Note: We must set "C-c h" globally, because we
+    ;;     ;; cannot change `helm-command-prefix-key' once `helm-config' is loaded.
+    ;;     (global-set-key (kbd "C-c h") 'helm-command-prefix)
+    ;;     (global-unset-key (kbd "C-x c"))
+
+    ;;     (define-key helm-map (kbd "<tab>") 'helm-execute-persistent-action) ; rebihnd tab to do persistent action
+    ;;     (define-key helm-map (kbd "C-i") 'helm-execute-persistent-action) ; make TAB works in terminal
+    ;;     (define-key helm-map (kbd "C-z")  'helm-select-action) ; list actions using C-z
+
+    ;;     (define-key helm-grep-mode-map (kbd "<return>")  'helm-grep-mode-jump-other-window)
+    ;;     (define-key helm-grep-mode-map (kbd "n")  'helm-grep-mode-jump-other-window-forward)
+    ;;     (define-key helm-grep-mode-map (kbd "p")  'helm-grep-mode-jump-other-window-backward)
+
+    ;;     (when (executable-find "curl")
+    ;;       (setq helm-google-suggest-use-curl-p t))
+
+    ;;     (setq helm-google-suggest-use-curl-p t
+    ;;           helm-scroll-amount 4 ; scroll 4 lines other window using M-<next>/M-<prior>
+    ;;           ;; helm-quick-update t ; do not display invisible candidates
+    ;;           helm-ff-search-library-in-sexp t ; search for library in `require' and `declare-function' sexp.
+
+    ;;           ;; you can customize helm-do-grep to execute ack-grep
+    ;;           ;; helm-grep-default-command "ack-grep -Hn --smart-case --no-group --no-color %e %p %f"
+    ;;           ;; helm-grep-default-recurse-command "ack-grep -H --smart-case --no-group --no-color %e %p %f"
+    ;;           helm-split-window-in-side-p t ;; open helm buffer inside current window, not occupy whole other window
+
+    ;;           helm-echo-input-in-header-line t
+
+    ;;           ;; helm-candidate-number-limit 500 ; limit the number of displayed canidates
+    ;;           helm-ff-file-name-history-use-recentf t
+    ;;           helm-move-to-line-cycle-in-source t ; move to end or beginning of source when reaching top or bottom of source.
+    ;;           helm-buffer-skip-remote-checking t
+
+    ;;           helm-mode-fuzzy-match t
+
+    ;;           helm-buffers-fuzzy-matching t ; fuzzy matching buffer names when non-nil
+    ;;                                         ; useful in helm-mini that lists buffers
+    ;;           helm-org-headings-fontify t
+    ;;           ;; helm-find-files-sort-directories t
+    ;;           ;; ido-use-virtual-buffers t
+    ;;           helm-semantic-fuzzy-match t
+    ;;           helm-M-x-fuzzy-match t
+    ;;           helm-imenu-fuzzy-match t
+    ;;           helm-lisp-fuzzy-completion t
+    ;;           ;; helm-apropos-fuzzy-match t
+    ;;           helm-buffer-skip-remote-checking t
+    ;;           helm-locate-fuzzy-match t
+    ;;           helm-display-header-line nil)
+
+    ;;     (add-to-list 'helm-sources-using-default-as-input 'helm-source-man-pages)
+
+    ;;     (global-set-key (kbd "M-x") 'helm-M-x)
+    ;;     (global-set-key (kbd "M-y") 'helm-show-kill-ring)
+    ;;     (global-set-key (kbd "C-x b") 'helm-buffers-list)
+    ;;     (global-set-key (kbd "C-x C-f") 'helm-find-files)
+    ;;     (global-set-key (kbd "C-c r") 'helm-recentf)
+    ;;     (global-set-key (kbd "C-h SPC") 'helm-all-mark-rings)
+    ;;     (global-set-key (kbd "C-c h o") 'helm-occur)
+    ;;     (global-set-key (kbd "C-c h o") 'helm-occur)
+
+    ;;     (global-set-key (kbd "C-c h w") 'helm-wikipedia-suggest)
+    ;;     (global-set-key (kbd "C-c h g") 'helm-google-suggest)
+
+    ;;     (global-set-key (kbd "C-c h x") 'helm-register)
+    ;;     ;; (global-set-key (kbd "C-x r j") 'jump-to-register)
+
+    ;;     (define-key 'help-command (kbd "C-f") 'helm-apropos)
+    ;;     (define-key 'help-command (kbd "r") 'helm-info-emacs)
+    ;;     (define-key 'help-command (kbd "C-l") 'helm-locate-library)
+
+    ;;     ;; use helm to list eshell history
+    ;;     (add-hook 'eshell-mode-hook
+    ;;               #'(lambda ()
+    ;;                   (define-key eshell-mode-map (kbd "M-l")  'helm-eshell-history)))
+
+    ;; ;;; Save current position to mark ring
+    ;;     (add-hook 'helm-goto-line-before-hook 'helm-save-current-pos-to-mark-ring)
+
+    ;;     ;; show minibuffer history with Helm
+    ;;     (define-key minibuffer-local-map (kbd "M-p") 'helm-minibuffer-history)
+    ;;     (define-key minibuffer-local-map (kbd "M-n") 'helm-minibuffer-history)
+
+    ;;     (define-key global-map [remap find-tag] 'helm-etags-select)
+
+    ;;     (define-key global-map [remap list-buffers] 'helm-buffers-list))
+
+    ;;     ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+    ;;     ;; PACKAGE: helm-swoop                ;;
+    ;;     ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+    ;;     ;; Locate the helm-swoop folder to your path
+    ;;     (use-package helm-swoop
+    ;;       :bind (("C-c h o" . helm-swoop)
+    ;;              ("C-c s" . helm-multi-swoop-all))
+    ;;       :config
+    ;;       ;; When doing isearch, hand the word over to helm-swoop
+    ;;       (define-key isearch-mode-map (kbd "M-i") 'helm-swoop-from-isearch)
+
+    ;;       ;; From helm-swoop to helm-multi-swoop-all
+    ;;       (define-key helm-swoop-map (kbd "M-i") 'helm-multi-swoop-all-from-helm-swoop)
+
+    ;;       ;; Save buffer when helm-multi-swoop-edit complete
+    ;;       (setq helm-multi-swoop-edit-save t)
+
+    ;;       ;; If this value is t, split window inside the current window
+    ;;       (setq helm-swoop-split-with-multiple-windows t)
+
+    ;;       ;; Split direcion. 'split-window-vertically or 'split-window-horizontally
+    ;;       (setq helm-swoop-split-direction 'split-window-vertically)
+
+    ;;       ;; If nil, you can slightly boost invoke speed in exchange for text color
+    ;;       (setq helm-swoop-speed-or-color t))
+
+#+END_SRC
+* Helm-gtags
+#+BEGIN_SRC emacs-lisp
+;; Ref: https://github.com/tuhdo/emacs-c-ide-demo/blob/master/custom/setup-helm-gtags.el
+  (setq helm-gtags-prefix-key "\C-cg")
+
+  (use-package helm-gtags
+    :init
+    (progn
+      (setq helm-gtags-ignore-case t
+            helm-gtags-auto-update t
+            helm-gtags-use-input-at-cursor t
+            helm-gtags-pulse-at-cursor t
+            helm-gtags-prefix-key "\C-cg"
+            helm-gtags-suggested-key-mapping t)
+
+      ;; Enable helm-gtags-mode in Dired so you can jump to any tag
+      ;; when navigate project tree with Dired
+      (add-hook 'dired-mode-hook 'helm-gtags-mode)
+
+      ;; Enable helm-gtags-mode in Eshell for the same reason as above
+      (add-hook 'eshell-mode-hook 'helm-gtags-mode)
+
+      ;; Enable helm-gtags-mode in languages that GNU Global supports
+      (add-hook 'c-mode-hook 'helm-gtags-mode)
+      (add-hook 'c++-mode-hook 'helm-gtags-mode)
+      ;; (add-hook 'java-mode-hook 'helm-gtags-mode)
+      ;; (add-hook 'asm-mode-hook 'helm-gtags-mode)
+
+      ;; key bindings
+      (with-eval-after-load 'helm-gtags
+        (define-key helm-gtags-mode-map (kbd "C-c g a") 'helm-gtags-tags-in-this-function)
+        (define-key helm-gtags-mode-map (kbd "C-j") 'helm-gtags-select)
+        (define-key helm-gtags-mode-map (kbd "M-.") 'helm-gtags-dwim)
+        (define-key helm-gtags-mode-map (kbd "M-,") 'helm-gtags-pop-stack)
+        (define-key helm-gtags-mode-map (kbd "C-c <") 'helm-gtags-previous-history)
+        (define-key helm-gtags-mode-map (kbd "C-c >") 'helm-gtags-next-history))))
+
+#+END_SRC
+* GGtags
+#+BEGIN_SRC emacs-lisp
+  ;; Ref: https://github.com/tuhdo/emacs-c-ide-demo/blob/master/custom/setup-ggtags.el
+  (use-package ggtags
+    :ensure t
+    :config
+    (add-hook 'c-mode-common-hook
+            (lambda ()
+                (when (derived-mode-p 'c-mode 'c++-mode)
+                  (ggtags-mode 1))))
+    (dolist (map (list ggtags-mode-map dired-mode-map))
+      (define-key map (kbd "C-c g s") 'ggtags-find-other-symbol)
+      (define-key map (kbd "C-c g h") 'ggtags-view-tag-history)
+      (define-key map (kbd "C-c g r") 'ggtags-find-reference)
+      (define-key map (kbd "C-c g f") 'ggtags-find-file)
+      (define-key map (kbd "C-c g c") 'ggtags-create-tags)
+      (define-key map (kbd "C-c g u") 'ggtags-update-tags)
+      (define-key map (kbd "C-c g a") 'helm-gtags-tags-in-this-function)
+      (define-key map (kbd "M-.") 'ggtags-find-tag-dwim)
+      (define-key map (kbd "M-,") 'pop-tag-mark)
+      (define-key map (kbd "C-c <") 'ggtags-prev-mark)
+      (define-key map (kbd "C-c >") 'ggtags-next-mark)))
+    ;; :bind
+    ;; (("C-c g s" . ggtags-find-other-symbol)
+    ;;  ("C-c g h" . ggtags-view-tag-history)
+    ;;  ("C-c g r" . ggtags-find-reference)
+    ;;  ("C-c g f" . ggtags-find-file)
+    ;;  ("C-c g c" . ggtags-create-tags)
+    ;;  ("C-c g u" . ggtags-update-tags)
+    ;;  ("C-c g a" . helm-gtags-tags-in-this-function)
+    ;;  ("M-." . ggtags-find-tag-dwim)
+    ;;  ("M-," . pop-tag-mark)
+    ;;  ("C-c <" . ggtags-prev-mark)
+    ;;  ("C-c >" . ggtags-next-mark)))
+#+END_SRC
 * Projectile
 
 #+BEGIN_SRC emacs-lisp
-(use-package projectile
-  :ensure t
-  :config
-  (projectile-global-mode)
-  (setq projectile-enable-caching t))
+  (use-package projectile
+    :ensure t
+    :config
+    (projectile-global-mode)
+    (setq projectile-enable-caching t))
 
-(use-package helm-projectile
-  :ensure t
-  :bind ("M-t" . helm-projectile-find-file)
-  :config
-  (helm-projectile-on))
+  (use-package helm-projectile
+    :init
+    (helm-projectile-on)
+    (setq projectile-completion-system 'helm)
+    (setq projectile-indexing-method 'alien)
+    :bind
+    ("M-t" . helm-projectile-find-file))
 
 #+END_SRC
 
@@ -1489,7 +1637,7 @@ for reveal.js presentations
   ;;       (setq blink-matching-paren akk/mc-blink-matching-paren--store))
 
   ;;     (add-hook 'multiple-cursors-mode-enabled-hook #'akk/mc-when-enabled)
-  ;;     (add-hook 'multiple-cursors-mode-disabled-hook #'akk/mc-when-disabled)))
+  ;;     (add-hook 'multiple-cursors-mode-disabled-hook #'akk/mc-when-disabled)
 
   (use-package expand-region
     :ensure t
@@ -1592,129 +1740,49 @@ for reveal.js presentations
 #+END_SRC
 * C/C++ Configuration
 #+BEGIN_SRC emacs-lisp
-  ;; clang-format can be triggered using C-c C-f
-  ;; Create clang-format file using google style
-  ;; clang-format -style=google -dump-config > .clang-format
-  ;; (use-package clang-format
-  ;;   :ensure t
-  ;;   :bind (("C-c C-f" . clang-format-region))
-  ;;   )
-  ;; (use-package cmake-mode
-  ;;   :ensure t
-  ;;   :mode ("CMakeLists.txt" ".cmake")
-  ;;   :hook (cmake-mode . (lambda ()
-  ;;                         (add-to-list 'company-backends 'company-cmake)))
-  ;;   :config
-  ;;   (use-package cmake-font-lock
-  ;;     :ensure t
-  ;;     :defer t
-  ;;     :commands (cmake-font-lock-activate)
-  ;;     :hook (cmake-mode . (lambda ()
-  ;;                           (cmake-font-lock-activate)
-  ;;                           (font-lock-add-keywords
-  ;;                            nil '(("\\<\\(FIXME\\|TODO\\|BUG\\|DONE\\)"
-  ;;                                   1 font-lock-warning-face t)))
-  ;;                           ))
-  ;;     )
-  ;;   )
-  ;; (use-package irony
-  ;;   :config
-  ;;   (progn
-  ;;     ;; If irony server was never installed, install it.
-  ;;     (unless (irony--find-server-executable) (call-interactively #'irony-install-server))
+  ;; Ref: https://github.com/tuhdo/emacs-c-ide-demo/blob/master/custom/setup-cedet.el
+  ;; company-c-headers
+  (use-package company-c-headers
+    :init
+    (add-to-list 'company-backends 'company-c-headers))
 
-  ;;     (add-hook 'c++-mode-hook 'irony-mode)
-  ;;     (add-hook 'c-mode-hook 'irony-mode)
+  ;; hs-minor-mode for folding source code
+  (add-hook 'c-mode-common-hook 'hs-minor-mode)
 
-  ;;     ;; Use compilation database first, clang_complete as fallback.
-  ;;     (setq-default irony-cdb-compilation-databases '(irony-cdb-libclang
-  ;;                                                       irony-cdb-clang-complete))
+  ;; Available C style:
+  ;; “gnu”: The default style for GNU projects
+  ;; “k&r”: What Kernighan and Ritchie, the authors of C used in their book
+  ;; “bsd”: What BSD developers use, aka “Allman style” after Eric Allman.
+  ;; “whitesmith”: Popularized by the examples that came with Whitesmiths C, an early commercial C compiler.
+  ;; “stroustrup”: What Stroustrup, the author of C++ used in his book
+  ;; “ellemtel”: Popular C++ coding standards as defined by “Programming in C++, Rules and Recommendations,” Erik Nyquist and Mats Henricson, Ellemtel
+  ;; “linux”: What the Linux developers use for kernel development
+  ;; “python”: What Python developers use for extension modules
+  ;; “java”: The default style for java-mode (see below)
+  ;; “user”: When you want to define your own style
+  (setq c-default-style '(other . "linux")) ;; set style to "linux"
 
-  ;;     (add-hook 'irony-mode-hook 'irony-cdb-autosetup-compile-options)
-  ;;   ))
+  (use-package cc-mode
+    :config
+    (define-key c-mode-map  (kbd "<tab>") 'company-complete)
+    (define-key c++-mode-map  (kbd "<tab>") 'company-complete))
+  (require 'semantic)
 
-  ;;   ;; I use irony with company to get code completion.
-  ;;   (use-package company-irony
-  ;;     :ensure t
-  ;;     :config
-  ;;     (progn
-  ;;       (eval-after-load 'company '(add-to-list 'company-backends 'company-irony))))
+  (global-semanticdb-minor-mode 1)
+  (global-semantic-idle-scheduler-mode 1)
+  (global-semantic-stickyfunc-mode 1)
 
-  ;;   ;; I use irony with flycheck to get real-time syntax checking.
-  ;;   (use-package flycheck-irony
-  ;;     :ensure t
-  ;;     :config
-  ;;     (progn
-  ;;       (eval-after-load 'flycheck '(add-hook 'flycheck-mode-hook #'flycheck-irony-setup))))
+  (semantic-mode 1)
 
-  ;;   ;; Eldoc shows argument list of the function you are currently writing in the echo area.
-  ;;   (use-package irony-eldoc
-  ;;     :ensure t
-  ;;     :config
-  ;;     (progn
-  ;;       (add-hook 'irony-mode-hook #'irony-eldoc)))
-  ;; (use-package company-irony-c-headers
-  ;;   :config
-  ;;     (eval-after-load 'company
-  ;;     '(add-to-list
-  ;;         'company-backends '(company-irony-c-headers company-irony))))
+  (defun alexott/cedet-hook ()
+    (local-set-key "\C-c\C-j" 'semantic-ia-fast-jump)
+    (local-set-key "\C-c\C-s" 'semantic-ia-show-summary))
 
-  ;; (use-package rtags
-  ;;   :config
-  ;;   (progn
-  ;;     (unless (rtags-executable-find "rc") (error "Binary rc is not installed!"))
-  ;;     (unless (rtags-executable-find "rdm") (error "Binary rdm is not installed!"))
+  (add-hook 'c-mode-common-hook 'alexott/cedet-hook)
+  (add-hook 'c-mode-hook 'alexott/cedet-hook)
+  (add-hook 'c++-mode-hook 'alexott/cedet-hook)
 
-  ;;     (define-key c-mode-base-map (kbd "M-.") 'rtags-find-symbol-at-point)
-  ;;     (define-key c-mode-base-map (kbd "M-,") 'rtags-find-references-at-point)
-  ;;     (define-key c-mode-base-map (kbd "M-?") 'rtags-display-summary)
-  ;;     (rtags-enable-standard-keybindings)
-
-  ;;     (setq rtags-use-helm t)
-
-  ;;     ;; Shutdown rdm when leaving emacs.
-  ;;     (add-hook 'kill-emacs-hook 'rtags-quit-rdm)
-  ;;     ))
-
-  ;; ;; TODO: Has no coloring! How can I get coloring?
-  ;; (use-package helm-rtags
-  ;;   :ensure t
-  ;;   :config
-  ;;   (progn
-  ;;     (setq rtags-display-result-backend 'helm)
-  ;;     ))
-
-  ;; ;; Use rtags for auto-completion.
-  ;; (use-package company-rtags
-  ;;   :ensure t
-  ;;   :config
-  ;;   (progn
-  ;;     (setq rtags-autostart-diagnostics t)
-  ;;     (rtags-diagnostics)
-  ;;     (setq rtags-completions-enabled t)
-  ;;     (push 'company-rtags company-backends)
-  ;;     ))
-
-  ;; ;; Live code checking.
-  ;; (use-package flycheck-rtags
-  ;;   :ensure t
-  ;;   :config
-  ;;   (progn
-  ;;     ;; ensure that we use only rtags checking
-  ;;     ;; https://github.com/Andersbakken/rtags#optional-1
-  ;;     (defun setup-flycheck-rtags ()
-  ;;       (flycheck-select-checker 'rtags)
-  ;;       (setq-local flycheck-highlighting-mode nil) ;; RTags creates more accurate overlays.
-  ;;       (setq-local flycheck-check-syntax-automatically nil)
-  ;;       (rtags-set-periodic-reparse-timeout 2.0)  ;; Run flycheck 2 seconds after being idle.
-  ;;       )
-  ;;     (add-hook 'c-mode-hook #'setup-flycheck-rtags)
-  ;;     (add-hook 'c++-mode-hook #'setup-flycheck-rtags)
-  ;;     ))
-
-  ;; ;; CMake automation with cmake-ide
-  ;; (use-package cmake-ide
-  ;;   :defer t
-  ;;   :config
-  ;;   (cmake-ide-setup))
+  ;; Enable EDE only in C/C++
+  (require 'ede)
+  (global-ede-mode)
 #+END_SRC
