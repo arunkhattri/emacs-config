@@ -7,48 +7,15 @@
   (fset 'yes-or-no-p 'y-or-n-p)
   (add-to-list 'default-frame-alist '(height . 35))
   (add-to-list 'default-frame-alist '(width . 110))
-
-  ;; setup GDB
-   ;; use gdb-many-windows by default
-  ;; (setq gdb-many-windows t)
-
-   ;; Non-nil means display source file containing the main routine at startup
-  ;;  (setq gdb-show-main t )
-  ;; ;; Compilation
-  ;; (global-set-key (kbd "<f5>") (lambda ()
-  ;;                                (interactive)
-  ;;                                (setq-local compilation-read-command nil)
-  ;;                                (call-interactively 'compile)))
-  ;; ----------------------------------------------------------------------------------
-  ;; [20190317] Setup Indentation
   (global-set-key (kbd "RET") 'newline-and-indent) ; automatically indent when press RET
-  ;; activate whitespace-mode to view all whitespace characters
-  ;; (global-set-key (kbd "C-c w") 'whitespace-mode)
-
-  ;; ;; show unncessary whitespace that can mess up your diff
-  ;; (add-hook 'prog-mode-hook (lambda () (interactive) (setq show-trailing-whitespace 1)))
-
   ;; use space to indent by default
   (setq-default indent-tabs-mode nil)
 
   ;; set appearance of a tab that is represented by 4 spaces
   (setq-default tab-width 4)
-  ;; Package: clean-aindent-mode
-  ;; (use-package clean-aindent-mode
-  ;;   :config
-  ;;    (add-hook 'prog-mode-hook 'clean-aindent-mode))
 
-  ;; ;; Package: dtrt-indent
-  ;; (use-package dtrt-indent
-  ;;   :config
-  ;;   (dtrt-indent-mode 1))
-
-  ;; package: ws-butler
-  ;; helps managing whitespace on every line of code written or edited, in an
-  ;; unobtrusive, help you write clean code without noisy whitespace effortlessly
-  ;; (use-package ws-butler
-  ;;   :config
-  ;;   (add-hook 'c-mode-common-hook 'ws-butler-mode))
+  ;; linum-mode in all programming modes
+  (add-hook 'prog-mode-hook 'linum-mode)
 #+END_SRC
 
 * Delhi Coordinates
@@ -1009,14 +976,45 @@ want to use in the modeline *in lieu of* the original.")
   (use-package web-mode
     :mode ("\\.html$" . web-mode)
     :init
+    (add-to-list 'auto-mode-alist '("\\.html?\\'" . web-mode))
+    (add-to-list 'auto-mode-alist '("\\.vue?\\'" . web-mode))
+    (setq web-mode-engines-alist
+    '(("django"    . "\\.html\\'")))
+    (setq web-mode-ac-sources-alist
+    '(("css" . (ac-source-css-property))
+    ("vue" . (ac-source-words-in-buffer ac-source-abbrev))
+    ("html" . (ac-source-words-in-buffer ac-source-abbrev))))
     (setq web-mode-markup-indent-offset 2)
     (setq web-mode-code-indent-offset 2)
     (setq web-mode-css-indent-offset 2)
     (setq js-indent-level 2)
+    (setq web-mode-attr-indent-offset 2)
     (setq web-mode-enable-auto-pairing t)
     (setq web-mode-enable-auto-expanding t)
     (setq web-mode-enable-css-colorization t)
-    (add-hook 'web-mode-hook 'electric-pair-mode))
+    (setq web-mode-enable-auto-closing t)
+    ;; (add-hook 'web-mode-hook 'electric-pair-mode)
+    (setq web-mode-enable-auto-quoting t) ; this fixes the quote problem I mentioned
+    :config
+      (defun my-web-mode-hook ()
+        "Hooks for Web mode."
+        (setq web-mode-markup-indent-offset 2))
+        (add-hook 'web-mode-hook  'my-web-mode-hook)
+        (add-hook 'web-mode-before-auto-complete-hooks
+            '(lambda ()
+            (let ((web-mode-cur-language
+                    (web-mode-language-at-pos)))
+                    (if (string= web-mode-cur-language "php")
+                (yas-activate-extra-mode 'php-mode)
+                (yas-deactivate-extra-mode 'php-mode))
+                    (if (string= web-mode-cur-language "css")
+                (setq emmet-use-css-transform t)
+                (setq emmet-use-css-transform nil)))))
+        (defun my-web-mode-hook ()
+        (set (make-local-variable 'company-backends) '(company-css company-web-html company-yasnippet company-files))
+        ))
+
+
 
   (use-package web-beautify
     :commands (web-beautify-css
@@ -1416,180 +1414,183 @@ regular expressions."
 * Org
 
 #+BEGIN_SRC emacs-lisp
-  ;;; Code:
-  (use-package org
-  :ensure t
-  :defer t
-  :commands (org-capture)
-  :config
-  (progn
-  (global-set-key "\C-cl" 'org-store-link)
-  (global-set-key "\C-ca" 'org-agenda)
-  (global-set-key "\C-cc" 'org-capture)
-  (global-set-key "\C-cw" 'org-refile)
-  (global-set-key "\C-cb" 'org-iswitchb))
-      ;;   (define-key viper-vi-global-user-map "C-c /" 'org-sparse-tree))
-      ;; :bind (("C-c l" . 'org-store-link)
-      ;;        ("C-c c" . 'org-capture)
-      ;;        ("C-c a" . 'org-agenda)
-      ;;        ("C-c b" . 'org-iswitchb))
-      ;; :config
-  (use-package org-bullets
+    ;;; Code:
+    (use-package org
     :ensure t
+    :defer t
+    :commands (org-capture)
     :config
-    (add-hook 'org-mode-hook (lambda () (org-bullets-mode 1))))
-      (custom-set-variables
-      ' (org-hide-leading-stars t)
-      ' (org-startup-folded (quote overview))
-      ' (org-startup-indented t))
-  (setq org-todo-keywords
-          '((sequence "TODO(t)" "IN-PROCESS(p)" "ON-HOLD(h)" "|" "CANCELLED(c@)" "DONE(d@)" "PARTIALLY-DONE(p@)" "DELEGATED(g@)")))
-  (setq org-agenda-include-diary t)
+    (progn
+    (global-set-key "\C-cl" 'org-store-link)
+    (global-set-key "\C-ca" 'org-agenda)
+    (global-set-key "\C-cc" 'org-capture)
+    (global-set-key "\C-cw" 'org-refile)
+    (global-set-key "\C-cb" 'org-iswitchb)
 
-  (setq org-indent-mode t)
-  (setq org-refile-targets (quote ((nil :maxlevel . 9)
-                                  (org-agenda-files :maxlevel . 9))))
+    (add-to-list 'org-emphasis-alist
+                 '("*" (:foreground "yellow"))))
+        ;;   (define-key viper-vi-global-user-map "C-c /" 'org-sparse-tree))
+        ;; :bind (("C-c l" . 'org-store-link)
+        ;;        ("C-c c" . 'org-capture)
+        ;;        ("C-c a" . 'org-agenda)
+        ;;        ("C-c b" . 'org-iswitchb))
+        ;; :config
+    (use-package org-bullets
+      :ensure t
+      :config
+      (add-hook 'org-mode-hook (lambda () (org-bullets-mode 1))))
+        (custom-set-variables
+        ' (org-hide-leading-stars t)
+        ' (org-startup-folded (quote overview))
+        ' (org-startup-indented t))
+    (setq org-todo-keywords
+            '((sequence "TODO(t)" "IN-PROCESS(p)" "ON-HOLD(h)" "|" "CANCELLED(c@)" "DONE(d@)" "PARTIALLY-DONE(p@)" "DELEGATED(g@)")))
+    (setq org-agenda-include-diary t)
 
-  ;; =======================================================================
-  ;; Function to choose where a captured entry will go
-  ;; No more working as on Sep 16, 2018
-  ;; https://emacs.stackexchange.com/questions/5923/org-capture-how-to-choose-the-target-file-at-the-end-of-the-process
-  ;; (defun org-get-target-headline (&optional targets prompt)
-  ;;  "Prompt for a location in an org file and jump to it.
+    (setq org-indent-mode t)
+    (setq org-refile-targets (quote ((nil :maxlevel . 9)
+                                    (org-agenda-files :maxlevel . 9))))
 
-  ;; This is for promping for refile targets when doing captures.
-  ;; Targets are selected from `org-refile-targets'. If TARGETS is
-  ;; given it temporarily overrides `org-refile-targets'. PROMPT will
-  ;; replace the default prompt message.
+    ;; =======================================================================
+    ;; Function to choose where a captured entry will go
+    ;; No more working as on Sep 16, 2018
+    ;; https://emacs.stackexchange.com/questions/5923/org-capture-how-to-choose-the-target-file-at-the-end-of-the-process
+    ;; (defun org-get-target-headline (&optional targets prompt)
+    ;;  "Prompt for a location in an org file and jump to it.
 
-  ;; If CAPTURE-LOC is is given, capture to that location instead of
-  ;; prompting."
-  ;;   (let ((org-refile-targets (or targets org-refile-targets))
-  ;;         (prompt (or prompt "Capture Location")))
-  ;;     (if org-capture-overriding-marker
-  ;;         (org-goto-marker-or-bmk org-capture-overriding-marker)
-  ;;       (org-refile t nil nil prompt)))
-  ;;   )
+    ;; This is for promping for refile targets when doing captures.
+    ;; Targets are selected from `org-refile-targets'. If TARGETS is
+    ;; given it temporarily overrides `org-refile-targets'. PROMPT will
+    ;; replace the default prompt message.
 
-  (setq org-capture-templates
-        '(("a" "Appointments" entry
-           (file+headline "~/Dropbox/orgFiles/Diary/organize.org" "Meetings")
-           "* %^{prompt}\nSCHEDULED: %^T\n+ %?")
-          ;; as function is not working giving full location.
-          ("n" "Notes" entry
-           (file+olp "~/Dropbox/orgFiles/Diary/organize.org" "Official" "Notes")
-           "* %^{prompt}\n%^T\n+ %?")
-          ("N" "Notes" entry
-           (file+olp "~/Dropbox/orgFiles/Diary/organize.org" "Personal" "Notes")
-           "* %^{prompt}\n%^T\n+ %?")
-          ("o" "Other Items Official" entry
-           (file+olp "~/Dropbox/orgFiles/Diary/organize.org" "Official")
-           "* %^{prompt}\n%^T\n+ %?")
-          ("O" "Other Items Personal" entry
-           (file+olp "~/Dropbox/orgFiles/Diary/organize.org" "Personal")
-           "* %^{prompt}\n%^T\n+ %?")
-          ))
-  ;; =======================================================================
-      ;; Use full outline paths for refile targets - we file directly with IDO
-      (setq org-refile-use-outline-path t)
-      ;; Targets complete directly with IDO
-      (setq org-outline-path-complete-in-steps nil)
-      ;; Allow refile to create parent tasks with confirmation
-      (setq org-refile-allow-creating-parent-nodes (quote confirm))
-      ;; Use the current window when visiting files and buffers with ido
-      (setq ido-default-file-method 'selected-window)
-      (setq ido-default-buffer-method 'selected-window)
-      ;; Use the current window for indirect buffer display
-      (setq org-indirect-buffer-display 'current-window)
-      ;;org-latex
-      (require 'ox-latex)
-      ;; Listing Package
-      (setq org-latex-listings t)
-      (add-to-list 'org-latex-packages-alist '("" "listings"))
-      (add-to-list 'org-latex-packages-alist '("" "color"))
+    ;; If CAPTURE-LOC is is given, capture to that location instead of
+    ;; prompting."
+    ;;   (let ((org-refile-targets (or targets org-refile-targets))
+    ;;         (prompt (or prompt "Capture Location")))
+    ;;     (if org-capture-overriding-marker
+    ;;         (org-goto-marker-or-bmk org-capture-overriding-marker)
+    ;;       (org-refile t nil nil prompt)))
+    ;;   )
 
-      (setq org-latex-to-pdf-process
-            '("LC_ALL=C PDFLATEX=\"pdflatex –shell-escape\" texi2dvi -p %f"))
-      ;;Org to odt export
-      (setq org-export-odt-preferred-output-format "odt")
-      ;; org v8 bundled with Emacs 24.4
-      (setq org-odt-preferred-output-format "odt")
+    (setq org-capture-templates
+          '(("a" "Appointments" entry
+             (file+headline "~/Dropbox/orgFiles/Diary/organize.org" "Meetings")
+             "* %^{prompt}\nSCHEDULED: %^T\n+ %?")
+            ;; as function is not working giving full location.
+            ("n" "Notes" entry
+             (file+olp "~/Dropbox/orgFiles/Diary/organize.org" "Official" "Notes")
+             "* %^{prompt}\n%^T\n+ %?")
+            ("N" "Notes" entry
+             (file+olp "~/Dropbox/orgFiles/Diary/organize.org" "Personal" "Notes")
+             "* %^{prompt}\n%^T\n+ %?")
+            ("o" "Other Items Official" entry
+             (file+olp "~/Dropbox/orgFiles/Diary/organize.org" "Official")
+             "* %^{prompt}\n%^T\n+ %?")
+            ("O" "Other Items Personal" entry
+             (file+olp "~/Dropbox/orgFiles/Diary/organize.org" "Personal")
+             "* %^{prompt}\n%^T\n+ %?")
+            ))
+    ;; =======================================================================
+        ;; Use full outline paths for refile targets - we file directly with IDO
+        (setq org-refile-use-outline-path t)
+        ;; Targets complete directly with IDO
+        (setq org-outline-path-complete-in-steps nil)
+        ;; Allow refile to create parent tasks with confirmation
+        (setq org-refile-allow-creating-parent-nodes (quote confirm))
+        ;; Use the current window when visiting files and buffers with ido
+        (setq ido-default-file-method 'selected-window)
+        (setq ido-default-buffer-method 'selected-window)
+        ;; Use the current window for indirect buffer display
+        (setq org-indirect-buffer-display 'current-window)
+        ;;org-latex
+        (require 'ox-latex)
+        ;; Listing Package
+        (setq org-latex-listings t)
+        (add-to-list 'org-latex-packages-alist '("" "listings"))
+        (add-to-list 'org-latex-packages-alist '("" "color"))
 
-      ;; if evil-mode is present
-      (evil-leader/set-key-for-mode 'org-mode
-        "$"  'org-archive-subtree
-        "a"  'org-agenda
-        "d"  'org-deadline
-        "ns" 'org-narrow-to-subtree
-        "p"  'org-set-property
-        "s"  'org-schedule)
+        (setq org-latex-to-pdf-process
+              '("LC_ALL=C PDFLATEX=\"pdflatex –shell-escape\" texi2dvi -p %f"))
+        ;;Org to odt export
+        (setq org-export-odt-preferred-output-format "odt")
+        ;; org v8 bundled with Emacs 24.4
+        (setq org-odt-preferred-output-format "odt")
 
-      (add-hook 'org-agenda-mode-hook
+        ;; if evil-mode is present
+        (evil-leader/set-key-for-mode 'org-mode
+          "$"  'org-archive-subtree
+          "a"  'org-agenda
+          "d"  'org-deadline
+          "ns" 'org-narrow-to-subtree
+          "p"  'org-set-property
+          "s"  'org-schedule)
+
+        (add-hook 'org-agenda-mode-hook
+                  (lambda ()
+                    (setq org-habit-graph-column 50)
+                    (define-key org-agenda-mode-map "H"          'beginning-of-buffer)
+                    (define-key org-agenda-mode-map "j"          'org-agenda-next-item)
+                    (define-key org-agenda-mode-map "k"          'org-agenda-previous-item)
+                    (define-key org-agenda-mode-map "n"          'org-agenda-next-date-line)
+                    (define-key org-agenda-mode-map "p"          'org-agenda-previous-date-line)
+                    (define-key org-agenda-mode-map "R"          'org-revert-all-org-buffers)
+                    (define-key org-agenda-mode-map "/"          'counsel-grep-or-swiper)
+                    (define-key org-agenda-mode-map (kbd "RET")  'org-agenda-switch-to)))
+
+        )
+
+
+      ;; Colour-coding categories in org-mode
+
+      (add-hook 'org-finalize-agenda-hook
                 (lambda ()
-                  (setq org-habit-graph-column 50)
-                  (define-key org-agenda-mode-map "H"          'beginning-of-buffer)
-                  (define-key org-agenda-mode-map "j"          'org-agenda-next-item)
-                  (define-key org-agenda-mode-map "k"          'org-agenda-previous-item)
-                  (define-key org-agenda-mode-map "n"          'org-agenda-next-date-line)
-                  (define-key org-agenda-mode-map "p"          'org-agenda-previous-date-line)
-                  (define-key org-agenda-mode-map "R"          'org-revert-all-org-buffers)
-                  (define-key org-agenda-mode-map "/"          'counsel-grep-or-swiper)
-                  (define-key org-agenda-mode-map (kbd "RET")  'org-agenda-switch-to)))
+                  (save-excursion
+                    (color-org-header "TODO:" "green")
+                    (color-org-header "Meetings:" "DarkGreen")
+                    (color-org-header "Notes:" "#00fa9a")
+                    (color-org-header "Reports:" "blue3")
+                    (color-org-header "Tours:" "yellow1")
+                    (color-org-header "Annv:" "dark cyan")
+                    (color-org-header "mail:" "yellow")
+                    (color-org-header "outlay:" "dark orange")
+                    (color-org-header "Attention:" "chartreuse")
+                    (color-org-header "personal:" "salmon")
+                    (color-org-header "call:" "DeepSkyBlue"))))
 
-      )
+      (defun color-org-header (tag col)
+        ""
+        (interactive)
+        (goto-char (point-min))
+        (while (re-search-forward tag nil t)
+          (add-text-properties (match-beginning 0) (point-at-eol)
+                               `(face (:foreground ,col)))))
 
-
-    ;; Colour-coding categories in org-mode
-
-    (add-hook 'org-finalize-agenda-hook
-              (lambda ()
-                (save-excursion
-                  (color-org-header "TODO:" "green")
-                  (color-org-header "Meetings:" "DarkGreen")
-                  (color-org-header "Notes:" "#00fa9a")
-                  (color-org-header "Reports:" "blue3")
-                  (color-org-header "Tours:" "yellow1")
-                  (color-org-header "Annv:" "dark cyan")
-                  (color-org-header "mail:" "yellow")
-                  (color-org-header "outlay:" "dark orange")
-                  (color-org-header "Attention:" "chartreuse")
-                  (color-org-header "personal:" "salmon")
-                  (color-org-header "call:" "DeepSkyBlue"))))
-
-    (defun color-org-header (tag col)
-      ""
-      (interactive)
-      (goto-char (point-min))
-      (while (re-search-forward tag nil t)
-        (add-text-properties (match-beginning 0) (point-at-eol)
-                             `(face (:foreground ,col)))))
-
-    ;;=============================================
-    (unless (boundp 'org-latex-classes)
-      (setq org-latex-classes nil))
-    (add-to-list 'org-latex-classes
-                 '("article"
-                   "\\documentclass{article}"
-                   ("\\section{%s}" . "\\section*{%s}")
-                   ("\\subsection{%s}" . "\\subsection*{%s}")
-                   ("\\subsubsection{%s}" . "\\subsubsection*{%s}")
-                   ("\\paragraph{%s}" . "\\paragraph*{%s}")
-                   ("\\subparagraph{%s}" . "\\subparagraph*{%s}"))
-                 '("beamer"
-                   ,(concat "\\documentclass[presentation]{beamer}\n"
-                            "[DEFAULT-PACKAGES]"
-                            "[PACKAGES]"
-                            "[EXTRA]\n")
-                   ("\\section{%s}" . "\\section*{%s}")
-                   ("\\subsection{%s}" . "\\subsection*{%s}")
-                   ("\\subsubsection{%s}" . "\\subsubsection*{%s}")))
+      ;;=============================================
+      (unless (boundp 'org-latex-classes)
+        (setq org-latex-classes nil))
+      (add-to-list 'org-latex-classes
+                   '("article"
+                     "\\documentclass{article}"
+                     ("\\section{%s}" . "\\section*{%s}")
+                     ("\\subsection{%s}" . "\\subsection*{%s}")
+                     ("\\subsubsection{%s}" . "\\subsubsection*{%s}")
+                     ("\\paragraph{%s}" . "\\paragraph*{%s}")
+                     ("\\subparagraph{%s}" . "\\subparagraph*{%s}"))
+                   '("beamer"
+                     ,(concat "\\documentclass[presentation]{beamer}\n"
+                              "[DEFAULT-PACKAGES]"
+                              "[PACKAGES]"
+                              "[EXTRA]\n")
+                     ("\\section{%s}" . "\\section*{%s}")
+                     ("\\subsection{%s}" . "\\subsection*{%s}")
+                     ("\\subsubsection{%s}" . "\\subsubsection*{%s}")))
 
 
 
-  (setq org-file-apps
-        (append '(
-                  ("\\.pdf\\'" . "okular %s")
-                  ) org-file-apps ))
+    (setq org-file-apps
+          (append '(
+                    ("\\.pdf\\'" . "okular %s")
+                    ) org-file-apps ))
 #+END_SRC
 
 #+RESULTS:
