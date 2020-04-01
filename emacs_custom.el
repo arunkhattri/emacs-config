@@ -12,7 +12,7 @@
 ;;  '(org-document-title ((t (:foreground "#ffffff" :weight bold :height 1.0))))
 ;;  '(org-level-1 ((t (:inherit outline-1 :background "#455A64" :box (:line-width 1 :style released-button) :weight bold :height 1.1))))
 ;;  '(org-level-2 ((t (:inherit outline-2 :background "#35575b" :box (:line-width 1 :style released-button) :height 1.1)))))
- 
+
 
 
 (custom-set-variables
@@ -23,7 +23,7 @@
  '(ansi-color-faces-vector
    [default bold shadow italic underline bold bold-italic bold])
  '(ansi-color-names-vector
-   ["#000000" "#8b0000" "#00ff00" "#ffa500" "#7b68ee" "#dc8cc3" "#93e0e3" "#dcdccc"])
+   ["#21252B" "#E06C75" "#98C379" "#E5C07B" "#61AFEF" "#C678DD" "#56B6C2" "#ABB2BF"])
  '(ansi-term-color-vector
    [unspecified "#1d1f21" "#cc6666" "#b5bd68" "#f0c674" "#81a2be" "#b294bb" "#81a2be" "#c5c8c6"] t)
  '(conda-anaconda-home "/home/arunkhattri/anaconda3")
@@ -31,9 +31,53 @@
    (quote
     ("a24c5b3c12d147da6cef80938dca1223b7c7f70f2f382b26308eba014dc4833a" "bc4c89a7b91cfbd3e28b2a8e9e6750079a985237b960384f158515d32c7f0490" "c968804189e0fc963c641f5c9ad64bca431d41af2fb7e1d01a2a6666376f819c" "446cc97923e30dec43f10573ac085e384975d8a0c55159464ea6ef001f4a16ba" "350dc341799fbbb81e59d1e6fff2b2c8772d7000e352a5c070aa4317127eee94" "3380a2766cf0590d50d6366c5a91e976bdc3c413df963a0ab9952314b4577299" "732b807b0543855541743429c9979ebfb363e27ec91e82f463c91e68c772f6e3" "d6922c974e8a78378eacb01414183ce32bc8dbf2de78aabcc6ad8172547cb074" "745f50fa29c8427309e172ec9ffb59ddd1e4a62e4871509f424ddfd854a065d2" "98cc377af705c0f2133bb6d340bf0becd08944a588804ee655809da5d8140de6" default)))
  '(electric-pair-mode t)
- '(fci-rule-color "#383838")
+ '(elpy-modules
+   (quote
+    (elpy-module-company elpy-module-eldoc elpy-module-pyvenv elpy-module-highlight-indentation elpy-module-yasnippet elpy-module-django elpy-module-sane-defaults)))
+ '(elpy-rpc-virtualenv-path (quote current))
+ '(ess-R-font-lock-keywords
+   (quote
+    ((ess-R-fl-keyword:modifiers . t)
+     (ess-R-fl-keyword:fun-defs . t)
+     (ess-R-fl-keyword:keywords . t)
+     (ess-R-fl-keyword:assign-ops . t)
+     (ess-R-fl-keyword:constants . t)
+     (ess-fl-keyword:fun-calls)
+     (ess-fl-keyword:numbers . t)
+     (ess-fl-keyword:operators . t)
+     (ess-fl-keyword:delimiters)
+     (ess-fl-keyword:= . t)
+     (ess-R-fl-keyword:F&T . t))) t)
+ '(ess-ask-for-ess-directory nil t)
+ '(ess-default-style (quote RStudio) t)
+ '(ess-eldoc-show-on-symbol t t)
+ '(ess-eval-visibly (quote nowait) t)
+ '(ess-history-directory "~/.emacs.d/var/Rhist/" t)
+ '(ess-nuke-trailing-whitespace-p t t)
+ '(ess-pdf-viewer-pref "emacsclient" t)
+ '(ess-plain-first-buffername nil t)
+ '(ess-style (quote RStudio))
+ '(ess-use-ido nil t (ido))
+ '(fci-rule-color "#3E4451")
  '(go-eldoc-gocode "gocode")
+ '(helm-follow-mode-persistent t)
  '(hl-sexp-background-color "#efebe9")
+ '(inferior-R-font-lock-keywords
+   (quote
+    ((ess-S-fl-keyword:prompt . t)
+     (ess-R-fl-keyword:messages . t)
+     (ess-R-fl-keyword:modifiers . t)
+     (ess-R-fl-keyword:fun-defs . t)
+     (ess-R-fl-keyword:keywords . t)
+     (ess-R-fl-keyword:assign-ops . t)
+     (ess-R-fl-keyword:constants . t)
+     (ess-fl-keyword:matrix-labels . t)
+     (ess-fl-keyword:fun-calls)
+     (ess-fl-keyword:numbers)
+     (ess-fl-keyword:operators . t)
+     (ess-fl-keyword:delimiters)
+     (ess-fl-keyword:= . t)
+     (ess-R-fl-keyword:F&T . t))) t)
  '(ledger-reports
    (quote
     (("" "")
@@ -44,7 +88,7 @@
  '(org-agenda-files (quote ("~/Dropbox/orgFiles/Diary/organize.org")))
  '(org-agenda-span (quote fortnight))
  '(org-hide-leading-stars t)
- '(org-plantuml-jar-path "/usr/share/plantuml/plantuml.jar")
+ '(org-plantuml-jar-path "/usr/share/java/plantuml/plantuml.jar")
  '(org-src-lang-modes
    (quote
     (("ocaml" . tuareg)
@@ -67,7 +111,8 @@
  '(org-use-sub-superscripts (quote {}))
  '(package-selected-packages
    (quote
-    (lua-mode clean-aindent-mode dtrt-indent ws-butler company-c-headers helm-gtags ggtags anzu counsel-projectile flycheck-rtags company-rtags helm-rtags irony-eldoc flycheck-irony company-irony cmake-mode clang-format counsel-etags loccur ox-reveal flycheck yasnippet go-complete gotest ess-R-data-view ess-smart-underscore ledger-mode all-the-icons org-bullets projectile company-go go-mode elfeed ess hydra powerline yasnippet-snippets ox-hugo company-jedi company-web region-bindings-mode go-guru org-ref-url-utils org-ref-pdf org-ref elfeed-goodies elfeed-org expand-region mark-multiple multiple-cursors conda paganini-theme paganini company-inf-python company-anaconda go-eldoc cython-mode plantuml-mode company-quickhelp which-key web-mode virtualenvwrapper validate use-package twittering-mode try theme-changer r-autoyas powerline-evil neotree material-theme magit help-fns+ helm-projectile evil-surround evil-leader evil-indent-textobject ess-view elpy cyberpunk-theme counsel ace-window)))
+    (jedi yasnippet emojify pyenv-mode helm-ag company-tern emmet-mode clean-aindent-mode ws-butler helm-gtags ggtags anzu irony-eldoc flycheck-irony company-irony ox-reveal go-complete ess-R-data-view ess-smart-underscore company-jedi company-web region-bindings-mode go-guru org-ref-url-utils org-ref-pdf elfeed-goodies elfeed-org mark-multiple paganini-theme paganini company-inf-python company-anaconda go-eldoc cython-mode company-quickhelp virtualenvwrapper validate twittering-mode try theme-changer r-autoyas neotree material-theme help-fns+ evil-leader evil-indent-textobject ess-view cyberpunk-theme)))
+ '(python-check-command "\"pylint\"")
  '(scroll-bar-mode nil)
  '(show-paren-mode t)
  '(tool-bar-mode nil)
@@ -109,11 +154,13 @@
 ;;  '(font-lock-regexp-grouping-construct ((t (:foreground "green yellow"))))
 ;;  '(font-lock-type-face ((t (:foreground "yellow"))))
 ;;  '(font-lock-variable-name-face ((t (:foreground "dark orange")))))
-;;==================================================================== 
+;;====================================================================
 (custom-set-faces
  ;; custom-set-faces was added by Custom.
  ;; If you edit it by hand, you could mess it up, so be careful.
  ;; Your init file should contain only one such instance.
  ;; If there is more than one, they won't work right.
  '(default ((t (:family "DejaVu Sans Mono for Powerline" :foundry "PfEd" :slant normal :weight normal :height 98 :width normal))))
- '(aw-leading-char-face ((t (:inherit ace-jump-face-foreground :height 3.0)))))
+ '(aw-leading-char-face ((t (:inherit ace-jump-face-foreground :height 3.0))))
+ '(lsp-ui-doc-background ((t (:background nil))))
+ '(lsp-ui-doc-header ((t (:inherit (font-lock-string-face italic))))))

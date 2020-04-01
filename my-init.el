@@ -1,3 +1,42 @@
+(setq inhibit-startup-message t)
+(tool-bar-mode -1)
+(fset 'yes-or-no-p 'y-or-n-p)
+(add-to-list 'default-frame-alist '(height . 35))
+(add-to-list 'default-frame-alist '(width . 110))
+(global-set-key (kbd "RET") 'newline-and-indent) ; automatically indent when press RET
+;; use space to indent by default
+(setq-default indent-tabs-mode nil)
+
+;; set appearance of a tab that is represented by 4 spaces
+(setq-default tab-width 4)
+
+;; linum-mode in all programming modes
+(add-hook 'prog-mode-hook 'linum-mode)
+
+(setq calendar-latitude 28.6)
+(setq calendar-longitude 77.2)
+(setq calendar-location-name "New Delhi, India")
+;; Time-Zone for New Delhi
+(setq calendar-time-zone +530)
+(setq calendar-standard-time-zone-name "IST")
+
+(setq holiday-other-holidays
+      '((holiday-fixed 9 2 "Krishna Janmashtami")
+        (holiday-fixed 9 13 "Ganesh Chaturthi")
+        (holiday-fixed 9 17 "Vishwakarma Puja")
+        (holiday-fixed 10 10 "Navratri begins")
+        (holiday-fixed 10 17 "Navratri ends/Maha Navami")
+        (holiday-fixed 10 19 "Dusshera")
+        (holiday-fixed 10 27 "Karwa Chauth")
+        (holiday-fixed 11 5 "Dhan Teras")
+        (holiday-fixed 11 7 "Diwali")
+        (holiday-fixed 11 9 "Bhai Dooj")
+        (holiday-fixed 11 13 "Chhath Puja")))
+
+(set-language-environment "UTF-8")
+(when (display-graphic-p)
+  (setq x-select-request-type '(UTF8_STRING COMPOUND_TEXT TEXT STRING)))
+
 (use-package anzu
   :init
   (global-anzu-mode)
@@ -29,11 +68,11 @@
   :ensure t
   :config (which-key-mode))
 
-(setq ido-enable-flex-matching t)
-(setq ido-everywhere t)
-(ido-mode 1)
-;; (setq ido-max-directory-size 100000)
-(ido-mode (quote both))
+;; (setq ido-enable-flex-matching t)
+;; (setq ido-everywhere t)
+;; (ido-mode 1)
+;; ;; (setq ido-max-directory-size 100000)
+;; (ido-mode (quote both))
 
 (defalias 'list-buffers 'ibuffer)
 
@@ -46,7 +85,7 @@
   (global-set-key [remap other-window] 'ace-window)
   (custom-set-faces
    '(aw-leading-char-face
-     ((t (:inherit ace-jump-face-foreground :height 3.0))))) 
+     ((t (:inherit ace-jump-face-foreground :height 3.0)))))
   ))
 
 (defface my-pl-segment1-active
@@ -121,7 +160,7 @@
                      (concat (powerline-render lhs)
                              (powerline-fill seg3 (powerline-width rhs))
                              (powerline-render rhs)))))))
-  
+
 (use-package powerline
   :ensure t
   :config
@@ -208,7 +247,7 @@
   :config
   (global-set-key (kbd "C-x g") 'magit-status)
   (setenv "GIT_ASKPASS" "git-gui--askpass")
-  
+
   (defun magit-insert-remote-header ()
     "Insert a header line about the remote of the current branch."
     (-when-let (remote (or (magit-get-remote)
@@ -257,6 +296,10 @@
   (interactive)
   (bookmark-maybe-load-default-file)
   (bookmark-jump "elfeed-golang"))
+(defun akk/elfeed-show-dataAnalysis ()
+  (interactive)
+  (bookmark-maybe-load-default-file)
+  (bookmark-jump "elfeed-dataAnalysis"))
 (defun elfeed-mark-all-as-read ()
   (interactive)
   (mark-whole-buffer)
@@ -288,11 +331,12 @@
 
 (defhydra akk/hydra-elfeed ()
   "filter"
-  ("e" (elfeed-search-set-filter "@6-months-ago +emacs") "emacs")
-  ("p" (elfeed-search-set-filter "@6-months-ago +python") "python")
-  ("g" (elfeed-search-set-filter "@6-months-ago +golang") "golang")
-  ("n" (elfeed-search-set-filter "@6-months-ago +news") "news")
-  ("A" (elfeed-search-set-filter "@6-months-ago") "All")
+  ("E" (elfeed-search-set-filter "@6-months-ago +emacs") "elfeed-emacs")
+  ("P" (elfeed-search-set-filter "@6-months-ago +python") "elfeed-python")
+  ("g" (elfeed-search-set-filter "@6-months-ago +golang") "elfeed-golang")
+  ("N" (elfeed-search-set-filter "@6-months-ago +news") "elfeed-news")
+  ("D" (elfeed-search-set-filter "@6-months-ago") "elfeed-dataAnalysis")
+  ("A" (elfeed-search-set-filter "@6-months-ago") "elfeed-all")
   ("T" (elfeed-search-set-filter "@1-day-ago") "Today")
   ("Q" akk/elfeed-save-db-and-bury "Quit Elfeed" :color blue)
   ("q" nil "quit" :color blue)
@@ -334,7 +378,7 @@
 ;;   :bind (("C-n" . ac-next)
 ;;          ("C-p" . ac-previous))
 ;;   :config
-;;   (progn 
+;;   (progn
 ;;     (use-package auto-complete-config)
 
 ;;     (ac-set-trigger-key "TAB")
@@ -343,7 +387,7 @@
 ;;     (setq ac-delay 0.02)
 ;;     (setq ac-use-menu-map t)
 ;;     (setq ac-menu-height 50)
-;;     (setq ac-use-quick-help nil) 
+;;     (setq ac-use-quick-help nil)
 ;;     (setq ac-comphist-file  "~/.emacs.d/ac-comphist.dat")
 ;;     (setq ac-ignore-case nil)
 ;;     (setq ac-dwim  t)
@@ -399,14 +443,14 @@
     :config
     (add-to-list 'company-backends 'company-web-html))
   ;; Company settings.
-  (setq company-tooltip-limit 10)
-  (setq company-idle-delay 0.2)
-  (setq company-echo-delay 0)
-  (setq company-minimum-prefix-length 2)
-  (setq company-require-match nil)
-  (setq company-selection-wrap-around t)
-  (setq company-tooltip-align-annotations t)
-  (setq company-tooltip-flip-when-above t)
+  (setq company-tooltip-limit 10
+        company-idle-delay 0.2
+        company-echo-delay 0
+        company-minimum-prefix-length 2
+        company-require-match nil
+        company-selection-wrap-around t
+        company-tooltip-align-annotations t
+        company-tooltip-flip-when-above t)
   ;; weight by frequency
   (setq company-transformers '(company-sort-by-occurrence))
   (define-key company-active-map (kbd "M-n") nil)
@@ -420,61 +464,118 @@
   ;; prevent company from completing on its own when we type regular characters
   ;; (define-key company-active-map (kbd "SPC") nil)
 
+(use-package company-lsp
+  :ensure t
+  :config
+  (setq company-lsp-enable-snippet t
+        company-lsp-async t
+        company-transformers nil
+        company-lsp-cache-candidates nil)
+  (push 'company-lsp company-backends))
+
 (defun sh ()
   (interactive)
   (ansi-term "/bin/zsh"))
 
-(use-package python
+;; (use-package python
+;;   :ensure t
+;;   :config
+;;   (add-hook 'python-mode-hook 'electric-pair-mode))
+
+
+;;   (use-package elpy
+;;   :ensure t
+;;   :config
+;;   (elpy-enable)
+;;   ;; Enable elpy in a Python mode and jedi for auto-completion in elpy
+;;   (add-hook 'python-mode-hook 'elpy-mode)
+;;   (setq elpy-rpc-backend "jedi")
+;;   (add-to-list 'exec-path "~/.pyenv/shims")
+;;   (setenv "WORKON_HOME" "~/.pyenv/versions/")
+;;   (pyvenv-mode 1)
+;;   (setq-default indent-tabs-mode nil)
+;;   (global-set-key (kbd "<f7>") (kbd "C-u C-c C-c"))
+;;   (setq gud-pdb-command-name "python -m pdb ")
+;;   ;; (setq elpy-shell-echo-input nil)
+;;   )
+
+;;   ;; Python auto completion
+;;   (use-package company-jedi
+;;     :init
+;;     (setq company-jedi-python-bin "python")
+;;     :config
+;;     (add-to-list 'company-backends 'company-jedi))
+
+(use-package lsp-mode
+  :ensure t
+  :commands (lsp lsp-deferred)
+  :custom
+  (lsp-auto-guess-root nil)
+  (lsp-prefer-flymake nil) ; Use flycheck instead of flymake
+  ;; (setq lsp-prefer-capf t)
+  :bind (:map lsp-mode-map ("C-c C-f" . lsp-format-buffer))
+  :hook ((python-mode) . lsp))
+
+
+(use-package lsp-ui
+  :after lsp-mode
+  :diminish
+  :commands lsp-ui-mode
+  :custom-face
+  (lsp-ui-doc-background ((t (:background nil))))
+  (lsp-ui-doc-header ((t (:inherit (font-lock-string-face italic)))))
+  :bind (:map lsp-ui-mode-map
+              ([remap xref-find-definitions] . lsp-ui-peek-find-definitions)
+              ([remap xref-find-references] . lsp-ui-peek-find-references)
+              ("C-c u" . lsp-ui-imenu))
+  :custom
+  (lsp-ui-doc-enable t)
+  (lsp-ui-doc-header t)
+  (lsp-ui-doc-include-signature t)
+  (lsp-ui-doc-position 'top)
+  (lsp-ui-doc-border (face-foreground 'default))
+  (lsp-ui-sideline-enable nil)
+  (lsp-ui-sideline-ignore-duplicate t)
+  (lsp-ui-sideline-show-code-actions nil)
+  :config
+  ;; Use lsp-ui-doc-webkit only in GUI
+  (setq lsp-ui-doc-use-webkit t)
+  ;; WORKAROUND Hide mode-line of the lsp-ui-imenu buffer
+  ;; https://github.com/emacs-lsp/lsp-ui/issues/243
+  (defadvice lsp-ui-imenu (after hide-lsp-ui-imenu-mode-line activate)
+    (setq mode-line-format nil)))
+
+(use-package pyenv-mode
   :ensure t
   :config
-  ;; (setq python-shell-interpreter-args "--simple-prompt -i")
-  (add-hook 'python-mode-hook 'electric-pair-mode))
+    (defun projectile-pyenv-mode-set ()
+      "Set pyenv version matching project name."
+      (let ((project (projectile-project-name)))
+        (if (member project (pyenv-mode-versions))
+            (pyenv-mode-set project)
+          (pyenv-mode-unset))))
+    (add-hook 'projectile-switch-project-hook 'projectile-pyenv-mode-set)
+    (add-hook 'python-mode-hook 'pyenv-mode))
+;; (use-package virtualenvwrapper
+;;   :ensure t
+;;   :config
+;;   (add-to-list 'exec-path "~/.pyenv/shims")
+;;   (setenv "WORKON_HOME" "~/.pyenv/versions/")
+  ;; (venv-initialize-interactive-shells)
+  ;; (venv-initialize-eshell))
 
-  (use-package conda
+;; (setq lsp-python-executable-cmd "python3")
+
+(use-package jedi
   :ensure t
+  :init
+  (add-hook 'python-mode-hook 'jedi:setup)
+  (add-hook 'python-mode-hook 'jedi:ac-setup)
   :config
-  (custom-set-variables
-    '(conda-anaconda-home "/home/arunkhattri/anaconda3"))
-  ;; if you want interactive shell support, include:
-  (conda-env-initialize-interactive-shells)
-  ;; if you want auto-activation (see below for details), include:
-  (conda-env-autoactivate-mode t))
+  (setq jedi:complete-on-dot t))
 
-  (use-package elpy
-  :ensure t
-  :config
-  (elpy-enable)
-  ;; Enable elpy in a Python mode and jedi for auto-completion in elpy
-  (add-hook 'python-mode-hook 'elpy-mode)
-  (setq elpy-rpc-backend "jedi")
-  ;; (when (executable-find "ipython")
-  ;; (elpy-use-ipython))
-  (setenv "WORKON_HOME" "/home/arunkhattri/anaconda3/envs")
-  (pyvenv-mode 1)
-  (setq-default indent-tabs-mode nil)
-  (global-set-key (kbd "<f7>") (kbd "C-u C-c C-c"))
-  ;; Tell Python debugger (pdb) to use the current virtual environment
-  ;; https://emacs.stackexchange.com/questions/17808/enable-python-pdb-on-emacs-with-virtualenv
-  (setq python-shell-interpreter "ipython"
-        python-shell-interpreter-args "--colors NoColor --simple-prompt"
-        python-shell-prompt-regexp "In \\[[0-9]+\\]: "
-        python-shell-prompt-output-regexp "Out\\[[0-9]+\\]: "
-        python-shell-completion-setup-code "from IPython.core.completerlib import module_completion"
-        python-shell-completion-module-string-code "';'.join(module_completion('''%s'''))\n"
-        python-shell-completion-string-code "';'.join(get_ipython().Completer.all_completions('''%s'''))\n")
-
-  (add-to-list 'python-shell-completion-native-disabled-interpreters
-               "ipython")
-  (setq gud-pdb-command-name "python -m pdb ")
-  ;; (setq elpy-shell-echo-input nil)
-  )
-
-  ;; Python auto completion
-  (use-package company-jedi
-    :init
-    (setq company-jedi-python-bin "python")
-    :config
-    (add-to-list 'company-backends 'company-jedi))
+(setq python-shell-interpreter "jupyter-console"
+      python-shell-interpreter-args "--simple-prompt -i")
 
 ;; (defun akk/go-run()
 ;;   (interactive)
@@ -492,9 +593,9 @@
           ^Command^     ^Imports^     ^Doc^               ^Format^
           ^-------^     ^-------^     ^---^               ^------^
        _r_: run        _ig_: goto     _d_: doc at point   _f_: format
-       _b_: build      _ia_: add  
+       _b_: build      _ia_: add
      [_g_]: guru       _ir_: remove
-     ^  ^           
+     ^  ^
     "
     ("g" akk/hydra-go-guru/body :color blue)
     ("r" go-run)
@@ -518,7 +619,6 @@
   ;;        ("C-c C-c" . compile))
 (use-package company-go
   :ensure t
-  ;; :defer t
   :init
   (with-eval-after-load 'company
     (add-to-list 'company-backends 'company-go))
@@ -571,16 +671,112 @@
   :config
   (setq yas-snippet-dirs
         '("~/.emacs.d/snippets"                            ;; personal snippets
-          "~/.emacs.d/elpa/yasnippet-snippets-20190202.2145/snippets"        ;; the yasnippets
           "~/go_projects/src/github.com/yasnippet-go"               ;; go snippets
+          ;; "~/.emacs.d/elpa/yasnippet-snippets-[:digit:]+.[:digit:]+/snippets"
+          "~/.emacs.d/elpa/yasnippet-snippets-20200122.1140./snippets"
           ))
   (yas-global-mode 1))
 
 (use-package yasnippet-snippets
   :ensure t)
 
+(use-package ess-r-mode
+  ;; ESS (Emacs Speaks Statistics) is a great project that makes Emacs
+  ;; speak with R and other statistical languages
+  :bind
+  (:map ess-mode-map
+        ("M-=" . ess-insert-S-assign)
+        ("M-p" . my/add-pipe)
+        ("C-|" . my/ess-eval-pipe-through-line)
+        :map inferior-ess-mode-map
+        ("M-=" . ess-insert-S-assign))
+  :custom
+  (ess-ask-for-ess-directory nil "Don't ask for dir when starting a process")
+  (ess-default-style 'RStudio)
+  (ess-eldoc-show-on-symbol t "Show eldoc on symbol instead of only inside of parens")
+  (ess-eval-visibly 'nowait "Don't hog Emacs")
+  (ess-history-directory (concat user-emacs-directory "var/Rhist/") "Save R history in one place rather than making .Rhistory files everywhere.")
+  (ess-pdf-viewer-pref "emacsclient")
+  (ess-use-ido nil "I prefer helm.")
+  (ess-plain-first-buffername nil "Name first R process R:1")
+  (ess-nuke-trailing-whitespace-p t)
+  (ess-R-font-lock-keywords
+   '((ess-R-fl-keyword:modifiers . t)
+     (ess-R-fl-keyword:fun-defs . t)
+     (ess-R-fl-keyword:keywords . t)
+     (ess-R-fl-keyword:assign-ops . t)
+     (ess-R-fl-keyword:constants . t)
+     (ess-fl-keyword:fun-calls . nil)
+     (ess-fl-keyword:numbers . t)
+     (ess-fl-keyword:operators . t)
+     (ess-fl-keyword:delimiters . nil)
+     (ess-fl-keyword:= . t)
+     (ess-R-fl-keyword:F&T . t)))
+  (inferior-R-font-lock-keywords
+   '((ess-S-fl-keyword:prompt . t)
+     (ess-R-fl-keyword:messages . t)
+     (ess-R-fl-keyword:modifiers . t)
+     (ess-R-fl-keyword:fun-defs . t)
+     (ess-R-fl-keyword:keywords . t)
+     (ess-R-fl-keyword:assign-ops . t)
+     (ess-R-fl-keyword:constants . t)
+     (ess-fl-keyword:matrix-labels . t)
+     (ess-fl-keyword:fun-calls . nil)
+     (ess-fl-keyword:numbers . nil)
+     (ess-fl-keyword:operators . t)
+     (ess-fl-keyword:delimiters . nil)
+     (ess-fl-keyword:= . t)
+     (ess-R-fl-keyword:F&T . t)))
+  :hook
+  (ess-r-post-run . my/ess-execute-screen-options)
+  :config
+  (setq ess-write-to-dribble nil)
+  ;; Make that folder if needed.
+  (mkdir ess-history-directory t)
+  (defalias 'ess-smart-S-assign #'self-insert-command)
+  (defun my/add-pipe ()
+    "Add a pipe operator %>% at the end of the current line.
+Don't add one if the end of line already has one.  Ensure one
+space to the left and start a newline with indentation."
+    (interactive)
+    (end-of-line)
+    (unless (looking-back "%>%" nil)
+      (just-one-space 1)
+      (insert "%>%"))
+    (newline-and-indent))
+  (defun my/ess-execute-screen-options ()
+    "Call `ess-execute-screen-options' invisibly."
+    (ess-execute-screen-options t))
+  ;; I sometimes want to evaluate just part of a piped sequence. The
+  ;; following lets me do so without needing to insert blank lines or
+  ;; something:
+  (defun my/ess-beginning-of-pipe-or-end-of-line ()
+    "Find point position of end of line or beginning of pipe %>%."
+    (if (search-forward "%>%" (line-end-position) t)
+        (let ((pos (progn
+                     (beginning-of-line)
+                     (search-forward "%>%" (line-end-position))
+                     (backward-char 3)
+                     (point))))
+          (goto-char pos))
+      (end-of-line)))
+
+  (defun my/ess-eval-pipe-through-line (vis)
+    "Like `ess-eval-paragraph' but only evaluates up to the pipe on this line.
+If no pipe, evaluate paragraph through the end of current line.
+Prefix arg VIS toggles visibility of ess-code as for `ess-eval-region'."
+    (interactive "P")
+    (save-excursion
+      (let ((end (progn
+                   (my/ess-beginning-of-pipe-or-end-of-line)
+                   (point)))
+            (beg (progn (backward-paragraph)
+                        (ess-skip-blanks-forward 'multiline)
+                        (point))))
+        (ess-eval-region beg end vis)))))
+
 ;; (use-package ess-site
-;;   :load-path "~/.emacs.d/elpa/ess-20190122.2108/lisp/"
+;;   ;; :load-path "~/.emacs.d/elpa/ess-20190122.2108/lisp/"
 ;;   :mode ("\\.R\\'" . R-mode)
 ;;   :config
 ;;   (validate-setq
@@ -593,26 +789,21 @@
 ;;    comint-scroll-to-bottom-on-output t
 ;;    comint-move-point-for-output t
 ;;    ess-default-style 'RStudio)         ; rstudio indentation style
-
-;;   ;; set assignment operator
-;;   ;; original
-;;   ;; (setq ess-S-assign-key (kbd "C--"))
-;;   ;; (ess-toggle-S-assign-key t)
-;;   ;; changing to
-
-;;   ;; disable '_' shortcut
-;;   (ess-toggle-underscore nil)
-;;   ;; display quick help
+;;   :bind
+;;   (:map ess-mode-map
+;;         (";" . ess-insert-assign))
+;;   (:map inferior-ess-mode-map
+;;         (";" . ess-insert-assign))
 ;;   (define-key company-active-map (kbd "M-h") 'company-show-doc-buffer)
 
-;;   ;; bind ac-complete to tab:
-;;   (define-key company-active-map [return] nil)
-;;   (define-key company-active-map [tab] 'company-complete-common)
-;;   (define-key company-active-map (kbd "TAB") 'company-complete-common)
-;;   (define-key company-active-map (kbd "M-TAB") 'company-complete-selection)
+;; ;;   ;; bind ac-complete to tab:
+;; ;;   (define-key company-active-map [return] nil)
+;; ;;   (define-key company-active-map [tab] 'company-complete-common)
+;; ;;   (define-key company-active-map (kbd "TAB") 'company-complete-common)
+;; ;;   (define-key company-active-map (kbd "M-TAB") 'company-complete-selection)
 
-;;   ;; automatically complete parentheses etc
-;;   ;; (add-hook 'ess-mode-hook #'electric-pair-mode)
+;; ;;   ;; automatically complete parentheses etc
+;; ;;   ;; (add-hook 'ess-mode-hook #'electric-pair-mode)
 
 ;;   ;; set piping operator key binding
 ;;   ;; http://emacs.stackexchange.com/questions/8041/how-to-implement-the-piping-operator-in-ess-mode
@@ -675,8 +866,7 @@
 ;;   :after ess)
 
 ;; (use-package ess-view
-;;   :ensure t
-;;   :after ess)
+;;   :ensure t)
 
 ;; (use-package r-autoyas
 ;;   :ensure t
@@ -684,9 +874,9 @@
 ;;   (progn (add-hook 'ess-mode-hook 'r-autoyas-ess-activate)))
 
 (add-hook 'prog-mode-hook
-	  (lambda ()
-	    (font-lock-add-keywords nil '(("\\<\\(AKK\\|FIXME\\|TODO\\|BUG\\):" 1
-					   font-lock-warning-face t)))))
+      (lambda ()
+        (font-lock-add-keywords nil '(("\\<\\(AKK\\|FIXME\\|TODO\\|BUG\\):" 1
+                       font-lock-warning-face t)))))
 
 (require 'epa)
 (epa-file-enable)
@@ -694,12 +884,14 @@
 (defvar mode-line-cleaner-alist
   `((company-mode . " α")
     (elpy-mode . " Elp")
-    (ivy-mode . " I")
-    (undo-tree-mode . " UT")
+    (ivy-mode . "")
+    (undo-tree-mode . "")
     (yas/minor-mode . " υ")
     (paredit-mode . " π")
     (eldoc-mode . "")
     (abbrev-mode . "")
+    (flycheck-mode . " FC")
+    (projectile-mode . " PJT")
     ;; Major modes
     (lisp-interaction-mode . "λ")
     (hi-lock-mode . "")
@@ -780,18 +972,80 @@ want to use in the modeline *in lieu of* the original.")
 ;;     )
 
 ;;; Configuration for editing html, js and css
+(use-package company-tern
+  :ensure t)
+
+(use-package js2-refactor
+  :ensure t
+  :config
+  (add-hook 'js2-mode-hook #'js2-refactor-mode)
+  (js2r-add-keybindings-with-prefix "C-c C-r")
+  (define-key js2-mode-map (kbd "C-k") #'js2r-kill)
+  ;; js-mode (which js2 is based on) binds "M-." which conflicts with xref, so
+  ;; unbind it.
+  (define-key js-mode-map (kbd "M-.") nil)
+  (add-hook 'js2-mode-hook (lambda ()
+    (add-hook 'xref-backend-functions #'xref-js2-xref-backend nil t)))
+  )
+
+(use-package xref-js2
+  :ensure t)
+
+(use-package js2-mode
+  :ensure t
+  :config
+  (add-to-list 'auto-mode-alist '("\\.js\\'". js2-mode))
+  (add-to-list 'company-backends 'company-tern)
+  (add-hook 'js2-mode-hook (lambda ()
+                             (tern-mode)
+                             (company-mode)))
+  ;; disable completion keybindings, as we use xref-js2 instead
+  (define-key tern-mode-keymap (kbd "M-.") nil)
+  (define-key tern-mode-keymap (kbd "M-,") nil)
+  )
 
 (use-package web-mode
   :mode ("\\.html$" . web-mode)
   :init
+  (add-to-list 'auto-mode-alist '("\\.html?\\'" . web-mode))
+  (add-to-list 'auto-mode-alist '("\\.vue?\\'" . web-mode))
+  (setq web-mode-engines-alist
+  '(("django"    . "\\.html\\'")))
+  (setq web-mode-ac-sources-alist
+  '(("css" . (ac-source-css-property))
+  ("vue" . (ac-source-words-in-buffer ac-source-abbrev))
+  ("html" . (ac-source-words-in-buffer ac-source-abbrev))))
   (setq web-mode-markup-indent-offset 2)
   (setq web-mode-code-indent-offset 2)
   (setq web-mode-css-indent-offset 2)
   (setq js-indent-level 2)
+  (setq web-mode-attr-indent-offset 2)
   (setq web-mode-enable-auto-pairing t)
   (setq web-mode-enable-auto-expanding t)
   (setq web-mode-enable-css-colorization t)
-  (add-hook 'web-mode-hook 'electric-pair-mode))
+  (setq web-mode-enable-auto-closing t)
+  ;; (add-hook 'web-mode-hook 'electric-pair-mode)
+  (setq web-mode-enable-auto-quoting t) ; this fixes the quote problem I mentioned
+  :config
+    (defun my-web-mode-hook ()
+      "Hooks for Web mode."
+      (setq web-mode-markup-indent-offset 2))
+      (add-hook 'web-mode-hook  'my-web-mode-hook)
+      (add-hook 'web-mode-before-auto-complete-hooks
+          '(lambda ()
+          (let ((web-mode-cur-language
+                  (web-mode-language-at-pos)))
+                  (if (string= web-mode-cur-language "php")
+              (yas-activate-extra-mode 'php-mode)
+              (yas-deactivate-extra-mode 'php-mode))
+                  (if (string= web-mode-cur-language "css")
+              (setq emmet-use-css-transform t)
+              (setq emmet-use-css-transform nil)))))
+      (defun my-web-mode-hook ()
+      (set (make-local-variable 'company-backends) '(company-css company-web-html company-yasnippet company-files))
+      ))
+
+
 
 (use-package web-beautify
   :commands (web-beautify-css
@@ -819,10 +1073,12 @@ want to use in the modeline *in lieu of* the original.")
 (use-package emmet-mode
   :diminish (emmet-mode . "ε")
   :bind* (("C-)" . emmet-next-edit-point)
-          ("C-(" . emmet-prev-edit-point))
+          ("C-(" . emmet-prev-edit-point)
+          ("C-j" . emmet-expand-line))
   :commands (emmet-mode
              emmet-next-edit-point
-             emmet-prev-edit-point)
+             emmet-prev-edit-point
+             emmet-expand-line)
   :init
   (setq emmet-indentation 2)
   (setq emmet-move-cursor-between-quotes t)
@@ -843,139 +1099,144 @@ want to use in the modeline *in lieu of* the original.")
   (bind-key "}" #'paredit-close-curly json-mode-map))
 
 ;; ref: https://github.com/tuhdo/emacs-c-ide-demo/blob/master/custom/setup-helm.el
-  ;; (use-package helm
-  ;;   :ensure t
-  ;;   :init
-  ;;   (progn
-  ;;     (require 'helm-config)
-  ;;     (require 'helm-grep)
-  ;;     ;; To fix error at compile:
-  ;;     ;; Error (bytecomp): Forgot to expand macro with-helm-buffer in
-  ;;     ;; (with-helm-buffer helm-echo-input-in-header-line)
-  ;;     (if (version< "26.0.50" emacs-version)
-  ;;         (eval-when-compile (require 'helm-lib)))
+  (use-package helm
+    :ensure t
+    :init
+    (progn
+      (require 'helm-config)
+      (require 'helm-grep)
+      ;; To fix error at compile:
+      ;; Error (bytecomp): Forgot to expand macro with-helm-buffer in
+      ;; (with-helm-buffer helm-echo-input-in-header-line)
+      (if (version< "26.0.50" emacs-version)
+          (eval-when-compile (require 'helm-lib)))
 
-  ;;     (defun helm-hide-minibuffer-maybe ()
-  ;;       (when (with-helm-buffer helm-echo-input-in-header-line)
-  ;;         (let ((ov (make-overlay (point-min) (point-max) nil nil t)))
-  ;;           (overlay-put ov 'window (selected-window))
-  ;;           (overlay-put ov 'face (let ((bg-color (face-background 'default nil)))
-  ;;                                   `(:background ,bg-color :foreground ,bg-color)))
-  ;;           (setq-local cursor-type nil))))
+      (defun helm-hide-minibuffer-maybe ()
+        (when (with-helm-buffer helm-echo-input-in-header-line)
+          (let ((ov (make-overlay (point-min) (point-max) nil nil t)))
+            (overlay-put ov 'window (selected-window))
+            (overlay-put ov 'face (let ((bg-color (face-background 'default nil)))
+                                    `(:background ,bg-color :foreground ,bg-color)))
+            (setq-local cursor-type nil))))
 
-  ;;     (add-hook 'helm-minibuffer-set-up-hook 'helm-hide-minibuffer-maybe)
-  ;;     ;; The default "C-x c" is quite close to "C-x C-c", which quits Emacs.
-  ;;     ;; Changed to "C-c h". Note: We must set "C-c h" globally, because we
-  ;;     ;; cannot change `helm-command-prefix-key' once `helm-config' is loaded.
-  ;;     (global-set-key (kbd "C-c h") 'helm-command-prefix)
-  ;;     (global-unset-key (kbd "C-x c"))
+      (add-hook 'helm-minibuffer-set-up-hook 'helm-hide-minibuffer-maybe)
+      ;; The default "C-x c" is quite close to "C-x C-c", which quits Emacs.
+      ;; Changed to "C-c h". Note: We must set "C-c h" globally, because we
+      ;; cannot change `helm-command-prefix-key' once `helm-config' is loaded.
+      (global-set-key (kbd "C-c h") 'helm-command-prefix)
+      (global-unset-key (kbd "C-x c"))
 
-  ;;     (define-key helm-map (kbd "<tab>") 'helm-execute-persistent-action) ; rebihnd tab to do persistent action
-  ;;     (define-key helm-map (kbd "C-i") 'helm-execute-persistent-action) ; make TAB works in terminal
-  ;;     (define-key helm-map (kbd "C-z")  'helm-select-action) ; list actions using C-z
+      (define-key helm-map (kbd "<tab>") 'helm-execute-persistent-action) ; rebihnd tab to do persistent action
+      (define-key helm-map (kbd "C-i") 'helm-execute-persistent-action) ; make TAB works in terminal
+      (define-key helm-map (kbd "C-z")  'helm-select-action) ; list actions using C-z
 
-  ;;     (define-key helm-grep-mode-map (kbd "<return>")  'helm-grep-mode-jump-other-window)
-  ;;     (define-key helm-grep-mode-map (kbd "n")  'helm-grep-mode-jump-other-window-forward)
-  ;;     (define-key helm-grep-mode-map (kbd "p")  'helm-grep-mode-jump-other-window-backward)
+      (define-key helm-grep-mode-map (kbd "<return>")  'helm-grep-mode-jump-other-window)
+      (define-key helm-grep-mode-map (kbd "n")  'helm-grep-mode-jump-other-window-forward)
+      (define-key helm-grep-mode-map (kbd "p")  'helm-grep-mode-jump-other-window-backward)
 
-  ;;     (when (executable-find "curl")
-  ;;       (setq helm-google-suggest-use-curl-p t))
+      (when (executable-find "curl")
+        (setq helm-google-suggest-use-curl-p t))
 
-  ;;     (setq helm-google-suggest-use-curl-p t
-  ;;           helm-scroll-amount 4 ; scroll 4 lines other window using M-<next>/M-<prior>
-  ;;           ;; helm-quick-update t ; do not display invisible candidates
-  ;;           helm-ff-search-library-in-sexp t ; search for library in `require' and `declare-function' sexp.
+      (setq helm-google-suggest-use-curl-p t
+            helm-scroll-amount 4 ; scroll 4 lines other window using M-<next>/M-<prior>
+            ;; helm-quick-update t ; do not display invisible candidates
+            helm-ff-search-library-in-sexp t ; search for library in `require' and `declare-function' sexp.
 
-  ;;           ;; you can customize helm-do-grep to execute ack-grep
-  ;;           ;; helm-grep-default-command "ack-grep -Hn --smart-case --no-group --no-color %e %p %f"
-  ;;           ;; helm-grep-default-recurse-command "ack-grep -H --smart-case --no-group --no-color %e %p %f"
-  ;;           helm-split-window-in-side-p t ;; open helm buffer inside current window, not occupy whole other window
+            ;; you can customize helm-do-grep to execute ack-grep
+            ;; helm-grep-default-command "ack-grep -Hn --smart-case --no-group --no-color %e %p %f"
+            ;; helm-grep-default-recurse-command "ack-grep -H --smart-case --no-group --no-color %e %p %f"
+            helm-split-window-in-side-p t ;; open helm buffer inside current window, not occupy whole other window
 
-  ;;           helm-echo-input-in-header-line t
+            helm-echo-input-in-header-line t
 
-  ;;           ;; helm-candidate-number-limit 500 ; limit the number of displayed canidates
-  ;;           helm-ff-file-name-history-use-recentf t
-  ;;           helm-move-to-line-cycle-in-source t ; move to end or beginning of source when reaching top or bottom of source.
-  ;;           helm-buffer-skip-remote-checking t
+            ;; helm-candidate-number-limit 500 ; limit the number of displayed canidates
+            helm-ff-file-name-history-use-recentf t
+            helm-move-to-line-cycle-in-source t ; move to end or beginning of source when reaching top or bottom of source.
+            helm-buffer-skip-remote-checking t
 
-  ;;           helm-mode-fuzzy-match t
+            helm-mode-fuzzy-match t
 
-  ;;           helm-buffers-fuzzy-matching t ; fuzzy matching buffer names when non-nil
-  ;;                                         ; useful in helm-mini that lists buffers
-  ;;           helm-org-headings-fontify t
-  ;;           ;; helm-find-files-sort-directories t
-  ;;           ;; ido-use-virtual-buffers t
-  ;;           helm-semantic-fuzzy-match t
-  ;;           helm-M-x-fuzzy-match t
-  ;;           helm-imenu-fuzzy-match t
-  ;;           helm-lisp-fuzzy-completion t
-  ;;           ;; helm-apropos-fuzzy-match t
-  ;;           helm-buffer-skip-remote-checking t
-  ;;           helm-locate-fuzzy-match t
-  ;;           helm-display-header-line nil)
+            helm-buffers-fuzzy-matching t ; fuzzy matching buffer names when non-nil
+                                          ; useful in helm-mini that lists buffers
+            helm-org-headings-fontify t
+            ;; helm-find-files-sort-directories t
+            ;; ido-use-virtual-buffers t
+            helm-semantic-fuzzy-match t
+            helm-M-x-fuzzy-match t
+            helm-imenu-fuzzy-match t
+            helm-lisp-fuzzy-completion t
+            ;; helm-apropos-fuzzy-match t
+            helm-buffer-skip-remote-checking t
+            helm-locate-fuzzy-match t
+            helm-display-header-line nil)
 
-  ;;     (add-to-list 'helm-sources-using-default-as-input 'helm-source-man-pages)
+      (add-to-list 'helm-sources-using-default-as-input 'helm-source-man-pages)
 
-  ;;     (global-set-key (kbd "M-x") 'helm-M-x)
-  ;;     (global-set-key (kbd "M-y") 'helm-show-kill-ring)
-  ;;     (global-set-key (kbd "C-x b") 'helm-buffers-list)
-  ;;     (global-set-key (kbd "C-x C-f") 'helm-find-files)
-  ;;     (global-set-key (kbd "C-c r") 'helm-recentf)
-  ;;     (global-set-key (kbd "C-h SPC") 'helm-all-mark-rings)
-  ;;     (global-set-key (kbd "C-c h o") 'helm-occur)
-  ;;     (global-set-key (kbd "C-c h o") 'helm-occur)
+      (global-set-key (kbd "M-x") 'helm-M-x)
+      (global-set-key (kbd "M-y") 'helm-show-kill-ring)
+      (global-set-key (kbd "C-x b") 'helm-buffers-list)
+      (global-set-key (kbd "C-x C-f") 'helm-find-files)
+      (global-set-key (kbd "C-c r") 'helm-recentf)
+      (global-set-key (kbd "C-h SPC") 'helm-all-mark-rings)
+      (global-set-key (kbd "C-c h o") 'helm-occur)
 
-  ;;     (global-set-key (kbd "C-c h w") 'helm-wikipedia-suggest)
-  ;;     (global-set-key (kbd "C-c h g") 'helm-google-suggest)
+      (global-set-key (kbd "C-c h w") 'helm-wikipedia-suggest)
+      (global-set-key (kbd "C-c h g") 'helm-google-suggest)
 
-  ;;     (global-set-key (kbd "C-c h x") 'helm-register)
-  ;;     ;; (global-set-key (kbd "C-x r j") 'jump-to-register)
+      (global-set-key (kbd "C-c h x") 'helm-register)
+      ;; (global-set-key (kbd "C-x r j") 'jump-to-register)
 
-  ;;     (define-key 'help-command (kbd "C-f") 'helm-apropos)
-  ;;     (define-key 'help-command (kbd "r") 'helm-info-emacs)
-  ;;     (define-key 'help-command (kbd "C-l") 'helm-locate-library)
+      (define-key 'help-command (kbd "C-f") 'helm-apropos)
+      (define-key 'help-command (kbd "r") 'helm-info-emacs)
+      (define-key 'help-command (kbd "C-l") 'helm-locate-library)
 
-  ;;     ;; use helm to list eshell history
-  ;;     (add-hook 'eshell-mode-hook
-  ;;               #'(lambda ()
-  ;;                   (define-key eshell-mode-map (kbd "M-l")  'helm-eshell-history)))
+      ;; use helm to list eshell history
+      (add-hook 'eshell-mode-hook
+                #'(lambda ()
+                    (define-key eshell-mode-map (kbd "M-l")  'helm-eshell-history)))
 
-  ;; ;;; Save current position to mark ring
-  ;;     (add-hook 'helm-goto-line-before-hook 'helm-save-current-pos-to-mark-ring)
+  ;;; Save current position to mark ring
+      (add-hook 'helm-goto-line-before-hook 'helm-save-current-pos-to-mark-ring)
 
-  ;;     ;; show minibuffer history with Helm
-  ;;     (define-key minibuffer-local-map (kbd "M-p") 'helm-minibuffer-history)
-  ;;     (define-key minibuffer-local-map (kbd "M-n") 'helm-minibuffer-history)
+      ;; show minibuffer history with Helm
+      (define-key minibuffer-local-map (kbd "M-p") 'helm-minibuffer-history)
+      (define-key minibuffer-local-map (kbd "M-n") 'helm-minibuffer-history)
 
-  ;;     (define-key global-map [remap find-tag] 'helm-etags-select)
+      (define-key global-map [remap find-tag] 'helm-etags-select)
 
-  ;;     (define-key global-map [remap list-buffers] 'helm-buffers-list)))
+      (define-key global-map [remap list-buffers] 'helm-buffers-list)))
 
-  ;;     ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-  ;;     ;; PACKAGE: helm-swoop                ;;
-  ;;     ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-  ;;     ;; Locate the helm-swoop folder to your path
-  ;;     (use-package helm-swoop
-  ;;       :bind (("C-c h o" . helm-swoop)
-  ;;              ("C-c s" . helm-multi-swoop-all))
-  ;;       :config
-  ;;       ;; When doing isearch, hand the word over to helm-swoop
-  ;;       (define-key isearch-mode-map (kbd "M-i") 'helm-swoop-from-isearch)
+      ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+      ;; PACKAGE: helm-swoop                ;;
+      ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+      ;; Locate the helm-swoop folder to your path
+      (use-package helm-swoop
+        :bind (("C-c h o" . helm-swoop)
+               ("C-c s" . helm-multi-swoop-all))
+        :config
+        ;; When doing isearch, hand the word over to helm-swoop
+        (define-key isearch-mode-map (kbd "M-i") 'helm-swoop-from-isearch)
 
-  ;;       ;; From helm-swoop to helm-multi-swoop-all
-  ;;       (define-key helm-swoop-map (kbd "M-i") 'helm-multi-swoop-all-from-helm-swoop)
+        ;; From helm-swoop to helm-multi-swoop-all
+        (define-key helm-swoop-map (kbd "M-i") 'helm-multi-swoop-all-from-helm-swoop)
 
-  ;;       ;; Save buffer when helm-multi-swoop-edit complete
-  ;;       (setq helm-multi-swoop-edit-save t)
+        ;; Save buffer when helm-multi-swoop-edit complete
+        (setq helm-multi-swoop-edit-save t)
 
-  ;;       ;; If this value is t, split window inside the current window
-  ;;       (setq helm-swoop-split-with-multiple-windows t)
+        ;; If this value is t, split window inside the current window
+        (setq helm-swoop-split-with-multiple-windows t)
 
-  ;;       ;; Split direcion. 'split-window-vertically or 'split-window-horizontally
-  ;;       (setq helm-swoop-split-direction 'split-window-vertically)
+        ;; Split direcion. 'split-window-vertically or 'split-window-horizontally
+        (setq helm-swoop-split-direction 'split-window-vertically)
 
-  ;;       ;; If nil, you can slightly boost invoke speed in exchange for text color
-  ;;       (setq helm-swoop-speed-or-color t))
+        ;; If nil, you can slightly boost invoke speed in exchange for text color
+        (setq helm-swoop-speed-or-color t))
+        (use-package helm-ag
+        :ensure helm-ag
+        :bind ("M-p" . helm-projectile-ag)
+        :commands (helm-ag helm-projectile-ag)
+        :init (setq helm-ag-insert-at-point 'symbol
+                helm-ag-command-option "--path-to-ignore ~/.agignore"))
 
 ;; Ref: https://github.com/tuhdo/emacs-c-ide-demo/blob/master/custom/setup-helm-gtags.el
   ;; (setq helm-gtags-prefix-key "\C-cg")
@@ -1035,17 +1296,20 @@ want to use in the modeline *in lieu of* the original.")
 
 (use-package projectile
   :ensure t
+  :bind-keymap
+  ("C-c p" . projectile-command-map)
   :config
   (projectile-global-mode)
-  (setq projectile-enable-caching t))
+  (setq projectile-enable-caching t)
+  (setq projectile-completion-system 'ivy))
 
-;; (use-package helm-projectile
-;;   :init
-;;   (helm-projectile-on)
-;;   (setq projectile-completion-system 'helm)
-;;   (setq projectile-indexing-method 'alien)
-;;   :bind
-;;   ("M-t" . helm-projectile-find-file))
+(use-package helm-projectile
+  :init
+  (helm-projectile-on)
+  (setq projectile-completion-system 'helm)
+  (setq projectile-indexing-method 'alien)
+  :bind
+  ("M-t" . helm-projectile-find-file))
 
 (use-package cython-mode
   :ensure t
@@ -1059,7 +1323,7 @@ want to use in the modeline *in lieu of* the original.")
 (global-set-key (kbd "C-c I") 'irc)
 (setq rcirc-server-alist
       '(("irc.freenode.net" :port 6697 :encryption tls
-	 :channels ("#rcirc" "#emacs" "#emacswiki"))))
+     :channels ("#rcirc" "#emacs" "#emacswiki"))))
 
 ;; This code adds smileys such as :) and :( to rcirc.
 
@@ -1153,6 +1417,17 @@ regular expressions."
 
 ;; using dark-theme, change the luminosity
 (setq shr-color-visible-luminance-min 80)
+;; save message
+(defun djcb-mu4e-copy-message-at-point (&optional dir)
+  "Copy message at point to somewhere else as <date>_<subject>.eml."
+  (interactive)
+  (let* ((msg (mu4e-message-at-point))
+         (target (format "%s_%s.eml"
+                         (format-time-string "%F" (mu4e-message-field msg :date))
+                         (or (mu4e-message-field msg :subject) "No subject"))))
+    (copy-file
+     (mu4e-message-field msg :path)
+     (format "%s/%s" (or dir (read-directory-name "Copy message to: ")) target) 1)))
 
 ;;; Code:
 (use-package org
@@ -1160,12 +1435,28 @@ regular expressions."
 :defer t
 :commands (org-capture)
 :config
-(progn
-(global-set-key "\C-cl" 'org-store-link)
-(global-set-key "\C-ca" 'org-agenda)
-(global-set-key "\C-cc" 'org-capture)
-(global-set-key "\C-cw" 'org-refile)
-(global-set-key "\C-cb" 'org-iswitchb))
+(setq org-hide-emphasis-markers t)
+(setq org-emphasis-alist
+      '(("*" (bold :foreground "yellow"))
+        ("/" (italic :foreground "green"))
+        ("_" (underline :background "maroon" :foreground white))
+        ("=" org-verbatim verbatim)
+        ("~" (:foreground "#ff7f50"))
+        ("+" (:strike-through t))))
+      ;; (quote (("*" (:foreground "yellow" :bold t))
+      ;;         ;; ("/" italic)
+      ;;         ("/" (:foreground "green" :italic t))
+      ;;          ;; ("_" underline)
+      ;;         ("_" (:background "maroon" :foreground "white" :underline t))
+      ;;         ("=" org-verbatim verbatim)
+      ;;         ("~" org-code verbatim)
+      ;;         ("+" (:strike-through t)))))
+:bind (("\C-cl" . org-store-link)
+       ("\C-ca" . org-agenda)
+       ("\C-cc" . org-capture)
+       ("\C-cw" . org-refile)
+       ("\C-cb" . org-iswitchb)
+       ("\C-c!" . org-time-stamp-inactive)))
     ;;   (define-key viper-vi-global-user-map "C-c /" 'org-sparse-tree))
     ;; :bind (("C-c l" . 'org-store-link)
     ;;        ("C-c c" . 'org-capture)
@@ -1175,11 +1466,11 @@ regular expressions."
 (use-package org-bullets
   :ensure t
   :config
-  (add-hook 'org-mode-hook (lambda () (org-bullets-mode 1))))
+  (add-hook 'org-mode-hook (lambda () (org-bullets-mode 1)))
     (custom-set-variables
     ' (org-hide-leading-stars t)
     ' (org-startup-folded (quote overview))
-    ' (org-startup-indented t))
+    ' (org-startup-indented t)))
 (setq org-todo-keywords
         '((sequence "TODO(t)" "IN-PROCESS(p)" "ON-HOLD(h)" "|" "CANCELLED(c@)" "DONE(d@)" "PARTIALLY-DONE(p@)" "DELEGATED(g@)")))
 (setq org-agenda-include-diary t)
@@ -1274,9 +1565,6 @@ regular expressions."
                 (define-key org-agenda-mode-map "/"          'counsel-grep-or-swiper)
                 (define-key org-agenda-mode-map (kbd "RET")  'org-agenda-switch-to)))
 
-    )
-
-
   ;; Colour-coding categories in org-mode
 
   (add-hook 'org-finalize-agenda-hook
@@ -1307,7 +1595,17 @@ regular expressions."
     (setq org-latex-classes nil))
   (add-to-list 'org-latex-classes
                '("article"
-                 "\\documentclass{article}"
+                 "\\documentclass{article}
+\\usepackage[utf8]{inputenc}
+\\usepackage[T1]{fontenc}
+\\usepackage{graphicx}
+\\usepackage{longtable}
+\\usepackage{hyperref}
+\\usepackage{natbib}
+\\usepackage{amssymb}
+\\usepackage{amsmath}
+\\usepackage{geometry}
+\\geometry{a4paper,left=2.5cm,top=2cm,right=2.5cm,bottom=2cm,marginparsep=7pt, marginparwidth=.6in}"
                  ("\\section{%s}" . "\\section*{%s}")
                  ("\\subsection{%s}" . "\\subsection*{%s}")
                  ("\\subsubsection{%s}" . "\\subsubsection*{%s}")
@@ -1343,7 +1641,7 @@ regular expressions."
 
 (use-package plantuml-mode
   :init
-  (setq plantuml-jar-path "/usr/share/plantuml/plantuml.jar"))
+  (setq plantuml-jar-path "/usr/share/java/plantuml/plantuml.jar"))
 
 (add-to-list 'auto-mode-alist '("\\.plantuml\\'" . plantuml-mode))
 
@@ -1353,7 +1651,10 @@ regular expressions."
    (emacs-lisp . t)
    ;; (R . t)
    (python . t)
+   (ditaa . t)
    (plantuml . t)))
+
+(setq org-ditaa-jar-path "/usr/share/java/ditaa/ditaa-0.11.jar")
 
 (use-package all-the-icons
   :ensure t
@@ -1369,6 +1670,7 @@ regular expressions."
     (evil-define-key 'normal neotree-mode-map (kbd "SPC") 'neotree-quick-look)
     (evil-define-key 'normal neotree-mode-map (kbd "q") 'neotree-hide)
     (evil-define-key 'normal neotree-mode-map (kbd "RET") 'neotree-enter)
+    (evil-define-key 'normal neotree-mode-map (kbd "H") 'neotree-hidden-file-toggle)
     (setq neo-window-fixed-size nil)
     (eval-after-load "neotree"
         '(add-to-list 'window-size-change-functions
@@ -1578,3 +1880,35 @@ regular expressions."
 (use-package lua-mode
   :ensure t
   :mode ("\\.lua\\'" "\\.p8\\'"))
+  :config
+  (add-hook 'lua-mode-hook #'company-mode)
+
+(use-package sql-indent
+  :defer t)
+
+(setq sql-postgres-login-params
+      '((user :default "postgres")
+        (database :default "postgres")
+        (server :default "localhost")
+        (port :default 5432)))
+
+(add-hook 'sql-interactive-mode-hook
+          (lambda ()
+            (toggle-truncate-lines t)
+            (setq-local show-trailing-whitespace nil)
+            (company-mode t)))
+
+(defun upcase-sql-keywords ()
+    (interactive)
+    (save-excursion
+      (dolist (keywords sql-mode-postgres-font-lock-keywords)
+        (goto-char (point-min))
+        (while (re-search-forward (car keywords) nil t)
+          (goto-char (+ 1 (match-beginning 0)))
+          (when (eql font-lock-keyword-face (face-at-point))
+            (backward-char)
+            (upcase-word 1)
+            (forward-char))))))
+
+(use-package emojify
+  :init (global-emojify-mode 1))
