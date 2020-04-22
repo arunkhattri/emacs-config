@@ -111,8 +111,9 @@
  '(org-use-sub-superscripts (quote {}))
  '(package-selected-packages
    (quote
-    (jedi yasnippet emojify pyenv-mode helm-ag company-tern emmet-mode clean-aindent-mode ws-butler helm-gtags ggtags anzu irony-eldoc flycheck-irony company-irony ox-reveal go-complete ess-R-data-view ess-smart-underscore company-jedi company-web region-bindings-mode go-guru org-ref-url-utils org-ref-pdf elfeed-goodies elfeed-org mark-multiple paganini-theme paganini company-inf-python company-anaconda go-eldoc cython-mode company-quickhelp virtualenvwrapper validate twittering-mode try theme-changer r-autoyas neotree material-theme help-fns+ evil-leader evil-indent-textobject ess-view cyberpunk-theme)))
+    (kaolin-themes nimbus-theme python-x pyvenv-mode jedi yasnippet emojify pyenv-mode helm-ag company-tern emmet-mode clean-aindent-mode ws-butler helm-gtags ggtags anzu irony-eldoc flycheck-irony company-irony ox-reveal go-complete ess-R-data-view ess-smart-underscore company-jedi company-web region-bindings-mode go-guru org-ref-url-utils org-ref-pdf elfeed-goodies elfeed-org mark-multiple paganini-theme paganini company-inf-python company-anaconda go-eldoc cython-mode company-quickhelp virtualenvwrapper validate twittering-mode try theme-changer r-autoyas neotree material-theme help-fns+ evil-leader evil-indent-textobject ess-view cyberpunk-theme)))
  '(python-check-command "\"pylint\"")
+ '(safe-local-variable-values (quote ((org-src-preserve-indentation . t))))
  '(scroll-bar-mode nil)
  '(show-paren-mode t)
  '(tool-bar-mode nil)

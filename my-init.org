@@ -580,110 +580,122 @@ zsh
 * Python & Elpy
 
 #+BEGIN_SRC emacs-lisp
-  ;; (use-package python
-  ;;   :ensure t
-  ;;   :config
-  ;;   (add-hook 'python-mode-hook 'electric-pair-mode))
+  (use-package python
+    :ensure t
+    :config
+    (add-hook 'python-mode-hook 'electric-pair-mode)
+    (yas-reload-all)
+    (add-hook 'python-mode-hook 'yas-minor-mode))
 
 
-  ;;   (use-package elpy
-  ;;   :ensure t
-  ;;   :config
-  ;;   (elpy-enable)
-  ;;   ;; Enable elpy in a Python mode and jedi for auto-completion in elpy
-  ;;   (add-hook 'python-mode-hook 'elpy-mode)
-  ;;   (setq elpy-rpc-backend "jedi")
-  ;;   (add-to-list 'exec-path "~/.pyenv/shims")
-  ;;   (setenv "WORKON_HOME" "~/.pyenv/versions/")
-  ;;   (pyvenv-mode 1)
-  ;;   (setq-default indent-tabs-mode nil)
-  ;;   (global-set-key (kbd "<f7>") (kbd "C-u C-c C-c"))
-  ;;   (setq gud-pdb-command-name "python -m pdb ")
-  ;;   ;; (setq elpy-shell-echo-input nil)
-  ;;   )
+    (use-package elpy
+    :ensure t
+    :config
+    (elpy-enable)
+    ;; Enable elpy in a Python mode and jedi for auto-completion in elpy
+    (add-hook 'python-mode-hook 'elpy-mode)
+    (setq elpy-rpc-backend "jedi")
+    (add-to-list 'exec-path "~/.pyenv/shims")
+    (setenv "WORKON_HOME" "~/anaconda3/envs/")
+    (setenv "WORKON_HOME" "~/.pyenv/versions/")
+    (pyvenv-mode 1)
+    (setq-default indent-tabs-mode nil)
+    (global-set-key (kbd "<f7>") (kbd "C-u C-c C-c"))
+    (setq gud-pdb-command-name "python -m pdb ")
+    ;; (setq elpy-shell-echo-input nil)
+    )
 
-  ;;   ;; Python auto completion
-  ;;   (use-package company-jedi
-  ;;     :init
-  ;;     (setq company-jedi-python-bin "python")
-  ;;     :config
-  ;;     (add-to-list 'company-backends 'company-jedi))
+    ;; Python auto completion
+    (use-package company-jedi
+      :init
+      (setq company-jedi-python-bin "python")
+      :config
+      (add-to-list 'company-backends 'company-jedi))
 #+END_SRC
 
 * LSP
+Working fine however will prefer elpy for now (Apr 5, 2020)
 #+BEGIN_SRC emacs-lisp
-  (use-package lsp-mode
-    :ensure t
-    :commands (lsp lsp-deferred)
-    :custom
-    (lsp-auto-guess-root nil)
-    (lsp-prefer-flymake nil) ; Use flycheck instead of flymake
-    ;; (setq lsp-prefer-capf t)
-    :bind (:map lsp-mode-map ("C-c C-f" . lsp-format-buffer))
-    :hook ((python-mode) . lsp))
+  ;; (use-package lsp-mode
+  ;;   :ensure t
+  ;;   :commands (lsp lsp-deferred)
+  ;;   :custom
+  ;;   (lsp-auto-guess-root nil)
+  ;;   (lsp-prefer-flymake nil) ; Use flycheck instead of flymake
+  ;;   ;; (setq lsp-prefer-capf t)
+  ;;   :bind (:map lsp-mode-map ("C-c C-f" . lsp-format-buffer))
+  ;;   :hook ((python-mode) . lsp))
 
 
-  (use-package lsp-ui
-    :after lsp-mode
-    :diminish
-    :commands lsp-ui-mode
-    :custom-face
-    (lsp-ui-doc-background ((t (:background nil))))
-    (lsp-ui-doc-header ((t (:inherit (font-lock-string-face italic)))))
-    :bind (:map lsp-ui-mode-map
-                ([remap xref-find-definitions] . lsp-ui-peek-find-definitions)
-                ([remap xref-find-references] . lsp-ui-peek-find-references)
-                ("C-c u" . lsp-ui-imenu))
-    :custom
-    (lsp-ui-doc-enable t)
-    (lsp-ui-doc-header t)
-    (lsp-ui-doc-include-signature t)
-    (lsp-ui-doc-position 'top)
-    (lsp-ui-doc-border (face-foreground 'default))
-    (lsp-ui-sideline-enable nil)
-    (lsp-ui-sideline-ignore-duplicate t)
-    (lsp-ui-sideline-show-code-actions nil)
-    :config
-    ;; Use lsp-ui-doc-webkit only in GUI
-    (setq lsp-ui-doc-use-webkit t)
-    ;; WORKAROUND Hide mode-line of the lsp-ui-imenu buffer
-    ;; https://github.com/emacs-lsp/lsp-ui/issues/243
-    (defadvice lsp-ui-imenu (after hide-lsp-ui-imenu-mode-line activate)
-      (setq mode-line-format nil)))
+  ;; (use-package lsp-ui
+  ;;   :after lsp-mode
+  ;;   :diminish
+  ;;   :commands lsp-ui-mode
+  ;;   :custom-face
+  ;;   (lsp-ui-doc-background ((t (:background nil))))
+  ;;   (lsp-ui-doc-header ((t (:inherit (font-lock-string-face italic)))))
+  ;;   :bind (:map lsp-ui-mode-map
+  ;;               ([remap xref-find-definitions] . lsp-ui-peek-find-definitions)
+  ;;               ([remap xref-find-references] . lsp-ui-peek-find-references)
+  ;;               ("C-c u" . lsp-ui-imenu))
+  ;;   :custom
+  ;;   (lsp-ui-doc-enable t)
+  ;;   (lsp-ui-doc-header t)
+  ;;   (lsp-ui-doc-include-signature t)
+  ;;   (lsp-ui-doc-position 'top)
+  ;;   (lsp-ui-doc-border (face-foreground 'default))
+  ;;   (lsp-ui-sideline-enable nil)
+  ;;   (lsp-ui-sideline-ignore-duplicate t)
+  ;;   (lsp-ui-sideline-show-code-actions nil)
+  ;;   :config
+  ;;   ;; Use lsp-ui-doc-webkit only in GUI
+  ;;   (setq lsp-ui-doc-use-webkit t)
+  ;;   ;; WORKAROUND Hide mode-line of the lsp-ui-imenu buffer
+  ;;   ;; https://github.com/emacs-lsp/lsp-ui/issues/243
+  ;;   (defadvice lsp-ui-imenu (after hide-lsp-ui-imenu-mode-line activate)
+  ;;     (setq mode-line-format nil)))
 #+END_SRC
 * LSP Python
+using elpy for now
 #+BEGIN_SRC emacs-lisp
-  (use-package pyenv-mode
-    :ensure t
-    :config
-      (defun projectile-pyenv-mode-set ()
-        "Set pyenv version matching project name."
-        (let ((project (projectile-project-name)))
-          (if (member project (pyenv-mode-versions))
-              (pyenv-mode-set project)
-            (pyenv-mode-unset))))
-      (add-hook 'projectile-switch-project-hook 'projectile-pyenv-mode-set)
-      (add-hook 'python-mode-hook 'pyenv-mode))
-  ;; (use-package virtualenvwrapper
+  ;; (use-package pyvenv
   ;;   :ensure t
   ;;   :config
+  ;;   (pyvenv-mode 1)
   ;;   (add-to-list 'exec-path "~/.pyenv/shims")
   ;;   (setenv "WORKON_HOME" "~/.pyenv/versions/")
-    ;; (venv-initialize-interactive-shells)
-    ;; (venv-initialize-eshell))
+  ;;   )
+  ;; ;; (use-package pyenv-mode
+  ;; ;;   :ensure t
+  ;; ;;   :config
+  ;; ;;     (defun projectile-pyenv-mode-set ()
+  ;; ;;       "Set pyenv version matching project name."
+  ;; ;;       (let ((project (projectile-project-name)))
+  ;; ;;         (if (member project (pyenv-mode-versions))
+  ;; ;;             (pyenv-mode-set project)
+  ;; ;;           (pyenv-mode-unset))))
+  ;; ;;     (add-hook 'projectile-switch-project-hook 'projectile-pyenv-mode-set)
+  ;; ;;     (add-hook 'python-mode-hook 'pyenv-mode))
+  ;; ;; (use-package virtualenvwrapper
+  ;; ;;   :ensure t
+  ;; ;;   :config
+  ;; ;;   (add-to-list 'exec-path "~/.pyenv/shims")
+  ;; ;;   (setenv "WORKON_HOME" "~/.pyenv/versions/")
+  ;;   ;; (venv-initialize-interactive-shells)
+  ;;   ;; (venv-initialize-eshell))
 
-  ;; (setq lsp-python-executable-cmd "python3")
+  ;; ;; (setq lsp-python-executable-cmd "python3")
 
-  (use-package jedi
-    :ensure t
-    :init
-    (add-hook 'python-mode-hook 'jedi:setup)
-    (add-hook 'python-mode-hook 'jedi:ac-setup)
-    :config
-    (setq jedi:complete-on-dot t))
+  ;; (use-package jedi
+  ;;   :ensure t
+  ;;   :init
+  ;;   (add-hook 'python-mode-hook 'jedi:setup)
+  ;;   (add-hook 'python-mode-hook 'jedi:ac-setup)
+  ;;   :config
+  ;;   (setq jedi:complete-on-dot t))
 
-  (setq python-shell-interpreter "jupyter-console"
-        python-shell-interpreter-args "--simple-prompt -i")
+  ;; (setq python-shell-interpreter "python3"
+  ;;       python-shell-interpreter-args "-i")
 #+END_SRC
 * Golang
 #+BEGIN_SRC emacs-lisp
@@ -782,10 +794,10 @@ zsh
     :init (add-hook 'prog-mode-hook #'yas-minor-mode)
     :config
     (setq yas-snippet-dirs
-          '("~/.emacs.d/snippets"                            ;; personal snippets
-            "~/go_projects/src/github.com/yasnippet-go"               ;; go snippets
+          '("/home/arunkhattri/.emacs.d/snippets/"                            ;; personal snippets
+            "/home/arunkhattri/go_projects/src/github.com/yasnippet-go"               ;; go snippets
             ;; "~/.emacs.d/elpa/yasnippet-snippets-[:digit:]+.[:digit:]+/snippets"
-            "~/.emacs.d/elpa/yasnippet-snippets-20200122.1140./snippets"
+            "/home/arunkhattri/.emacs.d/elpa/yasnippet-snippets-20200122.1140/snippets/"
             ))
     (yas-global-mode 1))
 
@@ -796,6 +808,7 @@ zsh
 #+END_SRC
 * ESS-R
 copied: https://github.com/jabranham/emacs/blob/master/init.el
+helm off from here also
 #+BEGIN_SRC emacs-lisp
   (use-package ess-r-mode
     ;; ESS (Emacs Speaks Statistics) is a great project that makes Emacs
@@ -814,7 +827,7 @@ copied: https://github.com/jabranham/emacs/blob/master/init.el
     (ess-eval-visibly 'nowait "Don't hog Emacs")
     (ess-history-directory (concat user-emacs-directory "var/Rhist/") "Save R history in one place rather than making .Rhistory files everywhere.")
     (ess-pdf-viewer-pref "emacsclient")
-    (ess-use-ido nil "I prefer helm.")
+    ;; (ess-use-ido nil "I prefer helm.")
     (ess-plain-first-buffername nil "Name first R process R:1")
     (ess-nuke-trailing-whitespace-p t)
     (ess-R-font-lock-keywords
@@ -1258,146 +1271,147 @@ for encryption and decryption of files
 
 #+END_SRC
 * Helm
+not using much so putting off.
 #+BEGIN_SRC emacs-lisp
-  ;; ref: https://github.com/tuhdo/emacs-c-ide-demo/blob/master/custom/setup-helm.el
-    (use-package helm
-      :ensure t
-      :init
-      (progn
-        (require 'helm-config)
-        (require 'helm-grep)
-        ;; To fix error at compile:
-        ;; Error (bytecomp): Forgot to expand macro with-helm-buffer in
-        ;; (with-helm-buffer helm-echo-input-in-header-line)
-        (if (version< "26.0.50" emacs-version)
-            (eval-when-compile (require 'helm-lib)))
+  ;; ;; ref: https://github.com/tuhdo/emacs-c-ide-demo/blob/master/custom/setup-helm.el
+  ;;   (use-package helm
+  ;;     :ensure t
+  ;;     :init
+  ;;     (progn
+  ;;       (require 'helm-config)
+  ;;       (require 'helm-grep)
+  ;;       ;; To fix error at compile:
+  ;;       ;; Error (bytecomp): Forgot to expand macro with-helm-buffer in
+  ;;       ;; (with-helm-buffer helm-echo-input-in-header-line)
+  ;;       (if (version< "26.0.50" emacs-version)
+  ;;           (eval-when-compile (require 'helm-lib)))
 
-        (defun helm-hide-minibuffer-maybe ()
-          (when (with-helm-buffer helm-echo-input-in-header-line)
-            (let ((ov (make-overlay (point-min) (point-max) nil nil t)))
-              (overlay-put ov 'window (selected-window))
-              (overlay-put ov 'face (let ((bg-color (face-background 'default nil)))
-                                      `(:background ,bg-color :foreground ,bg-color)))
-              (setq-local cursor-type nil))))
+  ;;       (defun helm-hide-minibuffer-maybe ()
+  ;;         (when (with-helm-buffer helm-echo-input-in-header-line)
+  ;;           (let ((ov (make-overlay (point-min) (point-max) nil nil t)))
+  ;;             (overlay-put ov 'window (selected-window))
+  ;;             (overlay-put ov 'face (let ((bg-color (face-background 'default nil)))
+  ;;                                     `(:background ,bg-color :foreground ,bg-color)))
+  ;;             (setq-local cursor-type nil))))
 
-        (add-hook 'helm-minibuffer-set-up-hook 'helm-hide-minibuffer-maybe)
-        ;; The default "C-x c" is quite close to "C-x C-c", which quits Emacs.
-        ;; Changed to "C-c h". Note: We must set "C-c h" globally, because we
-        ;; cannot change `helm-command-prefix-key' once `helm-config' is loaded.
-        (global-set-key (kbd "C-c h") 'helm-command-prefix)
-        (global-unset-key (kbd "C-x c"))
+  ;;       (add-hook 'helm-minibuffer-set-up-hook 'helm-hide-minibuffer-maybe)
+  ;;       ;; The default "C-x c" is quite close to "C-x C-c", which quits Emacs.
+  ;;       ;; Changed to "C-c h". Note: We must set "C-c h" globally, because we
+  ;;       ;; cannot change `helm-command-prefix-key' once `helm-config' is loaded.
+  ;;       (global-set-key (kbd "C-c h") 'helm-command-prefix)
+  ;;       (global-unset-key (kbd "C-x c"))
 
-        (define-key helm-map (kbd "<tab>") 'helm-execute-persistent-action) ; rebihnd tab to do persistent action
-        (define-key helm-map (kbd "C-i") 'helm-execute-persistent-action) ; make TAB works in terminal
-        (define-key helm-map (kbd "C-z")  'helm-select-action) ; list actions using C-z
+  ;;       (define-key helm-map (kbd "<tab>") 'helm-execute-persistent-action) ; rebihnd tab to do persistent action
+  ;;       (define-key helm-map (kbd "C-i") 'helm-execute-persistent-action) ; make TAB works in terminal
+  ;;       (define-key helm-map (kbd "C-z")  'helm-select-action) ; list actions using C-z
 
-        (define-key helm-grep-mode-map (kbd "<return>")  'helm-grep-mode-jump-other-window)
-        (define-key helm-grep-mode-map (kbd "n")  'helm-grep-mode-jump-other-window-forward)
-        (define-key helm-grep-mode-map (kbd "p")  'helm-grep-mode-jump-other-window-backward)
+  ;;       (define-key helm-grep-mode-map (kbd "<return>")  'helm-grep-mode-jump-other-window)
+  ;;       (define-key helm-grep-mode-map (kbd "n")  'helm-grep-mode-jump-other-window-forward)
+  ;;       (define-key helm-grep-mode-map (kbd "p")  'helm-grep-mode-jump-other-window-backward)
 
-        (when (executable-find "curl")
-          (setq helm-google-suggest-use-curl-p t))
+  ;;       (when (executable-find "curl")
+  ;;         (setq helm-google-suggest-use-curl-p t))
 
-        (setq helm-google-suggest-use-curl-p t
-              helm-scroll-amount 4 ; scroll 4 lines other window using M-<next>/M-<prior>
-              ;; helm-quick-update t ; do not display invisible candidates
-              helm-ff-search-library-in-sexp t ; search for library in `require' and `declare-function' sexp.
+  ;;       (setq helm-google-suggest-use-curl-p t
+  ;;             helm-scroll-amount 4 ; scroll 4 lines other window using M-<next>/M-<prior>
+  ;;             ;; helm-quick-update t ; do not display invisible candidates
+  ;;             helm-ff-search-library-in-sexp t ; search for library in `require' and `declare-function' sexp.
 
-              ;; you can customize helm-do-grep to execute ack-grep
-              ;; helm-grep-default-command "ack-grep -Hn --smart-case --no-group --no-color %e %p %f"
-              ;; helm-grep-default-recurse-command "ack-grep -H --smart-case --no-group --no-color %e %p %f"
-              helm-split-window-in-side-p t ;; open helm buffer inside current window, not occupy whole other window
+  ;;             ;; you can customize helm-do-grep to execute ack-grep
+  ;;             ;; helm-grep-default-command "ack-grep -Hn --smart-case --no-group --no-color %e %p %f"
+  ;;             ;; helm-grep-default-recurse-command "ack-grep -H --smart-case --no-group --no-color %e %p %f"
+  ;;             helm-split-window-in-side-p t ;; open helm buffer inside current window, not occupy whole other window
 
-              helm-echo-input-in-header-line t
+  ;;             helm-echo-input-in-header-line t
 
-              ;; helm-candidate-number-limit 500 ; limit the number of displayed canidates
-              helm-ff-file-name-history-use-recentf t
-              helm-move-to-line-cycle-in-source t ; move to end or beginning of source when reaching top or bottom of source.
-              helm-buffer-skip-remote-checking t
+  ;;             ;; helm-candidate-number-limit 500 ; limit the number of displayed canidates
+  ;;             helm-ff-file-name-history-use-recentf t
+  ;;             helm-move-to-line-cycle-in-source t ; move to end or beginning of source when reaching top or bottom of source.
+  ;;             helm-buffer-skip-remote-checking t
 
-              helm-mode-fuzzy-match t
+  ;;             helm-mode-fuzzy-match t
 
-              helm-buffers-fuzzy-matching t ; fuzzy matching buffer names when non-nil
-                                            ; useful in helm-mini that lists buffers
-              helm-org-headings-fontify t
-              ;; helm-find-files-sort-directories t
-              ;; ido-use-virtual-buffers t
-              helm-semantic-fuzzy-match t
-              helm-M-x-fuzzy-match t
-              helm-imenu-fuzzy-match t
-              helm-lisp-fuzzy-completion t
-              ;; helm-apropos-fuzzy-match t
-              helm-buffer-skip-remote-checking t
-              helm-locate-fuzzy-match t
-              helm-display-header-line nil)
+  ;;             helm-buffers-fuzzy-matching t ; fuzzy matching buffer names when non-nil
+  ;;                                           ; useful in helm-mini that lists buffers
+  ;;             helm-org-headings-fontify t
+  ;;             ;; helm-find-files-sort-directories t
+  ;;             ;; ido-use-virtual-buffers t
+  ;;             helm-semantic-fuzzy-match t
+  ;;             helm-M-x-fuzzy-match t
+  ;;             helm-imenu-fuzzy-match t
+  ;;             helm-lisp-fuzzy-completion t
+  ;;             ;; helm-apropos-fuzzy-match t
+  ;;             helm-buffer-skip-remote-checking t
+  ;;             helm-locate-fuzzy-match t
+  ;;             helm-display-header-line nil)
 
-        (add-to-list 'helm-sources-using-default-as-input 'helm-source-man-pages)
+  ;;       (add-to-list 'helm-sources-using-default-as-input 'helm-source-man-pages)
 
-        (global-set-key (kbd "M-x") 'helm-M-x)
-        (global-set-key (kbd "M-y") 'helm-show-kill-ring)
-        (global-set-key (kbd "C-x b") 'helm-buffers-list)
-        (global-set-key (kbd "C-x C-f") 'helm-find-files)
-        (global-set-key (kbd "C-c r") 'helm-recentf)
-        (global-set-key (kbd "C-h SPC") 'helm-all-mark-rings)
-        (global-set-key (kbd "C-c h o") 'helm-occur)
+  ;;       (global-set-key (kbd "M-x") 'helm-M-x)
+  ;;       (global-set-key (kbd "M-y") 'helm-show-kill-ring)
+  ;;       (global-set-key (kbd "C-x b") 'helm-buffers-list)
+  ;;       (global-set-key (kbd "C-x C-f") 'helm-find-files)
+  ;;       (global-set-key (kbd "C-c r") 'helm-recentf)
+  ;;       (global-set-key (kbd "C-h SPC") 'helm-all-mark-rings)
+  ;;       (global-set-key (kbd "C-c h o") 'helm-occur)
 
-        (global-set-key (kbd "C-c h w") 'helm-wikipedia-suggest)
-        (global-set-key (kbd "C-c h g") 'helm-google-suggest)
+  ;;       (global-set-key (kbd "C-c h w") 'helm-wikipedia-suggest)
+  ;;       (global-set-key (kbd "C-c h g") 'helm-google-suggest)
 
-        (global-set-key (kbd "C-c h x") 'helm-register)
-        ;; (global-set-key (kbd "C-x r j") 'jump-to-register)
+  ;;       (global-set-key (kbd "C-c h x") 'helm-register)
+  ;;       ;; (global-set-key (kbd "C-x r j") 'jump-to-register)
 
-        (define-key 'help-command (kbd "C-f") 'helm-apropos)
-        (define-key 'help-command (kbd "r") 'helm-info-emacs)
-        (define-key 'help-command (kbd "C-l") 'helm-locate-library)
+  ;;       (define-key 'help-command (kbd "C-f") 'helm-apropos)
+  ;;       (define-key 'help-command (kbd "r") 'helm-info-emacs)
+  ;;       (define-key 'help-command (kbd "C-l") 'helm-locate-library)
 
-        ;; use helm to list eshell history
-        (add-hook 'eshell-mode-hook
-                  #'(lambda ()
-                      (define-key eshell-mode-map (kbd "M-l")  'helm-eshell-history)))
+  ;;       ;; use helm to list eshell history
+  ;;       (add-hook 'eshell-mode-hook
+  ;;                 #'(lambda ()
+  ;;                     (define-key eshell-mode-map (kbd "M-l")  'helm-eshell-history)))
 
-    ;;; Save current position to mark ring
-        (add-hook 'helm-goto-line-before-hook 'helm-save-current-pos-to-mark-ring)
+  ;;   ;;; Save current position to mark ring
+  ;;       (add-hook 'helm-goto-line-before-hook 'helm-save-current-pos-to-mark-ring)
 
-        ;; show minibuffer history with Helm
-        (define-key minibuffer-local-map (kbd "M-p") 'helm-minibuffer-history)
-        (define-key minibuffer-local-map (kbd "M-n") 'helm-minibuffer-history)
+  ;;       ;; show minibuffer history with Helm
+  ;;       (define-key minibuffer-local-map (kbd "M-p") 'helm-minibuffer-history)
+  ;;       (define-key minibuffer-local-map (kbd "M-n") 'helm-minibuffer-history)
 
-        (define-key global-map [remap find-tag] 'helm-etags-select)
+  ;;       (define-key global-map [remap find-tag] 'helm-etags-select)
 
-        (define-key global-map [remap list-buffers] 'helm-buffers-list)))
+  ;;       (define-key global-map [remap list-buffers] 'helm-buffers-list)))
 
-        ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-        ;; PACKAGE: helm-swoop                ;;
-        ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-        ;; Locate the helm-swoop folder to your path
-        (use-package helm-swoop
-          :bind (("C-c h o" . helm-swoop)
-                 ("C-c s" . helm-multi-swoop-all))
-          :config
-          ;; When doing isearch, hand the word over to helm-swoop
-          (define-key isearch-mode-map (kbd "M-i") 'helm-swoop-from-isearch)
+  ;;       ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+  ;;       ;; PACKAGE: helm-swoop                ;;
+  ;;       ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+  ;;       ;; Locate the helm-swoop folder to your path
+  ;;       (use-package helm-swoop
+  ;;         :bind (("C-c h o" . helm-swoop)
+  ;;                ("C-c s" . helm-multi-swoop-all))
+  ;;         :config
+  ;;         ;; When doing isearch, hand the word over to helm-swoop
+  ;;         (define-key isearch-mode-map (kbd "M-i") 'helm-swoop-from-isearch)
 
-          ;; From helm-swoop to helm-multi-swoop-all
-          (define-key helm-swoop-map (kbd "M-i") 'helm-multi-swoop-all-from-helm-swoop)
+  ;;         ;; From helm-swoop to helm-multi-swoop-all
+  ;;         (define-key helm-swoop-map (kbd "M-i") 'helm-multi-swoop-all-from-helm-swoop)
 
-          ;; Save buffer when helm-multi-swoop-edit complete
-          (setq helm-multi-swoop-edit-save t)
+  ;;         ;; Save buffer when helm-multi-swoop-edit complete
+  ;;         (setq helm-multi-swoop-edit-save t)
 
-          ;; If this value is t, split window inside the current window
-          (setq helm-swoop-split-with-multiple-windows t)
+  ;;         ;; If this value is t, split window inside the current window
+  ;;         (setq helm-swoop-split-with-multiple-windows t)
 
-          ;; Split direcion. 'split-window-vertically or 'split-window-horizontally
-          (setq helm-swoop-split-direction 'split-window-vertically)
+  ;;         ;; Split direcion. 'split-window-vertically or 'split-window-horizontally
+  ;;         (setq helm-swoop-split-direction 'split-window-vertically)
 
-          ;; If nil, you can slightly boost invoke speed in exchange for text color
-          (setq helm-swoop-speed-or-color t))
-          (use-package helm-ag
-          :ensure helm-ag
-          :bind ("M-p" . helm-projectile-ag)
-          :commands (helm-ag helm-projectile-ag)
-          :init (setq helm-ag-insert-at-point 'symbol
-                  helm-ag-command-option "--path-to-ignore ~/.agignore"))
+  ;;         ;; If nil, you can slightly boost invoke speed in exchange for text color
+  ;;         (setq helm-swoop-speed-or-color t))
+  ;;         (use-package helm-ag
+  ;;         :ensure helm-ag
+  ;;         :bind ("M-p" . helm-projectile-ag)
+  ;;         :commands (helm-ag helm-projectile-ag)
+  ;;         :init (setq helm-ag-insert-at-point 'symbol
+  ;;                 helm-ag-command-option "--path-to-ignore ~/.agignore"))
 
 
 #+END_SRC
@@ -1463,7 +1477,7 @@ for encryption and decryption of files
   ;;     (define-key map (kbd "C-c >") 'ggtags-next-mark)))
 #+END_SRC
 * Projectile
-
+helm projectile commented as helm is off for now.
 #+BEGIN_SRC emacs-lisp
   (use-package projectile
     :ensure t
@@ -1474,13 +1488,13 @@ for encryption and decryption of files
     (setq projectile-enable-caching t)
     (setq projectile-completion-system 'ivy))
 
-  (use-package helm-projectile
-    :init
-    (helm-projectile-on)
-    (setq projectile-completion-system 'helm)
-    (setq projectile-indexing-method 'alien)
-    :bind
-    ("M-t" . helm-projectile-find-file))
+  ;; (use-package helm-projectile
+  ;;   :init
+  ;;   (helm-projectile-on)
+  ;;   (setq projectile-completion-system 'helm)
+  ;;   (setq projectile-indexing-method 'alien)
+  ;;   :bind
+  ;;   ("M-t" . helm-projectile-find-file))
 
 #+END_SRC
 

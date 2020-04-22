@@ -35,12 +35,20 @@ There are two things you can do about this warning:
 
 ;; ----------------------------------------------------------------------
 
-
+;; Atom-one-dark-theme
 (use-package atom-one-dark-theme
   :ensure t
   :config
   (progn
     (load-theme 'atom-one-dark t)))
+
+;; Kaolin-Themes
+;; (use-package kaolin-themes
+;;   :ensure t
+;;   :config
+;;   (progn
+;;     (load-theme 'kaolin-dark t)
+;;     (kaolin-treemacs-theme)))
 ;; ----------------------------------------------------------------------
 (load "~/github/emacs-config/help-fns+.el")
 
