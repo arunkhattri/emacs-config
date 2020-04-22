@@ -62,6 +62,7 @@
  '(go-eldoc-gocode "gocode")
  '(helm-follow-mode-persistent t)
  '(hl-sexp-background-color "#efebe9")
+ '(hydra-posframe-parameters (quote ((left-fringe . 5) (right-fringe . 5))))
  '(inferior-R-font-lock-keywords
    (quote
     ((ess-S-fl-keyword:prompt . t)
@@ -111,7 +112,7 @@
  '(org-use-sub-superscripts (quote {}))
  '(package-selected-packages
    (quote
-    (kaolin-themes nimbus-theme python-x pyvenv-mode jedi yasnippet emojify pyenv-mode helm-ag company-tern emmet-mode clean-aindent-mode ws-butler helm-gtags ggtags anzu irony-eldoc flycheck-irony company-irony ox-reveal go-complete ess-R-data-view ess-smart-underscore company-jedi company-web region-bindings-mode go-guru org-ref-url-utils org-ref-pdf elfeed-goodies elfeed-org mark-multiple paganini-theme paganini company-inf-python company-anaconda go-eldoc cython-mode company-quickhelp virtualenvwrapper validate twittering-mode try theme-changer r-autoyas neotree material-theme help-fns+ evil-leader evil-indent-textobject ess-view cyberpunk-theme)))
+    (python-mode posframe kaolin-themes nimbus-theme python-x pyvenv-mode jedi yasnippet emojify pyenv-mode helm-ag company-tern emmet-mode clean-aindent-mode ws-butler helm-gtags ggtags anzu irony-eldoc flycheck-irony company-irony ox-reveal go-complete ess-R-data-view ess-smart-underscore company-jedi company-web region-bindings-mode go-guru org-ref-url-utils org-ref-pdf elfeed-goodies elfeed-org mark-multiple paganini-theme paganini company-inf-python company-anaconda go-eldoc cython-mode company-quickhelp virtualenvwrapper validate twittering-mode try theme-changer r-autoyas neotree material-theme help-fns+ evil-leader evil-indent-textobject ess-view cyberpunk-theme)))
  '(python-check-command "\"pylint\"")
  '(safe-local-variable-values (quote ((org-src-preserve-indentation . t))))
  '(scroll-bar-mode nil)
@@ -163,5 +164,6 @@
  ;; If there is more than one, they won't work right.
  '(default ((t (:family "DejaVu Sans Mono for Powerline" :foundry "PfEd" :slant normal :weight normal :height 98 :width normal))))
  '(aw-leading-char-face ((t (:inherit ace-jump-face-foreground :height 3.0))))
+ '(hydra-posframe-border-face ((t (:background "#6272a4"))))
  '(lsp-ui-doc-background ((t (:background nil))))
  '(lsp-ui-doc-header ((t (:inherit (font-lock-string-face italic))))))

@@ -477,7 +477,7 @@
   (interactive)
   (ansi-term "/bin/zsh"))
 
-(use-package python
+(use-package python-mode
   :ensure t
   :config
   (add-hook 'python-mode-hook 'electric-pair-mode)
@@ -1759,8 +1759,19 @@ regular expressions."
   :ensure t
   :bind ("C-q" . 'er/expand-region))
 
+(use-package posframe)
 (use-package hydra
-  :ensure t)
+  :ensure t
+  :config
+  (use-package hydra-posframe
+    :load-path "/home/arunkhattri/github/hydra-posframe"
+    :custom
+    (hydra-posframe-parameters
+     '((left-fringe . 5)
+       (right-fringe . 5)))
+    :custom-face
+    (hydra-posframe-border-face (( t (:background "#6272a4"))))
+    :hook (after-init . hydra-posframe-enable)))
 
 ;;============================================================
 ;; Hydra for modes that toggle on and off
