@@ -432,7 +432,7 @@
   ;; (add-hook 'prog-mode-hook 'company-mode)
   ;; (add-hook 'comint-mode-hook 'company-mode)
   :config
-  (global-company-mode)
+  (global-company-mode 1)
   ;; Quick-help (popup documentation for suggestions).
   (use-package company-quickhelp
     :ensure t
@@ -472,7 +472,7 @@
   (setq company-lsp-enable-snippet t
         company-lsp-async t
         company-transformers nil
-        company-lsp-cache-candidates nil)
+        company-lsp-cache-candidates 'auto)
   (push 'company-lsp company-backends))
 
 (defun sh ()
