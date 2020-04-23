@@ -537,9 +537,11 @@ make ibuffer default
       (add-to-list 'company-backends 'company-web-html))
     ;; Company settings.
     (setq company-tooltip-limit 10
-          company-idle-delay 0.2
+          ;; company-idle-delay 0.2
+          company-idle-delay 0.0  ;; for lsp
           company-echo-delay 0
-          company-minimum-prefix-length 2
+          ;; company-minimum-prefix-length 2
+          company-minimum-prefix-length 1  ;; for lsp
           company-require-match nil
           company-selection-wrap-around t
           company-tooltip-align-annotations t
@@ -583,119 +585,124 @@ zsh
   (use-package python-mode
     :ensure t
     :config
-    (add-hook 'python-mode-hook 'electric-pair-mode)
+    ;; (add-hook 'python-mode-hook 'electric-pair-mode)
     (yas-reload-all)
-    (add-hook 'python-mode-hook 'yas-minor-mode))
+    (add-hook 'python-mode-hook 'yas-minor-mode)
+    (setq-default py-split-windows-on-execute-function 'split-window-horizontally)
+    :bind (:map python-mode-map
+               ("C-c C-r" . py-execute-region)
+               ("C-c C-l" . py-execute-line)))
 
 
-    (use-package elpy
-    :ensure t
-    :config
-    (elpy-enable)
-    ;; Enable elpy in a Python mode and jedi for auto-completion in elpy
-    (add-hook 'python-mode-hook 'elpy-mode)
-    (setq elpy-rpc-backend "jedi")
-    (add-to-list 'exec-path "~/.pyenv/shims")
-    (setenv "WORKON_HOME" "~/anaconda3/envs/")
-    (setenv "WORKON_HOME" "~/.pyenv/versions/")
-    (pyvenv-mode 1)
-    (setq-default indent-tabs-mode nil)
-    (global-set-key (kbd "<f7>") (kbd "C-u C-c C-c"))
-    (setq gud-pdb-command-name "python -m pdb ")
-    ;; (setq elpy-shell-echo-input nil)
-    )
+    ;; (use-package elpy
+    ;; :ensure t
+    ;; :config
+    ;; (elpy-enable)
+    ;; ;; Enable elpy in a Python mode and jedi for auto-completion in elpy
+    ;; (add-hook 'python-mode-hook 'elpy-mode)
+    ;; (setq elpy-rpc-backend "jedi")
+    ;; (add-to-list 'exec-path "~/.pyenv/shims")
+    ;; ;; (setenv "WORKON_HOME" "~/anaconda3/envs/")
+    ;; (setenv "WORKON_HOME" "~/.pyenv/versions/")
+    ;; (pyvenv-mode 1)
+    ;; (setq-default indent-tabs-mode nil)
+    ;; (global-set-key (kbd "<f7>") (kbd "C-u C-c C-c"))
+    ;; (setq gud-pdb-command-name "python -m pdb ")
+    ;; ;; (setq elpy-shell-echo-input nil)
+    ;; )
 
-    ;; Python auto completion
-    (use-package company-jedi
-      :init
-      (setq company-jedi-python-bin "python")
-      :config
-      (add-to-list 'company-backends 'company-jedi))
+    ;; ;; Python auto completion
+    ;; (use-package company-jedi
+    ;;   :init
+    ;;   (setq company-jedi-python-bin "python")
+    ;;   :config
+    ;;   (add-to-list 'company-backends 'company-jedi))
 #+END_SRC
 
 * LSP
 Working fine however will prefer elpy for now (Apr 5, 2020)
 #+BEGIN_SRC emacs-lisp
-  ;; (use-package lsp-mode
-  ;;   :ensure t
-  ;;   :commands (lsp lsp-deferred)
-  ;;   :custom
-  ;;   (lsp-auto-guess-root nil)
-  ;;   (lsp-prefer-flymake nil) ; Use flycheck instead of flymake
-  ;;   ;; (setq lsp-prefer-capf t)
-  ;;   :bind (:map lsp-mode-map ("C-c C-f" . lsp-format-buffer))
-  ;;   :hook ((python-mode) . lsp))
+  (use-package lsp-mode
+    :ensure t
+    :commands (lsp lsp-deferred)
+    :custom
+    (lsp-auto-guess-root nil)
+    (lsp-prefer-flymake nil) ; Use flycheck instead of flymake
+    ;; (setq lsp-prefer-capf t)
+    :bind (:map lsp-mode-map ("C-c C-f" . lsp-format-buffer))
+    :hook ((python-mode) . lsp))
 
 
-  ;; (use-package lsp-ui
-  ;;   :after lsp-mode
-  ;;   :diminish
-  ;;   :commands lsp-ui-mode
-  ;;   :custom-face
-  ;;   (lsp-ui-doc-background ((t (:background nil))))
-  ;;   (lsp-ui-doc-header ((t (:inherit (font-lock-string-face italic)))))
-  ;;   :bind (:map lsp-ui-mode-map
-  ;;               ([remap xref-find-definitions] . lsp-ui-peek-find-definitions)
-  ;;               ([remap xref-find-references] . lsp-ui-peek-find-references)
-  ;;               ("C-c u" . lsp-ui-imenu))
-  ;;   :custom
-  ;;   (lsp-ui-doc-enable t)
-  ;;   (lsp-ui-doc-header t)
-  ;;   (lsp-ui-doc-include-signature t)
-  ;;   (lsp-ui-doc-position 'top)
-  ;;   (lsp-ui-doc-border (face-foreground 'default))
-  ;;   (lsp-ui-sideline-enable nil)
-  ;;   (lsp-ui-sideline-ignore-duplicate t)
-  ;;   (lsp-ui-sideline-show-code-actions nil)
-  ;;   :config
-  ;;   ;; Use lsp-ui-doc-webkit only in GUI
-  ;;   (setq lsp-ui-doc-use-webkit t)
-  ;;   ;; WORKAROUND Hide mode-line of the lsp-ui-imenu buffer
-  ;;   ;; https://github.com/emacs-lsp/lsp-ui/issues/243
-  ;;   (defadvice lsp-ui-imenu (after hide-lsp-ui-imenu-mode-line activate)
-  ;;     (setq mode-line-format nil)))
+  (use-package lsp-ui
+    :after lsp-mode
+    :diminish
+    :commands lsp-ui-mode
+    :custom-face
+    (lsp-ui-doc-background ((t (:background nil))))
+    (lsp-ui-doc-header ((t (:inherit (font-lock-string-face italic)))))
+    :bind (:map lsp-ui-mode-map
+                ([remap xref-find-definitions] . lsp-ui-peek-find-definitions)
+                ([remap xref-find-references] . lsp-ui-peek-find-references)
+                ("C-c u" . lsp-ui-imenu))
+    :custom
+    (lsp-ui-doc-enable t)
+    (lsp-ui-doc-header t)
+    (lsp-ui-doc-include-signature t)
+    (lsp-ui-doc-position 'top)
+    (lsp-ui-doc-border (face-foreground 'default))
+    (lsp-ui-sideline-enable nil)
+    (lsp-ui-sideline-ignore-duplicate t)
+    (lsp-ui-sideline-show-code-actions nil)
+    :config
+    ;; Use lsp-ui-doc-webkit only in GUI
+    (setq lsp-ui-doc-use-webkit t)
+    ;; WORKAROUND Hide mode-line of the lsp-ui-imenu buffer
+    ;; https://github.com/emacs-lsp/lsp-ui/issues/243
+    (defadvice lsp-ui-imenu (after hide-lsp-ui-imenu-mode-line activate)
+      (setq mode-line-format nil)))
 #+END_SRC
 * LSP Python
 using elpy for now
+trying lsp with python [Apr 22, 2020]
 #+BEGIN_SRC emacs-lisp
-  ;; (use-package pyvenv
+  (use-package pyvenv
+    :ensure t
+    :config
+    (pyvenv-mode 1)
+    (add-to-list 'exec-path "~/.pyenv/shims")
+    (setenv "WORKON_HOME" "~/.pyenv/versions/")
+    )
+  ;; (use-package pyenv-mode
   ;;   :ensure t
   ;;   :config
-  ;;   (pyvenv-mode 1)
+  ;;     (defun projectile-pyenv-mode-set ()
+  ;;       "Set pyenv version matching project name."
+  ;;       (let ((project (projectile-project-name)))
+  ;;         (if (member project (pyenv-mode-versions))
+  ;;             (pyenv-mode-set project)
+  ;;           (pyenv-mode-unset))))
+  ;;     (add-hook 'projectile-switch-project-hook 'projectile-pyenv-mode-set)
+  ;;     (add-hook 'python-mode-hook 'pyenv-mode))
+  ;; (use-package virtualenvwrapper
+  ;;   :ensure t
+  ;;   :config
   ;;   (add-to-list 'exec-path "~/.pyenv/shims")
   ;;   (setenv "WORKON_HOME" "~/.pyenv/versions/")
-  ;;   )
-  ;; ;; (use-package pyenv-mode
-  ;; ;;   :ensure t
-  ;; ;;   :config
-  ;; ;;     (defun projectile-pyenv-mode-set ()
-  ;; ;;       "Set pyenv version matching project name."
-  ;; ;;       (let ((project (projectile-project-name)))
-  ;; ;;         (if (member project (pyenv-mode-versions))
-  ;; ;;             (pyenv-mode-set project)
-  ;; ;;           (pyenv-mode-unset))))
-  ;; ;;     (add-hook 'projectile-switch-project-hook 'projectile-pyenv-mode-set)
-  ;; ;;     (add-hook 'python-mode-hook 'pyenv-mode))
-  ;; ;; (use-package virtualenvwrapper
-  ;; ;;   :ensure t
-  ;; ;;   :config
-  ;; ;;   (add-to-list 'exec-path "~/.pyenv/shims")
-  ;; ;;   (setenv "WORKON_HOME" "~/.pyenv/versions/")
-  ;;   ;; (venv-initialize-interactive-shells)
-  ;;   ;; (venv-initialize-eshell))
+    ;; (venv-initialize-interactive-shells)
+    ;; (venv-initialize-eshell))
 
-  ;; ;; (setq lsp-python-executable-cmd "python3")
+  ;; (setq lsp-python-executable-cmd "python3")
 
-  ;; (use-package jedi
-  ;;   :ensure t
-  ;;   :init
-  ;;   (add-hook 'python-mode-hook 'jedi:setup)
-  ;;   (add-hook 'python-mode-hook 'jedi:ac-setup)
-  ;;   :config
-  ;;   (setq jedi:complete-on-dot t))
+  (use-package jedi
+    :ensure t
+    :init
+    (add-hook 'python-mode-hook 'jedi:setup)
+    (add-hook 'python-mode-hook 'jedi:ac-setup)
+    :config
+    (setq jedi:complete-on-dot t))
 
-  ;; (setq python-shell-interpreter "python3"
-  ;;       python-shell-interpreter-args "-i")
+  (setq python-shell-interpreter "python3"
+        python-shell-interpreter-args "-i")
 #+END_SRC
 * Golang
 #+BEGIN_SRC emacs-lisp
