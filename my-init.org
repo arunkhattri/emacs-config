@@ -56,10 +56,26 @@ for calendar and holidays
 #+BEGIN_SRC emacs-lisp
   (use-package anzu
     :init
-    (global-anzu-mode)
+    (global-anzu-mode +1)
     (global-set-key (kbd "M-%") 'anzu-query-replace)
-    (global-set-key (kbd "C-M-%") 'anzu-query-replace-regexp))
+    (global-set-key (kbd "C-M-%") 'anzu-query-replace-regexp)
+    :config
+    (custom-set-variables
+     '(anzu-mode-lighter "")
+     '(anzu-deactivate-region t)
+     '(anzu-search-threshold 1000)
+     '(anzu-replace-threshold 50)
+     '(anzu-replace-to-string-separator " => ")))
 
+  (defun akk/anzu-update-func (here total)
+    (when anzu--state
+      (let ((status (cl-case anzu--state
+                      (search (format "<%d/%d>" here total))
+                      (replace-query (format "(%d Replaces)" total))
+                      (replace (format "<%d/%d>" here total)))))
+        (propertize status 'face 'anzu-mode-line))))
+  (custom-set-variables
+   '(anzu-mode-line-update-function #'akk/anzu-update-func))
 #+END_SRC
 * Auto-wrap (80 char)
 #+BEGIN_SRC emacs-lisp
@@ -527,14 +543,6 @@ make ibuffer default
     :config
     (global-company-mode 1)
     ;; Quick-help (popup documentation for suggestions).
-    (use-package company-quickhelp
-      :ensure t
-      :init (company-quickhelp-mode 1))
-    (use-package company-web
-      :ensure t
-      :bind (("C-c w" . company-web-html))
-      :config
-      (add-to-list 'company-backends 'company-web-html))
     ;; Company settings.
     (setq company-tooltip-limit 10
           ;; company-idle-delay 0.2
@@ -559,6 +567,14 @@ make ibuffer default
     ;; prevent company from completing on its own when we type regular characters
     ;; (define-key company-active-map (kbd "SPC") nil)
 
+    (use-package company-quickhelp
+      :ensure t
+      :init (company-quickhelp-mode 1))
+    (use-package company-web
+      :ensure t
+      :bind (("C-c w" . company-web-html))
+      :config
+      (add-to-list 'company-backends 'company-web-html))
   (use-package company-lsp
     :ensure t
     :config
@@ -588,6 +604,7 @@ zsh
     ;; (add-hook 'python-mode-hook 'electric-pair-mode)
     (yas-reload-all)
     (add-hook 'python-mode-hook 'yas-minor-mode)
+    (add-hook 'python-mode-hook (lambda () (auto-complete-mode -1)))
     (setq-default py-split-windows-on-execute-function 'split-window-horizontally)
     :bind (:map python-mode-map
                ("C-c C-r" . py-execute-region)
@@ -627,6 +644,7 @@ Working fine however will prefer elpy for now (Apr 5, 2020)
     :commands (lsp lsp-deferred)
     :custom
     (lsp-auto-guess-root nil)
+    (lsp-prefer-capf t)
     (lsp-prefer-flymake nil) ; Use flycheck instead of flymake
     ;; (setq lsp-prefer-capf t)
     :bind (:map lsp-mode-map ("C-c C-f" . lsp-format-buffer))
@@ -665,6 +683,14 @@ Working fine however will prefer elpy for now (Apr 5, 2020)
 using elpy for now
 trying lsp with python [Apr 22, 2020]
 #+BEGIN_SRC emacs-lisp
+  ;; (use-package lsp-python-ms
+  ;;   :ensure t
+  ;;   :hook (python-mode . (lambda ()
+  ;;                          (require 'lsp-python-ms)
+  ;;                          (lsp))))
+  ;; (setq lsp-python-ms-executable
+  ;;       "/home/arunkhattri/github/python-language-server/output/bin/Release/")
+
   (use-package pyvenv
     :ensure t
     :config
@@ -693,16 +719,15 @@ trying lsp with python [Apr 22, 2020]
 
   ;; (setq lsp-python-executable-cmd "python3")
 
-  (use-package jedi
-    :ensure t
-    :init
-    (add-hook 'python-mode-hook 'jedi:setup)
-    (add-hook 'python-mode-hook 'jedi:ac-setup)
-    :config
-    (setq jedi:complete-on-dot t))
+  ;; (use-package jedi
+  ;;   :ensure t
+  ;;   :init
+  ;;   (add-hook 'python-mode-hook 'jedi:setup)
+  ;;   :config
+  ;;   (setq jedi:complete-on-dot t))
 
-  (setq python-shell-interpreter "python3"
-        python-shell-interpreter-args "-i")
+  ;; (setq python-shell-interpreter "python3"
+  ;;       python-shell-interpreter-args "-i")
 #+END_SRC
 * Golang
 #+BEGIN_SRC emacs-lisp
@@ -804,7 +829,7 @@ trying lsp with python [Apr 22, 2020]
           '("/home/arunkhattri/.emacs.d/snippets/"                            ;; personal snippets
             "/home/arunkhattri/go_projects/src/github.com/yasnippet-go"               ;; go snippets
             ;; "~/.emacs.d/elpa/yasnippet-snippets-[:digit:]+.[:digit:]+/snippets"
-            "/home/arunkhattri/.emacs.d/elpa/yasnippet-snippets-20200122.1140/snippets/"
+            "/home/arunkhattri/.emacs.d/elpa/yasnippet-snippets-20200425.1210/snippets"
             ))
     (yas-global-mode 1))
 
@@ -1653,6 +1678,7 @@ regular expressions."
   :commands (org-capture)
   :config
   (setq org-hide-emphasis-markers t)
+  (setq org-image-actual-width nil)
   (setq org-emphasis-alist
         '(("*" (bold :foreground "yellow"))
           ("/" (italic :foreground "green"))

@@ -36,19 +36,26 @@ There are two things you can do about this warning:
 ;; ----------------------------------------------------------------------
 
 ;; Atom-one-dark-theme
-(use-package atom-one-dark-theme
-  :ensure t
-  :config
-  (progn
-    (load-theme 'atom-one-dark t)))
-
-;; Kaolin-Themes
-;; (use-package kaolin-themes
+;; (use-package atom-one-dark-theme
 ;;   :ensure t
 ;;   :config
 ;;   (progn
-;;     (load-theme 'kaolin-dark t)
-;;     (kaolin-treemacs-theme)))
+;;     (load-theme 'atom-one-dark t)))
+
+;; themes
+(add-to-list 'custom-theme-load-path "~/.emacs.d/themes/")
+
+;; Base-16 themes
+;; (use-package base16-theme
+;;   :ensure t
+;;   :config
+;;   (load-theme 'base16-chalk t))
+
+;;One Themes
+(use-package one-themes
+  :ensure t
+  :config
+  (load-theme 'one-dark t))
 ;; ----------------------------------------------------------------------
 (load "~/github/emacs-config/help-fns+.el")
 

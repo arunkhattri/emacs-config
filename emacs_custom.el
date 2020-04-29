@@ -26,10 +26,16 @@
    ["#21252B" "#E06C75" "#98C379" "#E5C07B" "#61AFEF" "#C678DD" "#56B6C2" "#ABB2BF"])
  '(ansi-term-color-vector
    [unspecified "#1d1f21" "#cc6666" "#b5bd68" "#f0c674" "#81a2be" "#b294bb" "#81a2be" "#c5c8c6"] t)
+ '(anzu-deactivate-region t)
+ '(anzu-mode-lighter "")
+ '(anzu-mode-line-update-function (function akk/anzu-update-func))
+ '(anzu-replace-threshold 50)
+ '(anzu-replace-to-string-separator " => ")
+ '(anzu-search-threshold 1000)
  '(conda-anaconda-home "/home/arunkhattri/anaconda3")
  '(custom-safe-themes
    (quote
-    ("a24c5b3c12d147da6cef80938dca1223b7c7f70f2f382b26308eba014dc4833a" "bc4c89a7b91cfbd3e28b2a8e9e6750079a985237b960384f158515d32c7f0490" "c968804189e0fc963c641f5c9ad64bca431d41af2fb7e1d01a2a6666376f819c" "446cc97923e30dec43f10573ac085e384975d8a0c55159464ea6ef001f4a16ba" "350dc341799fbbb81e59d1e6fff2b2c8772d7000e352a5c070aa4317127eee94" "3380a2766cf0590d50d6366c5a91e976bdc3c413df963a0ab9952314b4577299" "732b807b0543855541743429c9979ebfb363e27ec91e82f463c91e68c772f6e3" "d6922c974e8a78378eacb01414183ce32bc8dbf2de78aabcc6ad8172547cb074" "745f50fa29c8427309e172ec9ffb59ddd1e4a62e4871509f424ddfd854a065d2" "98cc377af705c0f2133bb6d340bf0becd08944a588804ee655809da5d8140de6" default)))
+    ("a81bc918eceaee124247648fc9682caddd713897d7fd1398856a5b61a592cb62" "a24c5b3c12d147da6cef80938dca1223b7c7f70f2f382b26308eba014dc4833a" "bc4c89a7b91cfbd3e28b2a8e9e6750079a985237b960384f158515d32c7f0490" "c968804189e0fc963c641f5c9ad64bca431d41af2fb7e1d01a2a6666376f819c" "446cc97923e30dec43f10573ac085e384975d8a0c55159464ea6ef001f4a16ba" "350dc341799fbbb81e59d1e6fff2b2c8772d7000e352a5c070aa4317127eee94" "3380a2766cf0590d50d6366c5a91e976bdc3c413df963a0ab9952314b4577299" "732b807b0543855541743429c9979ebfb363e27ec91e82f463c91e68c772f6e3" "d6922c974e8a78378eacb01414183ce32bc8dbf2de78aabcc6ad8172547cb074" "745f50fa29c8427309e172ec9ffb59ddd1e4a62e4871509f424ddfd854a065d2" "98cc377af705c0f2133bb6d340bf0becd08944a588804ee655809da5d8140de6" default)))
  '(electric-pair-mode t)
  '(elpy-modules
    (quote
@@ -86,6 +92,17 @@
      ("reg" "%(binary) -f %(ledger-file) reg")
      ("payee" "%(binary) -f %(ledger-file) reg @%(payee)")
      ("account" "%(binary) -f %(ledger-file) reg %(account)"))))
+ '(lsp-auto-guess-root nil)
+ '(lsp-prefer-capf t)
+ '(lsp-prefer-flymake nil t)
+ '(lsp-ui-doc-border "#ABB2BF")
+ '(lsp-ui-doc-enable t)
+ '(lsp-ui-doc-header t)
+ '(lsp-ui-doc-include-signature t)
+ '(lsp-ui-doc-position (quote top))
+ '(lsp-ui-sideline-enable nil)
+ '(lsp-ui-sideline-ignore-duplicate t)
+ '(lsp-ui-sideline-show-code-actions nil)
  '(org-agenda-files (quote ("~/Dropbox/orgFiles/Diary/organize.org")))
  '(org-agenda-span (quote fortnight))
  '(org-hide-leading-stars t)
@@ -112,7 +129,7 @@
  '(org-use-sub-superscripts (quote {}))
  '(package-selected-packages
    (quote
-    (python-mode posframe kaolin-themes nimbus-theme python-x pyvenv-mode jedi yasnippet emojify pyenv-mode helm-ag company-tern emmet-mode clean-aindent-mode ws-butler helm-gtags ggtags anzu irony-eldoc flycheck-irony company-irony ox-reveal go-complete ess-R-data-view ess-smart-underscore company-jedi company-web region-bindings-mode go-guru org-ref-url-utils org-ref-pdf elfeed-goodies elfeed-org mark-multiple paganini-theme paganini company-inf-python company-anaconda go-eldoc cython-mode company-quickhelp virtualenvwrapper validate twittering-mode try theme-changer r-autoyas neotree material-theme help-fns+ evil-leader evil-indent-textobject ess-view cyberpunk-theme)))
+    (one-themes base16-theme lsp-python-ms python-mode posframe kaolin-themes nimbus-theme python-x pyvenv-mode jedi yasnippet emojify pyenv-mode helm-ag company-tern emmet-mode clean-aindent-mode ws-butler helm-gtags ggtags anzu irony-eldoc flycheck-irony company-irony ox-reveal go-complete ess-R-data-view ess-smart-underscore company-jedi company-web region-bindings-mode go-guru org-ref-url-utils org-ref-pdf elfeed-goodies elfeed-org mark-multiple paganini-theme paganini company-inf-python company-anaconda go-eldoc cython-mode company-quickhelp virtualenvwrapper validate twittering-mode try theme-changer r-autoyas neotree material-theme help-fns+ evil-leader evil-indent-textobject ess-view cyberpunk-theme)))
  '(python-check-command "\"pylint\"")
  '(safe-local-variable-values (quote ((org-src-preserve-indentation . t))))
  '(scroll-bar-mode nil)
