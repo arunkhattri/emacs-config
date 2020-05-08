@@ -64,7 +64,8 @@ There are two things you can do about this warning:
 (setq custom-file "~/github/emacs-config/emacs_custom.el")
 (load custom-file)
 ;; ----------------------------------------------------------------------
-(org-babel-load-file (expand-file-name "~/github/emacs-config/my-init.org"))
+;; (org-babel-load-file (expand-file-name "~/github/emacs-config/my-init.org"))
+(org-babel-load-file (expand-file-name "~/github/emacs-config/alternateConfig.org"))
 ;; ----------------------------------------------------------------------
 ;; Persistent action helm-again
 (custom-set-variables

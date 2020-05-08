@@ -39,9 +39,26 @@
 
 (use-package anzu
   :init
-  (global-anzu-mode)
+  (global-anzu-mode +1)
   (global-set-key (kbd "M-%") 'anzu-query-replace)
-  (global-set-key (kbd "C-M-%") 'anzu-query-replace-regexp))
+  (global-set-key (kbd "C-M-%") 'anzu-query-replace-regexp)
+  :config
+  (custom-set-variables
+   '(anzu-mode-lighter "")
+   '(anzu-deactivate-region t)
+   '(anzu-search-threshold 1000)
+   '(anzu-replace-threshold 50)
+   '(anzu-replace-to-string-separator " => ")))
+
+(defun akk/anzu-update-func (here total)
+  (when anzu--state
+    (let ((status (cl-case anzu--state
+                    (search (format "<%d/%d>" here total))
+                    (replace-query (format "(%d Replaces)" total))
+                    (replace (format "<%d/%d>" here total)))))
+      (propertize status 'face 'anzu-mode-line))))
+(custom-set-variables
+ '(anzu-mode-line-update-function #'akk/anzu-update-func))
 
 ;; Auto wrap at 80 characters
 (setq-default auto-fill-function 'do-auto-fill)
@@ -434,14 +451,6 @@
   :config
   (global-company-mode 1)
   ;; Quick-help (popup documentation for suggestions).
-  (use-package company-quickhelp
-    :ensure t
-    :init (company-quickhelp-mode 1))
-  (use-package company-web
-    :ensure t
-    :bind (("C-c w" . company-web-html))
-    :config
-    (add-to-list 'company-backends 'company-web-html))
   ;; Company settings.
   (setq company-tooltip-limit 10
         ;; company-idle-delay 0.2
@@ -466,6 +475,14 @@
   ;; prevent company from completing on its own when we type regular characters
   ;; (define-key company-active-map (kbd "SPC") nil)
 
+  (use-package company-quickhelp
+    :ensure t
+    :init (company-quickhelp-mode 1))
+  (use-package company-web
+    :ensure t
+    :bind (("C-c w" . company-web-html))
+    :config
+    (add-to-list 'company-backends 'company-web-html))
 (use-package company-lsp
   :ensure t
   :config
@@ -485,6 +502,7 @@
   ;; (add-hook 'python-mode-hook 'electric-pair-mode)
   (yas-reload-all)
   (add-hook 'python-mode-hook 'yas-minor-mode)
+  (add-hook 'python-mode-hook (lambda () (auto-complete-mode -1)))
   (setq-default py-split-windows-on-execute-function 'split-window-horizontally)
   :bind (:map python-mode-map
              ("C-c C-r" . py-execute-region)
@@ -517,13 +535,17 @@
 
 (use-package lsp-mode
   :ensure t
-  :commands (lsp lsp-deferred)
+  :commands (lsp)
   :custom
   (lsp-auto-guess-root nil)
+  (lsp-prefer-capf t)
   (lsp-prefer-flymake nil) ; Use flycheck instead of flymake
   ;; (setq lsp-prefer-capf t)
   :bind (:map lsp-mode-map ("C-c C-f" . lsp-format-buffer))
-  :hook ((python-mode) . lsp))
+  :hook
+  ((python-mode . lsp-deferred)
+   ;; (go-mode . lsp-deferred)
+   ))
 
 
 (use-package lsp-ui
@@ -554,6 +576,14 @@
   (defadvice lsp-ui-imenu (after hide-lsp-ui-imenu-mode-line activate)
     (setq mode-line-format nil)))
 
+;; (use-package lsp-python-ms
+;;   :ensure t
+;;   :hook (python-mode . (lambda ()
+;;                          (require 'lsp-python-ms)
+;;                          (lsp))))
+;; (setq lsp-python-ms-executable
+;;       "/home/arunkhattri/github/python-language-server/output/bin/Release/")
+
 (use-package pyvenv
   :ensure t
   :config
@@ -582,20 +612,16 @@
 
 ;; (setq lsp-python-executable-cmd "python3")
 
-(use-package jedi
-  :ensure t
-  :init
-  (add-hook 'python-mode-hook 'jedi:setup)
-  (add-hook 'python-mode-hook 'jedi:ac-setup)
-  :config
-  (setq jedi:complete-on-dot t))
+;; (use-package jedi
+;;   :ensure t
+;;   :init
+;;   (add-hook 'python-mode-hook 'jedi:setup)
+;;   :config
+;;   (setq jedi:complete-on-dot t))
 
-(setq python-shell-interpreter "python3"
-      python-shell-interpreter-args "-i")
+;; (setq python-shell-interpreter "python3"
+;;       python-shell-interpreter-args "-i")
 
-;; (defun akk/go-run()
-;;   (interactive)
-;;   (shell-command (concat "go run " (buffer-name))))
 (use-package gotest
   :ensure t)
 
@@ -626,13 +652,25 @@
     (add-hook 'go-mode-hook 'electric-pair-mode)
     (add-hook 'go-mode-hook 'global-flycheck-mode)
     (setq gofmt-command "goimports")
+    ;; ;; not needed after lsp and gopls [Apr 26, 2020]
     (add-hook 'before-save-hook 'gofmt-before-save)
     (setq compile-command "go build -v && go test -v && go vet"))
-  ;; :bind (("C-c C-r" . go-remove-unused-imports)
-  ;;        ("C-c C-g" . go-goto-imports)
-  ;;        ("C-c C-f" . gofmt)
-  ;;        ("C-c C-k" . godoc)
-  ;;        ("C-c C-c" . compile))
+    ;; (setq lsp-gopls-staticcheck t)
+    ;; (setq lsp-eldoc-render-all t)
+    ;; (setq lsp-gopls-complete-unimported t))
+
+;; lsp related settings
+;; (defun lsp-go-install-save-hooks ()
+;;   (add-hook 'before-save-hook #'lsp-format-buffer t t)
+;;   (add-hook 'before-save-hook #'lsp-organize-imports t t))
+;; (add-hook 'go-mode-hook #'lsp-go-install-save-hooks)
+
+;; ;; Gopls configuration
+;; (lsp-register-custom-settings
+;;  '(("gopls.completeUnimported" t t)
+;;    ("gopls.staticcheck" t t)))
+
+
 (use-package company-go
   :ensure t
   :init
@@ -643,13 +681,6 @@
       (lambda ()
         (set (make-local-variable 'company-backends) '(company-go))
         (company-mode))))
-;; (use-package go-complete
-;;   :ensure t
-;;   :defer t
-;;   :init
-;;   (with-eval-after-load 'go-mode)
-;;   :config
-;;   (add-hook 'completion-at-point-functions 'go-complete-at-point))
 
 (use-package go-eldoc
   :ensure t
@@ -689,7 +720,7 @@
         '("/home/arunkhattri/.emacs.d/snippets/"                            ;; personal snippets
           "/home/arunkhattri/go_projects/src/github.com/yasnippet-go"               ;; go snippets
           ;; "~/.emacs.d/elpa/yasnippet-snippets-[:digit:]+.[:digit:]+/snippets"
-          "/home/arunkhattri/.emacs.d/elpa/yasnippet-snippets-20200122.1140/snippets/"
+          "/home/arunkhattri/.emacs.d/elpa/yasnippet-snippets-20200425.1210/snippets"
           ))
   (yas-global-mode 1))
 
@@ -1340,6 +1371,8 @@ want to use in the modeline *in lieu of* the original.")
 (setq rcirc-server-alist
       '(("irc.freenode.net" :port 6697 :encryption tls
      :channels ("#rcirc" "#emacs" "#emacswiki"))))
+(add-hook 'rcirc-mode-hook 'turn-on-visual-line-mode)
+
 
 ;; This code adds smileys such as :) and :( to rcirc.
 
@@ -1452,6 +1485,7 @@ regular expressions."
 :commands (org-capture)
 :config
 (setq org-hide-emphasis-markers t)
+(setq org-image-actual-width nil)
 (setq org-emphasis-alist
       '(("*" (bold :foreground "yellow"))
         ("/" (italic :foreground "green"))

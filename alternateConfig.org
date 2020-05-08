@@ -28,23 +28,6 @@ for calendar and other stuffs:
 (setq calendar-standard-time-zone-name "IST")
 #+END_SRC
 
-* Hindu Holidays 2018
-for calendar and holidays
-
-#+BEGIN_SRC emacs-lisp
-  (setq holiday-other-holidays
-        '((holiday-fixed 9 2 "Krishna Janmashtami")
-          (holiday-fixed 9 13 "Ganesh Chaturthi")
-          (holiday-fixed 9 17 "Vishwakarma Puja")
-          (holiday-fixed 10 10 "Navratri begins")
-          (holiday-fixed 10 17 "Navratri ends/Maha Navami")
-          (holiday-fixed 10 19 "Dusshera")
-          (holiday-fixed 10 27 "Karwa Chauth")
-          (holiday-fixed 11 5 "Dhan Teras")
-          (holiday-fixed 11 7 "Diwali")
-          (holiday-fixed 11 9 "Bhai Dooj")
-          (holiday-fixed 11 13 "Chhath Puja")))
-#+END_SRC
 * Language Environment
 
 #+BEGIN_SRC emacs-lisp
@@ -52,36 +35,11 @@ for calendar and holidays
 (when (display-graphic-p)
   (setq x-select-request-type '(UTF8_STRING COMPOUND_TEXT TEXT STRING)))
 #+END_SRC
-* ANZU
-#+BEGIN_SRC emacs-lisp
-  (use-package anzu
-    :init
-    (global-anzu-mode +1)
-    (global-set-key (kbd "M-%") 'anzu-query-replace)
-    (global-set-key (kbd "C-M-%") 'anzu-query-replace-regexp)
-    :config
-    (custom-set-variables
-     '(anzu-mode-lighter "")
-     '(anzu-deactivate-region t)
-     '(anzu-search-threshold 1000)
-     '(anzu-replace-threshold 50)
-     '(anzu-replace-to-string-separator " => ")))
-
-  (defun akk/anzu-update-func (here total)
-    (when anzu--state
-      (let ((status (cl-case anzu--state
-                      (search (format "<%d/%d>" here total))
-                      (replace-query (format "(%d Replaces)" total))
-                      (replace (format "<%d/%d>" here total)))))
-        (propertize status 'face 'anzu-mode-line))))
-  (custom-set-variables
-   '(anzu-mode-line-update-function #'akk/anzu-update-func))
-#+END_SRC
-* Auto-wrap (80 char)
+* Auto-wrap (78 char)
 #+BEGIN_SRC emacs-lisp
   ;; Auto wrap at 80 characters
   (setq-default auto-fill-function 'do-auto-fill)
-  (setq-default fill-column 80)
+  (setq-default fill-column 78)
   (turn-on-auto-fill)
 
   ;; Disable auto-fill-mode in programming mode
@@ -116,16 +74,6 @@ for calendar and holidays
   :config (which-key-mode))
 #+END_SRC
 
-* IDO Mode
-
-#+BEGIN_SRC emacs-lisp
-  ;; (setq ido-enable-flex-matching t)
-  ;; (setq ido-everywhere t)
-  ;; (ido-mode 1)
-  ;; ;; (setq ido-max-directory-size 100000)
-  ;; (ido-mode (quote both))
-#+END_SRC
-
 * ibuffer
 make ibuffer default
 
@@ -152,88 +100,88 @@ make ibuffer default
 * Powerline
 
 #+BEGIN_SRC emacs-lisp
-(defface my-pl-segment1-active
-  '((t (:foreground "#000000" :background "#E1B61A")))
-  "Powerline first segment active face.")
-(defface my-pl-segment1-inactive
-  '((t (:foreground "#CEBFF3" :background "#3A2E58")))
-  "Powerline first segment inactive face.")
-(defface my-pl-segment2-active
-  '((t (:foreground "#F5E39F" :background "#8A7119")))
-  "Powerline second segment active face.")
-(defface my-pl-segment2-inactive
-  '((t (:foreground "#CEBFF3" :background "#3A2E58")))
-  "Powerline second segment inactive face.")
-(defface my-pl-segment3-active
-  '((t (:foreground "#CEBFF3" :background "#3A2E58")))
-  "Powerline third segment active face.")
-(defface my-pl-segment3-inactive
-  '((t (:foreground "#CEBFF3" :background "#3A2E58")))
-  "Powerline third segment inactive face.")
+  (defface my-pl-segment1-active
+    '((t (:foreground "#000000" :background "#E1B61A")))
+    "Powerline first segment active face.")
+  (defface my-pl-segment1-inactive
+    '((t (:foreground "#CEBFF3" :background "#3A2E58")))
+    "Powerline first segment inactive face.")
+  (defface my-pl-segment2-active
+    '((t (:foreground "#F5E39F" :background "#8A7119")))
+    "Powerline second segment active face.")
+  (defface my-pl-segment2-inactive
+    '((t (:foreground "#CEBFF3" :background "#3A2E58")))
+    "Powerline second segment inactive face.")
+  (defface my-pl-segment3-active
+    '((t (:foreground "#CEBFF3" :background "#3A2E58")))
+    "Powerline third segment active face.")
+  (defface my-pl-segment3-inactive
+    '((t (:foreground "#CEBFF3" :background "#3A2E58")))
+    "Powerline third segment inactive face.")
 
-(defun air--powerline-default-theme ()
-  "Set up my custom Powerline with Evil indicators."
-  (setq-default mode-line-format
-                '("%e"
-                  (:eval
-                   (let* ((active (powerline-selected-window-active))
-                          (seg1 (if active 'my-pl-segment1-active 'my-pl-segment1-inactive))
-                          (seg2 (if active 'my-pl-segment2-active 'my-pl-segment2-inactive))
-                          (seg3 (if active 'my-pl-segment3-active 'my-pl-segment3-inactive))
-                          (separator-left (intern (format "powerline-%s-%s"
-                                                          (powerline-current-separator)
-                                                          (car powerline-default-separator-dir))))
-                          (separator-right (intern (format "powerline-%s-%s"
-                                                           (powerline-current-separator)
-                                                           (cdr powerline-default-separator-dir))))
-                          (lhs (list (let ((evil-face (powerline-evil-face)))
+  (defun air--powerline-default-theme ()
+    "Set up my custom Powerline with Evil indicators."
+    (setq-default mode-line-format
+                  '("%e"
+                    (:eval
+                     (let* ((active (powerline-selected-window-active))
+                            (seg1 (if active 'my-pl-segment1-active 'my-pl-segment1-inactive))
+                            (seg2 (if active 'my-pl-segment2-active 'my-pl-segment2-inactive))
+                            (seg3 (if active 'my-pl-segment3-active 'my-pl-segment3-inactive))
+                            (separator-left (intern (format "powerline-%s-%s"
+                                                            (powerline-current-separator)
+                                                            (car powerline-default-separator-dir))))
+                            (separator-right (intern (format "powerline-%s-%s"
+                                                             (powerline-current-separator)
+                                                             (cdr powerline-default-separator-dir))))
+                            (lhs (list (let ((evil-face (powerline-evil-face)))
+                                         (if evil-mode
+                                             (powerline-raw (powerline-evil-tag) evil-face)
+                                           ))
                                        (if evil-mode
-                                           (powerline-raw (powerline-evil-tag) evil-face)
-                                         ))
-                                     (if evil-mode
-                                         (funcall separator-left (powerline-evil-face) seg1))
-                                     (powerline-buffer-id seg1 'l)
-                                     (powerline-raw "[%*]" seg1 'l)
-                                     (when (and (boundp 'which-func-mode) which-func-mode)
-                                       (powerline-raw which-func-format seg1 'l))
-                                     (powerline-raw " " seg1)
-                                     (funcall separator-left seg1 seg2)
-                                     (when (boundp 'erc-modified-channels-object)
-                                       (powerline-raw erc-modified-channels-object seg2 'l))
-                                     (powerline-major-mode seg2 'l)
-                                     (powerline-process seg2)
-                                     (powerline-minor-modes seg2 'l)
-                                     (powerline-narrow seg2 'l)
-                                     (powerline-raw " " seg2)
-                                     (funcall separator-left seg2 seg3)
-                                     (powerline-vc seg3 'r)
-                                     (when (bound-and-true-p nyan-mode)
-                                       (powerline-raw (list (nyan-create)) seg3 'l))))
-                          (rhs (list (powerline-raw global-mode-string seg3 'r)
-                                     (funcall separator-right seg3 seg2)
-                                     (unless window-system
-                                       (powerline-raw (char-to-string #xe0a1) seg2 'l))
-                                     (powerline-raw "%4l" seg2 'l)
-                                     (powerline-raw ":" seg2 'l)
-                                     (powerline-raw "%3c" seg2 'r)
-                                     (funcall separator-right seg2 seg1)
-                                     (powerline-raw " " seg1)
-                                     (powerline-raw "%6p" seg1 'r)
-                                     (when powerline-display-hud
-                                       (powerline-hud seg1 seg3)))))
-                     (concat (powerline-render lhs)
-                             (powerline-fill seg3 (powerline-width rhs))
-                             (powerline-render rhs)))))))
+                                           (funcall separator-left (powerline-evil-face) seg1))
+                                       (powerline-buffer-id seg1 'l)
+                                       (powerline-raw "[%*]" seg1 'l)
+                                       (when (and (boundp 'which-func-mode) which-func-mode)
+                                         (powerline-raw which-func-format seg1 'l))
+                                       (powerline-raw " " seg1)
+                                       (funcall separator-left seg1 seg2)
+                                       (when (boundp 'erc-modified-channels-object)
+                                         (powerline-raw erc-modified-channels-object seg2 'l))
+                                       (powerline-major-mode seg2 'l)
+                                       (powerline-process seg2)
+                                       (powerline-minor-modes seg2 'l)
+                                       (powerline-narrow seg2 'l)
+                                       (powerline-raw " " seg2)
+                                       (funcall separator-left seg2 seg3)
+                                       (powerline-vc seg3 'r)
+                                       (when (bound-and-true-p nyan-mode)
+                                         (powerline-raw (list (nyan-create)) seg3 'l))))
+                            (rhs (list (powerline-raw global-mode-string seg3 'r)
+                                       (funcall separator-right seg3 seg2)
+                                       (unless window-system
+                                         (powerline-raw (char-to-string #xe0a1) seg2 'l))
+                                       (powerline-raw "%4l" seg2 'l)
+                                       (powerline-raw ":" seg2 'l)
+                                       (powerline-raw "%3c" seg2 'r)
+                                       (funcall separator-right seg2 seg1)
+                                       (powerline-raw " " seg1)
+                                       (powerline-raw "%6p" seg1 'r)
+                                       (when powerline-display-hud
+                                         (powerline-hud seg1 seg3)))))
+                       (concat (powerline-render lhs)
+                               (powerline-fill seg3 (powerline-width rhs))
+                               (powerline-render rhs)))))))
 
-(use-package powerline
-  :ensure t
-  :config
-  (setq powerline-default-separator (if (display-graphic-p) 'arrow
-                                      nil))
-  (air--powerline-default-theme))
+  (use-package powerline
+    :ensure t
+    :config
+    (setq powerline-default-separator (if (display-graphic-p) 'arrow
+                                        nil))
+    (air--powerline-default-theme))
 
-(use-package powerline-evil
-  :ensure t)
+  (use-package powerline-evil
+    :ensure t)
 
 #+END_SRC
 
@@ -309,26 +257,27 @@ make ibuffer default
 * Evil
 
 #+BEGIN_SRC emacs-lisp
-(use-package evil
-  :ensure t
-  :config
-  (evil-mode 1)
-  (add-to-list 'evil-emacs-state-modes 'elfeed-search-mode)
-  (add-to-list 'evil-emacs-state-modes 'elfeed-show-mode)
-  (use-package evil-leader
+  (use-package evil
     :ensure t
     :config
-    (global-evil-leader-mode))
-;;  (use-package evil-jumper
-;;    :ensure t
-;;    :config
-;;    (global-evil-jumper-mode))
-  (use-package evil-surround
-    :ensure t
-    :config
-    (global-evil-surround-mode))
-  (use-package evil-indent-textobject
-    :ensure t))
+    (evil-mode 1)
+    (add-to-list 'evil-emacs-state-modes 'elfeed-search-mode)
+    (add-to-list 'evil-emacs-state-modes 'elfeed-show-mode)
+    (add-to-list 'evil-emacs-state-modes 'go-mode)
+    (use-package evil-leader
+      :ensure t
+      :config
+      (global-evil-leader-mode))
+  ;;  (use-package evil-jumper
+  ;;    :ensure t
+  ;;    :config
+  ;;    (global-evil-jumper-mode))
+    (use-package evil-surround
+      :ensure t
+      :config
+      (global-evil-surround-mode))
+    (use-package evil-indent-textobject
+      :ensure t))
 
 #+END_SRC
 
@@ -473,65 +422,6 @@ make ibuffer default
     :config(elfeed-goodies/setup))
 #+END_SRC
 
-* Autocomplete
-#+BEGIN_SRC emacs-lisp
-  ;; (use-package auto-complete
-  ;;   :commands auto-complete-mode
-  ;;   :init
-  ;;   (progn
-  ;;     (auto-complete-mode t))
-  ;;   :bind (("C-n" . ac-next)
-  ;;          ("C-p" . ac-previous))
-  ;;   :config
-  ;;   (progn
-  ;;     (use-package auto-complete-config)
-
-  ;;     (ac-set-trigger-key "TAB")
-  ;;     (ac-config-default)
-
-  ;;     (setq ac-delay 0.02)
-  ;;     (setq ac-use-menu-map t)
-  ;;     (setq ac-menu-height 50)
-  ;;     (setq ac-use-quick-help nil)
-  ;;     (setq ac-comphist-file  "~/.emacs.d/ac-comphist.dat")
-  ;;     (setq ac-ignore-case nil)
-  ;;     (setq ac-dwim  t)
-  ;;     (setq ac-fuzzy-enable t)
-
-  ;;     (use-package ac-dabbrev
-  ;;       :config
-  ;;       (progn
-  ;;         (add-to-list 'ac-sources 'ac-source-dabbrev)))
-
-  ;;     (setq ac-modes '(js3-mode
-  ;;                      emacs-lisp-mode
-  ;;                      lisp-mode
-  ;;                      lisp-interaction-mode
-  ;;                      slime-repl-mode
-  ;;                      c-mode
-  ;;                      cc-mode
-  ;;                      c++-mode
-  ;;                      go-mode
-  ;;                      python-mode
-  ;;                      ruby-mode
-  ;;                      enh-ruby-mode
-  ;;                      lua-mode
-  ;;                      ecmascript-mode
-  ;;                      javascript-mode
-  ;;                      js-mode
-  ;;                      js2-mode
-  ;;                      php-mode
-  ;;                      css-mode
-  ;;                      makefile-mode
-  ;;                      sh-mode
-  ;;                      ada-mode
-  ;;                      xml-mode
-  ;;                      sgml-mode
-  ;;                      ts-mode
-  ;;                      sclang-mode
-  ;;                      verilog-mode))))
-
-#+END_SRC
 * Company
 
 #+BEGIN_SRC emacs-lisp
@@ -610,77 +500,50 @@ zsh
                ("C-c C-r" . py-execute-region)
                ("C-c C-l" . py-execute-line)))
 
-
-    ;; (use-package elpy
-    ;; :ensure t
-    ;; :config
-    ;; (elpy-enable)
-    ;; ;; Enable elpy in a Python mode and jedi for auto-completion in elpy
-    ;; (add-hook 'python-mode-hook 'elpy-mode)
-    ;; (setq elpy-rpc-backend "jedi")
-    ;; (add-to-list 'exec-path "~/.pyenv/shims")
-    ;; ;; (setenv "WORKON_HOME" "~/anaconda3/envs/")
-    ;; (setenv "WORKON_HOME" "~/.pyenv/versions/")
-    ;; (pyvenv-mode 1)
-    ;; (setq-default indent-tabs-mode nil)
-    ;; (global-set-key (kbd "<f7>") (kbd "C-u C-c C-c"))
-    ;; (setq gud-pdb-command-name "python -m pdb ")
-    ;; ;; (setq elpy-shell-echo-input nil)
-    ;; )
-
-    ;; ;; Python auto completion
-    ;; (use-package company-jedi
-    ;;   :init
-    ;;   (setq company-jedi-python-bin "python")
-    ;;   :config
-    ;;   (add-to-list 'company-backends 'company-jedi))
 #+END_SRC
 
 * LSP
 Working fine however will prefer elpy for now (Apr 5, 2020)
 #+BEGIN_SRC emacs-lisp
-  (use-package lsp-mode
-    :ensure t
-    :commands (lsp)
-    :custom
-    (lsp-auto-guess-root nil)
-    (lsp-prefer-capf t)
-    (lsp-prefer-flymake nil) ; Use flycheck instead of flymake
-    ;; (setq lsp-prefer-capf t)
-    :bind (:map lsp-mode-map ("C-c C-f" . lsp-format-buffer))
-    :hook
-    ((python-mode . lsp-deferred)
-     ;; (go-mode . lsp-deferred)
-     ))
+    (use-package lsp-mode
+      :hook
+      (python-mode . lsp-deferred)
+      (go-mode . lsp-deferred)
+      :custom
+      (lsp-auto-guess-root nil)
+      (lsp-prefer-capf t)
+      (lsp-prefer-flymake nil)
+      :commands
+      (lsp-deferred))
 
 
-  (use-package lsp-ui
-    :after lsp-mode
-    :diminish
-    :commands lsp-ui-mode
-    :custom-face
-    (lsp-ui-doc-background ((t (:background nil))))
-    (lsp-ui-doc-header ((t (:inherit (font-lock-string-face italic)))))
-    :bind (:map lsp-ui-mode-map
-                ([remap xref-find-definitions] . lsp-ui-peek-find-definitions)
-                ([remap xref-find-references] . lsp-ui-peek-find-references)
-                ("C-c u" . lsp-ui-imenu))
-    :custom
-    (lsp-ui-doc-enable t)
-    (lsp-ui-doc-header t)
-    (lsp-ui-doc-include-signature t)
-    (lsp-ui-doc-position 'top)
-    (lsp-ui-doc-border (face-foreground 'default))
-    (lsp-ui-sideline-enable nil)
-    (lsp-ui-sideline-ignore-duplicate t)
-    (lsp-ui-sideline-show-code-actions nil)
-    :config
-    ;; Use lsp-ui-doc-webkit only in GUI
-    (setq lsp-ui-doc-use-webkit t)
-    ;; WORKAROUND Hide mode-line of the lsp-ui-imenu buffer
-    ;; https://github.com/emacs-lsp/lsp-ui/issues/243
-    (defadvice lsp-ui-imenu (after hide-lsp-ui-imenu-mode-line activate)
-      (setq mode-line-format nil)))
+    (use-package lsp-ui
+      :after lsp-mode
+      :diminish
+      :commands lsp-ui-mode
+      :custom-face
+      (lsp-ui-doc-background ((t (:background nil))))
+      (lsp-ui-doc-header ((t (:inherit (font-lock-string-face italic)))))
+      :bind (:map lsp-ui-mode-map
+                  ([remap xref-find-definitions] . lsp-ui-peek-find-definitions)
+                  ([remap xref-find-references] . lsp-ui-peek-find-references)
+                  ("C-c u" . lsp-ui-imenu))
+      :custom
+      (lsp-ui-doc-enable t)
+      (lsp-ui-doc-header t)
+      (lsp-ui-doc-include-signature t)
+      (lsp-ui-doc-position 'top)
+      (lsp-ui-doc-border (face-foreground 'default))
+      (lsp-ui-sideline-enable nil)
+      (lsp-ui-sideline-ignore-duplicate t)
+      (lsp-ui-sideline-show-code-actions nil)
+      :config
+      ;; Use lsp-ui-doc-webkit only in GUI
+      (setq lsp-ui-doc-use-webkit t)
+      ;; WORKAROUND Hide mode-line of the lsp-ui-imenu buffer
+      ;; https://github.com/emacs-lsp/lsp-ui/issues/243
+      (defadvice lsp-ui-imenu (after hide-lsp-ui-imenu-mode-line activate)
+        (setq mode-line-format nil)))
 #+END_SRC
 * LSP Python
 using elpy for now
@@ -701,128 +564,39 @@ trying lsp with python [Apr 22, 2020]
     (add-to-list 'exec-path "~/.pyenv/shims")
     (setenv "WORKON_HOME" "~/.pyenv/versions/")
     )
-  ;; (use-package pyenv-mode
-  ;;   :ensure t
-  ;;   :config
-  ;;     (defun projectile-pyenv-mode-set ()
-  ;;       "Set pyenv version matching project name."
-  ;;       (let ((project (projectile-project-name)))
-  ;;         (if (member project (pyenv-mode-versions))
-  ;;             (pyenv-mode-set project)
-  ;;           (pyenv-mode-unset))))
-  ;;     (add-hook 'projectile-switch-project-hook 'projectile-pyenv-mode-set)
-  ;;     (add-hook 'python-mode-hook 'pyenv-mode))
-  ;; (use-package virtualenvwrapper
-  ;;   :ensure t
-  ;;   :config
-  ;;   (add-to-list 'exec-path "~/.pyenv/shims")
-  ;;   (setenv "WORKON_HOME" "~/.pyenv/versions/")
-    ;; (venv-initialize-interactive-shells)
-    ;; (venv-initialize-eshell))
-
-  ;; (setq lsp-python-executable-cmd "python3")
-
-  ;; (use-package jedi
-  ;;   :ensure t
-  ;;   :init
-  ;;   (add-hook 'python-mode-hook 'jedi:setup)
-  ;;   :config
-  ;;   (setq jedi:complete-on-dot t))
-
-  ;; (setq python-shell-interpreter "python3"
-  ;;       python-shell-interpreter-args "-i")
 #+END_SRC
 * Golang
 #+BEGIN_SRC emacs-lisp
-  (use-package gotest
-    :ensure t)
-
+  ;;; golang --- Summary
+  ;;; Commentary:
+  ;;; configuration for go-mode
+  ;;; code:
   (use-package go-mode
     :ensure t
     :bind (:map go-mode-map
                 ("C-," . 'akk/hydra-go/body))
-    :init
-    (defhydra akk/hydra-go (:hint nil :color teal)
-      "
-            ^Command^     ^Imports^     ^Doc^               ^Format^
-            ^-------^     ^-------^     ^---^               ^------^
-         _r_: run        _ig_: goto     _d_: doc at point   _f_: format
-         _b_: build      _ia_: add
-       [_g_]: guru       _ir_: remove
-       ^  ^
-      "
-      ("g" akk/hydra-go-guru/body :color blue)
-      ("r" go-run)
-      ("b" compile)
-      ("d" godoc-at-point)
-      ("f" gofmt)
-      ("ig" go-goto-imports)
-      ("ia" go-import-add)
-      ("ir" go-remove-unused-imports)
-      ("q" nil "quit" :color blue))
     :config
-      (add-hook 'go-mode-hook 'electric-pair-mode)
-      (add-hook 'go-mode-hook 'global-flycheck-mode)
-      (setq gofmt-command "goimports")
+    (add-hook 'go-mode-hook 'lsp-deferred)
+      ;; (setq gofmt-command "goimports")
       ;; ;; not needed after lsp and gopls [Apr 26, 2020]
-      (add-hook 'before-save-hook 'gofmt-before-save)
-      (setq compile-command "go build -v && go test -v && go vet"))
-      ;; (setq lsp-gopls-staticcheck t)
-      ;; (setq lsp-eldoc-render-all t)
-      ;; (setq lsp-gopls-complete-unimported t))
+      ;; (add-hook 'before-save-hook 'gofmt-before-save)
+    (setq compile-command "go build -v && go test -v && go vet")
+    (setq lsp-gopls-staticcheck t)
+    (setq lsp-eldoc-render-all t)
+    (setq lsp-gopls-complete-unimported t))
 
   ;; lsp related settings
-  ;; (defun lsp-go-install-save-hooks ()
-  ;;   (add-hook 'before-save-hook #'lsp-format-buffer t t)
-  ;;   (add-hook 'before-save-hook #'lsp-organize-imports t t))
-  ;; (add-hook 'go-mode-hook #'lsp-go-install-save-hooks)
+  (defun lsp-go-install-save-hooks ()
+    (add-hook 'before-save-hook #'lsp-format-buffer t t)
+    (add-hook 'before-save-hook #'lsp-organize-imports t t))
+  (add-hook 'go-mode-hook #'lsp-go-install-save-hooks)
 
   ;; ;; Gopls configuration
-  ;; (lsp-register-custom-settings
-  ;;  '(("gopls.completeUnimported" t t)
-  ;;    ("gopls.staticcheck" t t)))
+  (lsp-register-custom-settings
+   '(("gopls.completeUnimported" t t)
+     ("gopls.staticcheck" t t)
+     ("gopls.deepCompletion" t t)))
 
-
-  (use-package company-go
-    :ensure t
-    :init
-    (with-eval-after-load 'company
-      (add-to-list 'company-backends 'company-go))
-    :config
-    (add-hook 'go-mode-hook
-        (lambda ()
-          (set (make-local-variable 'company-backends) '(company-go))
-          (company-mode))))
-
-  (use-package go-eldoc
-    :ensure t
-    :defer
-    :init
-    (add-hook 'go-mode-hook 'go-eldoc-setup))
-
-  (use-package go-guru
-    :ensure t
-    :config
-    (add-hook 'go-mode-hook #'go-guru-hl-identifier-mode)
-    (defhydra akk/hydra-go-guru (:color pink :columns 2 :hint nil)
-      "
-      ^NAME^             ^TYPE^            ^CALL^           ^ALIAS^
-      _._: definition    _d_: describe     _lr_: callers     _p_: pointsto
-      _r_: referrers     _i_: implement    _le_: callees     _c_: peers
-      _f_: freevars      ^ ^               _s_: callstack    _e_: whicherrs"
-      ("." go-guru-definition)
-      ("r" go-guru-referrers)
-      ("f" go-guru-freevars)
-      ("d" go-guru-describe)
-      ("i" go-guru-implements)
-      ("lr" go-guru-callers)
-      ("le" go-guru-callees)
-      ("s" go-guru-callstack)
-      ("p" go-guru-pointsto)
-      ("c" go-guru-peers)
-      ("e" go-guru-whicherrs)
-      ("S" go-guru-set-scope "scope" :color blue)
-      ("q" nil "quit" :color blue)))
 #+END_SRC
 * Yasnippets
 #+BEGIN_SRC emacs-lisp
@@ -843,220 +617,6 @@ trying lsp with python [Apr 22, 2020]
 
 
 #+END_SRC
-* ESS-R
-copied: https://github.com/jabranham/emacs/blob/master/init.el
-helm off from here also
-#+BEGIN_SRC emacs-lisp
-  (use-package ess-r-mode
-    ;; ESS (Emacs Speaks Statistics) is a great project that makes Emacs
-    ;; speak with R and other statistical languages
-    :bind
-    (:map ess-mode-map
-          ("M-=" . ess-insert-S-assign)
-          ("M-p" . my/add-pipe)
-          ("C-|" . my/ess-eval-pipe-through-line)
-          :map inferior-ess-mode-map
-          ("M-=" . ess-insert-S-assign))
-    :custom
-    (ess-ask-for-ess-directory nil "Don't ask for dir when starting a process")
-    (ess-default-style 'RStudio)
-    (ess-eldoc-show-on-symbol t "Show eldoc on symbol instead of only inside of parens")
-    (ess-eval-visibly 'nowait "Don't hog Emacs")
-    (ess-history-directory (concat user-emacs-directory "var/Rhist/") "Save R history in one place rather than making .Rhistory files everywhere.")
-    (ess-pdf-viewer-pref "emacsclient")
-    ;; (ess-use-ido nil "I prefer helm.")
-    (ess-plain-first-buffername nil "Name first R process R:1")
-    (ess-nuke-trailing-whitespace-p t)
-    (ess-R-font-lock-keywords
-     '((ess-R-fl-keyword:modifiers . t)
-       (ess-R-fl-keyword:fun-defs . t)
-       (ess-R-fl-keyword:keywords . t)
-       (ess-R-fl-keyword:assign-ops . t)
-       (ess-R-fl-keyword:constants . t)
-       (ess-fl-keyword:fun-calls . nil)
-       (ess-fl-keyword:numbers . t)
-       (ess-fl-keyword:operators . t)
-       (ess-fl-keyword:delimiters . nil)
-       (ess-fl-keyword:= . t)
-       (ess-R-fl-keyword:F&T . t)))
-    (inferior-R-font-lock-keywords
-     '((ess-S-fl-keyword:prompt . t)
-       (ess-R-fl-keyword:messages . t)
-       (ess-R-fl-keyword:modifiers . t)
-       (ess-R-fl-keyword:fun-defs . t)
-       (ess-R-fl-keyword:keywords . t)
-       (ess-R-fl-keyword:assign-ops . t)
-       (ess-R-fl-keyword:constants . t)
-       (ess-fl-keyword:matrix-labels . t)
-       (ess-fl-keyword:fun-calls . nil)
-       (ess-fl-keyword:numbers . nil)
-       (ess-fl-keyword:operators . t)
-       (ess-fl-keyword:delimiters . nil)
-       (ess-fl-keyword:= . t)
-       (ess-R-fl-keyword:F&T . t)))
-    :hook
-    (ess-r-post-run . my/ess-execute-screen-options)
-    :config
-    (setq ess-write-to-dribble nil)
-    ;; Make that folder if needed.
-    (mkdir ess-history-directory t)
-    (defalias 'ess-smart-S-assign #'self-insert-command)
-    (defun my/add-pipe ()
-      "Add a pipe operator %>% at the end of the current line.
-  Don't add one if the end of line already has one.  Ensure one
-  space to the left and start a newline with indentation."
-      (interactive)
-      (end-of-line)
-      (unless (looking-back "%>%" nil)
-        (just-one-space 1)
-        (insert "%>%"))
-      (newline-and-indent))
-    (defun my/ess-execute-screen-options ()
-      "Call `ess-execute-screen-options' invisibly."
-      (ess-execute-screen-options t))
-    ;; I sometimes want to evaluate just part of a piped sequence. The
-    ;; following lets me do so without needing to insert blank lines or
-    ;; something:
-    (defun my/ess-beginning-of-pipe-or-end-of-line ()
-      "Find point position of end of line or beginning of pipe %>%."
-      (if (search-forward "%>%" (line-end-position) t)
-          (let ((pos (progn
-                       (beginning-of-line)
-                       (search-forward "%>%" (line-end-position))
-                       (backward-char 3)
-                       (point))))
-            (goto-char pos))
-        (end-of-line)))
-
-    (defun my/ess-eval-pipe-through-line (vis)
-      "Like `ess-eval-paragraph' but only evaluates up to the pipe on this line.
-  If no pipe, evaluate paragraph through the end of current line.
-  Prefix arg VIS toggles visibility of ess-code as for `ess-eval-region'."
-      (interactive "P")
-      (save-excursion
-        (let ((end (progn
-                     (my/ess-beginning-of-pipe-or-end-of-line)
-                     (point)))
-              (beg (progn (backward-paragraph)
-                          (ess-skip-blanks-forward 'multiline)
-                          (point))))
-          (ess-eval-region beg end vis)))))
-
-#+END_SRC
-
-* ESS
-copied from: https://github.com/sejdemyr/.emacs.d/blob/master/init.el
-
-#+BEGIN_SRC emacs-lisp
-  ;; (use-package ess-site
-  ;;   ;; :load-path "~/.emacs.d/elpa/ess-20190122.2108/lisp/"
-  ;;   :mode ("\\.R\\'" . R-mode)
-  ;;   :config
-  ;;   (validate-setq
-  ;;    ring-bell-function #'ignore
-  ;;    ess-ask-for-ess-directory nil
-  ;;    inferior-R-program-name "/usr/bin/R"
-  ;;    ess-local-process-name "R"
-  ;;    ansi-color-for-comint-mode 'filter
-  ;;    comint-scroll-to-bottom-on-input t
-  ;;    comint-scroll-to-bottom-on-output t
-  ;;    comint-move-point-for-output t
-  ;;    ess-default-style 'RStudio)         ; rstudio indentation style
-  ;;   :bind
-  ;;   (:map ess-mode-map
-  ;;         (";" . ess-insert-assign))
-  ;;   (:map inferior-ess-mode-map
-  ;;         (";" . ess-insert-assign))
-  ;;   (define-key company-active-map (kbd "M-h") 'company-show-doc-buffer)
-
-  ;; ;;   ;; bind ac-complete to tab:
-  ;; ;;   (define-key company-active-map [return] nil)
-  ;; ;;   (define-key company-active-map [tab] 'company-complete-common)
-  ;; ;;   (define-key company-active-map (kbd "TAB") 'company-complete-common)
-  ;; ;;   (define-key company-active-map (kbd "M-TAB") 'company-complete-selection)
-
-  ;; ;;   ;; automatically complete parentheses etc
-  ;; ;;   ;; (add-hook 'ess-mode-hook #'electric-pair-mode)
-
-  ;;   ;; set piping operator key binding
-  ;;   ;; http://emacs.stackexchange.com/questions/8041/how-to-implement-the-piping-operator-in-ess-mode
-  ;;   ;; CTRL-SHIFT-% for pipe operator
-  ;;   (defun then_R_operator ()
-  ;;     "R - %>% operator or 'then' pipe operator"
-  ;;     (interactive)
-  ;;     (just-one-space 1)
-  ;;     (insert "%>%")
-  ;;     (just-one-space 1))
-  ;;   (define-key ess-mode-map (kbd "C-%") 'then_R_operator)
-  ;;   (define-key inferior-ess-mode-map (kbd "C-%") 'then_R_operator)
-
-  ;;   ;; key binding to evaluate current line or marked region
-  ;;   (defun my-ess-eval ()
-  ;;     (interactive)
-  ;;     (if (and transient-mark-mode mark-active)
-  ;;         (call-interactively 'ess-eval-region)
-  ;;       (call-interactively 'ess-eval-line)))
-  ;;   (add-hook 'ess-mode-hook
-  ;;             '(lambda()
-  ;;                (local-set-key (kbd "s-m") 'my-ess-eval)))
-
-  ;;   ;; key binding to evaluate entire region (whether marked or not)
-  ;;   (defun my-ess-eval2 ()
-  ;;     (interactive)
-  ;;     (call-interactively 'ess-eval-region-or-function-or-paragraph-and-step))
-  ;;   (add-hook 'ess-mode-hook
-  ;;             '(lambda()
-  ;;                (local-set-key (kbd "s-M") 'my-ess-eval2)))
-
-  ;;   ;; key binding to load_all() for R devlopment
-  ;;   (defun my-ess-eval3 ()
-  ;;     (interactive)
-  ;;     (call-interactively 'ess-r-devtools-load-package))
-  ;;   (add-hook 'ess-mode-hook
-  ;;             '(lambda()
-  ;;                (local-set-key (kbd "s-B") 'my-ess-eval3)))
-
-  ;;   )
-
-  ;; add author info
-  (defun akk/ess-author-date ()
-    (interactive)
-    (when (string= major-mode "ess-mode")
-      (goto-char (point-min))
-      (insert "#' ---\n")
-      (insert "#' title: <title>\n")
-      (insert "#' author: Arun Kr. Khattri\n")
-      (insert "#' Date: ")
-      (insert (format-time-string "%F %T\n"))
-      (insert "#' ---\n\n")
-      (save-buffer)))
-  (add-hook 'org-babel-post-tangle-hook 'akk/ess-author-date)
-  (setq ess-indent-offset 2)
-  (setq ess-help-kill-bogus-buffers t)
-#+END_SRC
-
-* other ESS related packages
-
-#+BEGIN_SRC emacs-lisp
-  ;; (use-package ess-smart-underscore
-  ;;   :ensure t
-  ;;   :after ess)
-
-  ;; (use-package ess-view
-  ;;   :ensure t)
-
-#+END_SRC
-
-* Snippets for R in ESS
-
-#+BEGIN_SRC emacs-lisp
-  ;; (use-package r-autoyas
-  ;;   :ensure t
-  ;;   :config
-  ;;   (progn (add-hook 'ess-mode-hook 'r-autoyas-ess-activate)))
-
-#+END_SRC
-
 * Highlight FIXME, TODO & BUG
 in prog-mode
 
@@ -1307,212 +867,6 @@ for encryption and decryption of files
     (bind-key "}" #'paredit-close-curly json-mode-map))
 
 #+END_SRC
-* Helm
-not using much so putting off.
-#+BEGIN_SRC emacs-lisp
-  ;; ;; ref: https://github.com/tuhdo/emacs-c-ide-demo/blob/master/custom/setup-helm.el
-  ;;   (use-package helm
-  ;;     :ensure t
-  ;;     :init
-  ;;     (progn
-  ;;       (require 'helm-config)
-  ;;       (require 'helm-grep)
-  ;;       ;; To fix error at compile:
-  ;;       ;; Error (bytecomp): Forgot to expand macro with-helm-buffer in
-  ;;       ;; (with-helm-buffer helm-echo-input-in-header-line)
-  ;;       (if (version< "26.0.50" emacs-version)
-  ;;           (eval-when-compile (require 'helm-lib)))
-
-  ;;       (defun helm-hide-minibuffer-maybe ()
-  ;;         (when (with-helm-buffer helm-echo-input-in-header-line)
-  ;;           (let ((ov (make-overlay (point-min) (point-max) nil nil t)))
-  ;;             (overlay-put ov 'window (selected-window))
-  ;;             (overlay-put ov 'face (let ((bg-color (face-background 'default nil)))
-  ;;                                     `(:background ,bg-color :foreground ,bg-color)))
-  ;;             (setq-local cursor-type nil))))
-
-  ;;       (add-hook 'helm-minibuffer-set-up-hook 'helm-hide-minibuffer-maybe)
-  ;;       ;; The default "C-x c" is quite close to "C-x C-c", which quits Emacs.
-  ;;       ;; Changed to "C-c h". Note: We must set "C-c h" globally, because we
-  ;;       ;; cannot change `helm-command-prefix-key' once `helm-config' is loaded.
-  ;;       (global-set-key (kbd "C-c h") 'helm-command-prefix)
-  ;;       (global-unset-key (kbd "C-x c"))
-
-  ;;       (define-key helm-map (kbd "<tab>") 'helm-execute-persistent-action) ; rebihnd tab to do persistent action
-  ;;       (define-key helm-map (kbd "C-i") 'helm-execute-persistent-action) ; make TAB works in terminal
-  ;;       (define-key helm-map (kbd "C-z")  'helm-select-action) ; list actions using C-z
-
-  ;;       (define-key helm-grep-mode-map (kbd "<return>")  'helm-grep-mode-jump-other-window)
-  ;;       (define-key helm-grep-mode-map (kbd "n")  'helm-grep-mode-jump-other-window-forward)
-  ;;       (define-key helm-grep-mode-map (kbd "p")  'helm-grep-mode-jump-other-window-backward)
-
-  ;;       (when (executable-find "curl")
-  ;;         (setq helm-google-suggest-use-curl-p t))
-
-  ;;       (setq helm-google-suggest-use-curl-p t
-  ;;             helm-scroll-amount 4 ; scroll 4 lines other window using M-<next>/M-<prior>
-  ;;             ;; helm-quick-update t ; do not display invisible candidates
-  ;;             helm-ff-search-library-in-sexp t ; search for library in `require' and `declare-function' sexp.
-
-  ;;             ;; you can customize helm-do-grep to execute ack-grep
-  ;;             ;; helm-grep-default-command "ack-grep -Hn --smart-case --no-group --no-color %e %p %f"
-  ;;             ;; helm-grep-default-recurse-command "ack-grep -H --smart-case --no-group --no-color %e %p %f"
-  ;;             helm-split-window-in-side-p t ;; open helm buffer inside current window, not occupy whole other window
-
-  ;;             helm-echo-input-in-header-line t
-
-  ;;             ;; helm-candidate-number-limit 500 ; limit the number of displayed canidates
-  ;;             helm-ff-file-name-history-use-recentf t
-  ;;             helm-move-to-line-cycle-in-source t ; move to end or beginning of source when reaching top or bottom of source.
-  ;;             helm-buffer-skip-remote-checking t
-
-  ;;             helm-mode-fuzzy-match t
-
-  ;;             helm-buffers-fuzzy-matching t ; fuzzy matching buffer names when non-nil
-  ;;                                           ; useful in helm-mini that lists buffers
-  ;;             helm-org-headings-fontify t
-  ;;             ;; helm-find-files-sort-directories t
-  ;;             ;; ido-use-virtual-buffers t
-  ;;             helm-semantic-fuzzy-match t
-  ;;             helm-M-x-fuzzy-match t
-  ;;             helm-imenu-fuzzy-match t
-  ;;             helm-lisp-fuzzy-completion t
-  ;;             ;; helm-apropos-fuzzy-match t
-  ;;             helm-buffer-skip-remote-checking t
-  ;;             helm-locate-fuzzy-match t
-  ;;             helm-display-header-line nil)
-
-  ;;       (add-to-list 'helm-sources-using-default-as-input 'helm-source-man-pages)
-
-  ;;       (global-set-key (kbd "M-x") 'helm-M-x)
-  ;;       (global-set-key (kbd "M-y") 'helm-show-kill-ring)
-  ;;       (global-set-key (kbd "C-x b") 'helm-buffers-list)
-  ;;       (global-set-key (kbd "C-x C-f") 'helm-find-files)
-  ;;       (global-set-key (kbd "C-c r") 'helm-recentf)
-  ;;       (global-set-key (kbd "C-h SPC") 'helm-all-mark-rings)
-  ;;       (global-set-key (kbd "C-c h o") 'helm-occur)
-
-  ;;       (global-set-key (kbd "C-c h w") 'helm-wikipedia-suggest)
-  ;;       (global-set-key (kbd "C-c h g") 'helm-google-suggest)
-
-  ;;       (global-set-key (kbd "C-c h x") 'helm-register)
-  ;;       ;; (global-set-key (kbd "C-x r j") 'jump-to-register)
-
-  ;;       (define-key 'help-command (kbd "C-f") 'helm-apropos)
-  ;;       (define-key 'help-command (kbd "r") 'helm-info-emacs)
-  ;;       (define-key 'help-command (kbd "C-l") 'helm-locate-library)
-
-  ;;       ;; use helm to list eshell history
-  ;;       (add-hook 'eshell-mode-hook
-  ;;                 #'(lambda ()
-  ;;                     (define-key eshell-mode-map (kbd "M-l")  'helm-eshell-history)))
-
-  ;;   ;;; Save current position to mark ring
-  ;;       (add-hook 'helm-goto-line-before-hook 'helm-save-current-pos-to-mark-ring)
-
-  ;;       ;; show minibuffer history with Helm
-  ;;       (define-key minibuffer-local-map (kbd "M-p") 'helm-minibuffer-history)
-  ;;       (define-key minibuffer-local-map (kbd "M-n") 'helm-minibuffer-history)
-
-  ;;       (define-key global-map [remap find-tag] 'helm-etags-select)
-
-  ;;       (define-key global-map [remap list-buffers] 'helm-buffers-list)))
-
-  ;;       ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-  ;;       ;; PACKAGE: helm-swoop                ;;
-  ;;       ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-  ;;       ;; Locate the helm-swoop folder to your path
-  ;;       (use-package helm-swoop
-  ;;         :bind (("C-c h o" . helm-swoop)
-  ;;                ("C-c s" . helm-multi-swoop-all))
-  ;;         :config
-  ;;         ;; When doing isearch, hand the word over to helm-swoop
-  ;;         (define-key isearch-mode-map (kbd "M-i") 'helm-swoop-from-isearch)
-
-  ;;         ;; From helm-swoop to helm-multi-swoop-all
-  ;;         (define-key helm-swoop-map (kbd "M-i") 'helm-multi-swoop-all-from-helm-swoop)
-
-  ;;         ;; Save buffer when helm-multi-swoop-edit complete
-  ;;         (setq helm-multi-swoop-edit-save t)
-
-  ;;         ;; If this value is t, split window inside the current window
-  ;;         (setq helm-swoop-split-with-multiple-windows t)
-
-  ;;         ;; Split direcion. 'split-window-vertically or 'split-window-horizontally
-  ;;         (setq helm-swoop-split-direction 'split-window-vertically)
-
-  ;;         ;; If nil, you can slightly boost invoke speed in exchange for text color
-  ;;         (setq helm-swoop-speed-or-color t))
-  ;;         (use-package helm-ag
-  ;;         :ensure helm-ag
-  ;;         :bind ("M-p" . helm-projectile-ag)
-  ;;         :commands (helm-ag helm-projectile-ag)
-  ;;         :init (setq helm-ag-insert-at-point 'symbol
-  ;;                 helm-ag-command-option "--path-to-ignore ~/.agignore"))
-
-
-#+END_SRC
-* Helm-gtags
-#+BEGIN_SRC emacs-lisp
-  ;; Ref: https://github.com/tuhdo/emacs-c-ide-demo/blob/master/custom/setup-helm-gtags.el
-    ;; (setq helm-gtags-prefix-key "\C-cg")
-
-    ;; (use-package helm-gtags
-    ;;   :init
-    ;;   (progn
-    ;;     (setq helm-gtags-ignore-case t
-    ;;           helm-gtags-auto-update t
-    ;;           helm-gtags-use-input-at-cursor t
-    ;;           helm-gtags-pulse-at-cursor t
-    ;;           helm-gtags-prefix-key "\C-cg"
-    ;;           helm-gtags-suggested-key-mapping t)
-
-    ;;     ;; Enable helm-gtags-mode in Dired so you can jump to any tag
-    ;;     ;; when navigate project tree with Dired
-    ;;     (add-hook 'dired-mode-hook 'helm-gtags-mode)
-
-    ;;     ;; Enable helm-gtags-mode in Eshell for the same reason as above
-    ;;     (add-hook 'eshell-mode-hook 'helm-gtags-mode)
-
-    ;;     ;; Enable helm-gtags-mode in languages that GNU Global supports
-    ;;     (add-hook 'c-mode-hook 'helm-gtags-mode)
-    ;;     (add-hook 'c++-mode-hook 'helm-gtags-mode)
-    ;;     ;; (add-hook 'java-mode-hook 'helm-gtags-mode)
-    ;;     ;; (add-hook 'asm-mode-hook 'helm-gtags-mode)
-
-    ;;     ;; key bindings
-    ;;     (with-eval-after-load 'helm-gtags
-    ;;       (define-key helm-gtags-mode-map (kbd "C-c g a") 'helm-gtags-tags-in-this-function)
-    ;;       (define-key helm-gtags-mode-map (kbd "C-j") 'helm-gtags-select)
-    ;;       (define-key helm-gtags-mode-map (kbd "M-.") 'helm-gtags-dwim)
-    ;;       (define-key helm-gtags-mode-map (kbd "M-,") 'helm-gtags-pop-stack)
-    ;;       (define-key helm-gtags-mode-map (kbd "C-c <") 'helm-gtags-previous-history)
-    ;;       (define-key helm-gtags-mode-map (kbd "C-c >") 'helm-gtags-next-history))))
-
-#+END_SRC
-* GGtags
-#+BEGIN_SRC emacs-lisp
-  ;; Ref: https://github.com/tuhdo/emacs-c-ide-demo/blob/master/custom/setup-ggtags.el
-  ;; (use-package ggtags
-  ;;   :ensure t
-  ;;   :config
-  ;;   (add-hook 'c-mode-common-hook
-  ;;           (lambda ()
-  ;;               (when (derived-mode-p 'c-mode 'c++-mode)
-  ;;                 (ggtags-mode 1))))
-  ;;   (dolist (map (list ggtags-mode-map dired-mode-map))
-  ;;     (define-key map (kbd "C-c g s") 'ggtags-find-other-symbol)
-  ;;     (define-key map (kbd "C-c g h") 'ggtags-view-tag-history)
-  ;;     (define-key map (kbd "C-c g r") 'ggtags-find-reference)
-  ;;     (define-key map (kbd "C-c g f") 'ggtags-find-file)
-  ;;     (define-key map (kbd "C-c g c") 'ggtags-create-tags)
-  ;;     (define-key map (kbd "C-c g u") 'ggtags-update-tags)
-  ;;     (define-key map (kbd "C-c g a") 'helm-gtags-tags-in-this-function)
-  ;;     (define-key map (kbd "M-.") 'ggtags-find-tag-dwim)
-  ;;     (define-key map (kbd "M-,") 'pop-tag-mark)
-  ;;     (define-key map (kbd "C-c <") 'ggtags-prev-mark)
-  ;;     (define-key map (kbd "C-c >") 'ggtags-next-mark)))
-#+END_SRC
 * Projectile
 helm projectile commented as helm is off for now.
 #+BEGIN_SRC emacs-lisp
@@ -1561,8 +915,6 @@ helm projectile commented as helm is off for now.
 (setq rcirc-server-alist
       '(("irc.freenode.net" :port 6697 :encryption tls
      :channels ("#rcirc" "#emacs" "#emacswiki"))))
-(add-hook 'rcirc-mode-hook 'turn-on-visual-line-mode)
-
 
 ;; This code adds smileys such as :) and :( to rcirc.
 
@@ -2138,55 +1490,6 @@ for reveal.js presentations
     (interactive)
     (set 'section (read-string "Enter Section Name: "))
     (save-excursion (insert (concat section (make-string (- fill-column (length section)) ?-)))))
-#+END_SRC
-* C/C++ Configuration
-#+BEGIN_SRC emacs-lisp
-  ;; Ref: https://github.com/tuhdo/emacs-c-ide-demo/blob/master/custom/setup-cedet.el
-  ;; company-c-headers
-  ;; (use-package company-c-headers
-  ;;   :init
-  ;;   (add-to-list 'company-backends 'company-c-headers))
-
-  ;; hs-minor-mode for folding source code
-  ;; (add-hook 'c-mode-common-hook 'hs-minor-mode)
-
-  ;; Available C style:
-  ;; “gnu”: The default style for GNU projects
-  ;; “k&r”: What Kernighan and Ritchie, the authors of C used in their book
-  ;; “bsd”: What BSD developers use, aka “Allman style” after Eric Allman.
-  ;; “whitesmith”: Popularized by the examples that came with Whitesmiths C, an early commercial C compiler.
-  ;; “stroustrup”: What Stroustrup, the author of C++ used in his book
-  ;; “ellemtel”: Popular C++ coding standards as defined by “Programming in C++, Rules and Recommendations,” Erik Nyquist and Mats Henricson, Ellemtel
-  ;; “linux”: What the Linux developers use for kernel development
-  ;; “python”: What Python developers use for extension modules
-  ;; “java”: The default style for java-mode (see below)
-  ;; “user”: When you want to define your own style
-  ;; (setq c-default-style "linux"
-  ;;       c-basic-offset 4) ;; set style to "linux"
-
-  ;; (use-package cc-mode
-  ;;   :config
-  ;;   (define-key c-mode-map  (kbd "<tab>") 'company-complete)
-  ;;   (define-key c++-mode-map  (kbd "<tab>") 'company-complete))
-  ;; (require 'semantic)
-
-  ;; (global-semanticdb-minor-mode 1)
-  ;; (global-semantic-idle-scheduler-mode 1)
-  ;; (global-semantic-stickyfunc-mode 1)
-
-  ;; (semantic-mode 1)
-
-  ;; (defun alexott/cedet-hook ()
-  ;;   (local-set-key "\C-c\C-j" 'semantic-ia-fast-jump)
-  ;;   (local-set-key "\C-c\C-s" 'semantic-ia-show-summary))
-
-  ;; (add-hook 'c-mode-common-hook 'alexott/cedet-hook)
-  ;; (add-hook 'c-mode-hook 'alexott/cedet-hook)
-  ;; (add-hook 'c++-mode-hook 'alexott/cedet-hook)
-
-  ;; ;; Enable EDE only in C/C++
-  ;; (require 'ede)
-  ;; (global-ede-mode)
 #+END_SRC
 * Lua
 #+BEGIN_SRC emacs-lisp
