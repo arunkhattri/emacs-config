@@ -1,0 +1,1 @@
+/home/deadlytackler/github/arunkhattri/emacs-config/tango/straight/repos/emacs-doom-themes/themes/doom-solarized-dark-theme.el
